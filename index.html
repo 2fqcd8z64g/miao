@@ -10,7 +10,7 @@
   :root {
     --bg: #f5f5f7;
     --text: #1c1c1e;
-    --glass-bg: rgba(255,255,255,0.25);
+    --glass-bg: rgba(255,255,255,0.15);
     --glass-border: rgba(255,255,255,0.28);
     --shadow: 0 1px 2px rgba(0,0,0,0.05);
     --card-bg: rgba(255,255,255,0.18);
@@ -21,7 +21,7 @@
     :root {
       --bg: #1c1c1e;
       --text: #f5f5f7;
-      --glass-bg: rgba(0,0,0,0.20);
+      --glass-bg: rgba(0,0,0,0.25);
       --glass-border: rgba(255,255,255,0.12);
       --shadow: 0 1px 2px rgba(0,0,0,0.2);
       --card-bg: rgba(255,255,255,0.08);
@@ -36,10 +36,10 @@
     overflow:hidden;width:100vw;height:100vh;height:100dvh;
     user-select:none;-webkit-user-select:none;
   }
-  .glass{background:var(--glass-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-border);}
-  .glass-card{background:var(--card-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-border);box-shadow:var(--shadow);}
-  .active-scale{transition:transform 0.1s ease;}
-  .active-scale:active{transform:scale(0.95);}
+  .glass{background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);}
+  .glass-card{background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);box-shadow:var(--shadow);}
+  .active-scale{transition:transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94);}
+  .active-scale:active{transform:scale(0.96);}
 
   /* Loading */
   #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;background:var(--bg);}
@@ -201,7 +201,7 @@
   .chat-avatar-sm{width:36px;height:36px;min-width:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:var(--subtle);overflow:hidden;cursor:pointer;position:relative;flex-shrink:0;}
   .chat-avatar-sm img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
   .bubble-wrap{position:relative;max-width:70%;}
-  .chat-bubble{padding:6px 12px;border-radius:20px;font-size:12px;line-height:1.5;position:relative;cursor:pointer;transition:opacity .15s;}
+  .chat-bubble{padding:6px 12px;border-radius:20px;font-size:12px;line-height:1.5;position:relative;cursor:pointer;transition:opacity 0.3s cubic-bezier(0.25,0.46,0.45,0.94);}
   .chat-bubble:hover{opacity:.85;}
   /* Left tail */
   .chat-row:not(.right) .chat-bubble{border-bottom-left-radius:4px;}
@@ -251,10 +251,29 @@
   .photo-frame:active{transform:scale(.95);}
   .photo-frame img{width:100%;height:100%;object-fit:cover;}
 
-  /* App Overlay */
-  .app-overlay{position:fixed;inset:0;z-index:1000;display:none;opacity:0;transition:opacity .25s ease;}
+  /* App Overlay — fills entire viewport on any screen */
+  .app-overlay{
+    position:fixed;inset:0;z-index:1000;display:none;
+    opacity:0;transition:opacity .28s ease-out;
+  }
   .app-overlay.show{opacity:1;}
-  .app-overlay-inner{position:absolute;inset:0;background:var(--glass-bg);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);overflow-y:auto;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0));padding-bottom:calc(24px + env(safe-area-inset-bottom,0));}
+  .app-overlay-inner{
+    position:absolute;inset:0;
+    background:var(--glass-bg);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:24px;
+    padding-top:calc(24px + env(safe-area-inset-top,0));
+    padding-bottom:calc(24px + env(safe-area-inset-bottom,0));
+    display:flex;flex-direction:column;
+    width:100%;height:100%;
+    box-sizing:border-box;
+  }
+  /* Chat module overrides padding=0, so it fills the full overlay */
+  .chat-app-container{
+    display:flex;flex-direction:column;
+    height:100%;width:100%;
+    overflow:hidden;
+  }
   .app-back{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:20px;background:var(--subtle);transition:transform .1s;}
   .app-back:active{transform:scale(.88);}
   .app-title{font-size:26px;font-weight:600;margin-bottom:24px;letter-spacing:-.5px;}
@@ -320,6 +339,238 @@
   }
   .music-ctrl-btn{cursor:pointer;transition:transform .1s;display:flex;align-items:center;justify-content:center;color:var(--text);}
   .music-ctrl-btn:active{transform:scale(0.88);}
+
+  /* ── TabBar frosted glass blur strip ── REMOVED ── */
+  .chat-tabbar-fade{
+    display:none;
+  }
+
+  /* ── Glass card light highlight (radial gradient corners) ── */
+  .chat-list-card,.contact-item,.contacts-item-new,.me-setting-card,.discover-card,.moments-card{position:relative;}
+  .chat-list-card::before,.contact-item::before,.contacts-item-new::before,.me-setting-card::before,.discover-card::before,.moments-card::before{
+    content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;z-index:1;
+    background:
+      radial-gradient(circle at top left, rgba(255,255,255,0.18) 0%, transparent 60%),
+      radial-gradient(circle at bottom right, rgba(255,255,255,0.12) 0%, transparent 60%);
+  }
+  @media(prefers-color-scheme:dark){
+    .chat-list-card::before,.contact-item::before,.contacts-item-new::before,.me-setting-card::before,.discover-card::before,.moments-card::before{
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.08) 0%, transparent 60%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.05) 0%, transparent 60%);
+    }
+  }
+  /* Ensure child content is above the pseudo overlay */
+  .chat-list-card > *,.contact-item > *,.contacts-item-new > *,.me-setting-card > *,.discover-card > *,.moments-card > *{position:relative;z-index:2;}
+  .chat-app-container{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+  .chat-app-header{padding:12px 16px 0;flex-shrink:0;}
+  .chat-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .chat-app-user-row{display:flex;align-items:center;gap:12px;padding:0 0 14px;}
+  .chat-app-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,rgba(200,200,200,.4),rgba(160,160,160,.3));overflow:hidden;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.35);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+  .chat-app-avatar img{width:100%;height:100%;object-fit:cover;}
+  .chat-app-userinfo{flex:1;min-width:0;}
+  .chat-app-username{font-size:18px;font-weight:600;color:#1c1c1e;line-height:1.2;}
+  .chat-app-bio{font-size:12px;color:#8e8e93;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+  @media(prefers-color-scheme:dark){
+    .chat-app-username{color:#f5f5f7;}
+    .chat-app-bio{color:#636366;}
+  }
+  .chat-app-body{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:0 16px 8px;}
+  .chat-app-body::-webkit-scrollbar{display:none;}
+  /* ── Chat App Bottom TabBar — fully transparent, wallpaper shows through ── */
+  .chat-app-tabbar{
+    flex-shrink:0;display:flex;align-items:center;
+    background:transparent;
+    /* no backdrop-filter, no border-top, no box-shadow */
+    border-radius:0 0 28px 28px;
+    padding:8px 0 calc(10px + env(safe-area-inset-bottom,0));
+  }
+  /* No dark-mode override needed — stays transparent */
+  .chat-tab-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent;
+    transition:opacity 0.3s ease-out;
+  }
+  .chat-tab-item:active{opacity:.5;}
+  .chat-tab-icon,.chat-tab-label{
+    transition:color 0.35s ease-out;
+    will-change:color;
+    /* shadow ensures legibility over any wallpaper */
+    filter:drop-shadow(0 1px 3px rgba(0,0,0,0.35));
+  }
+  .chat-tab-label{
+    font-size:10px;font-weight:600;
+    text-shadow:0 1px 3px rgba(0,0,0,0.35);
+  }
+  /* Active tab = bright white; inactive = soft white with lower opacity */
+  .chat-tab-item.active .chat-tab-icon,
+  .chat-tab-item.active .chat-tab-label{color:#ffffff;}
+  .chat-tab-item:not(.active) .chat-tab-icon,
+  .chat-tab-item:not(.active) .chat-tab-label{color:rgba(255,255,255,0.55);}
+  @media(prefers-color-scheme:dark){
+    .chat-tab-item.active .chat-tab-icon,
+    .chat-tab-item.active .chat-tab-label{color:#ffffff;}
+    .chat-tab-item:not(.active) .chat-tab-icon,
+    .chat-tab-item:not(.active) .chat-tab-label{color:rgba(255,255,255,0.45);}
+  }
+  @keyframes chatPageIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .chat-page{animation:chatPageIn 0.38s cubic-bezier(0.2,0.8,0.4,1.0);}
+  /* Chat list */
+  .chat-list-card{background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:20px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,0.06);}
+  @media(prefers-color-scheme:dark){.chat-list-card{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
+  .chat-list-item{display:flex;align-items:center;gap:12px;padding:8px 16px;cursor:pointer;transition:background 0.3s ease-out,opacity 0.3s ease-out;-webkit-tap-highlight-color:transparent;}
+  .chat-list-item:active{background:rgba(0,0,0,0.04);opacity:0.72;}
+  .chat-list-item:not(:last-child){border-bottom:1px solid rgba(0,0,0,0.05);}
+  @media(prefers-color-scheme:dark){.chat-list-item:not(:last-child){border-bottom-color:rgba(255,255,255,0.07);}}
+  @media(prefers-color-scheme:dark){.chat-list-item:active{background:rgba(255,255,255,0.04);opacity:0.72;}}
+  .chat-list-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .chat-list-info{flex:1;min-width:0;}
+  .chat-list-name{font-size:15px;font-weight:600;color:#1c1c1e;line-height:1.2;}
+  .chat-list-preview{font-size:13px;color:#8e8e93;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+  @media(prefers-color-scheme:dark){.chat-list-name{color:#f5f5f7;}}
+  .chat-list-time{font-size:11px;color:#aeaeb2;flex-shrink:0;}
+  /* Contacts */
+  .contact-group-title{font-size:15px;font-weight:600;color:#1c1c1e;padding:18px 4px 8px;letter-spacing:.1px;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:10px;}
+  @media(prefers-color-scheme:dark){.contact-group-title{color:#f5f5f7;border-bottom-color:rgba(255,255,255,0.08);}}
+  .contact-group-wrap{margin-bottom:6px;}
+  .contact-item{display:flex;align-items:center;gap:12px;padding:11px 16px;background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:14px;margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.3s ease-out;}
+  @media(prefers-color-scheme:dark){.contact-item{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
+  .contact-item:active{opacity:0.7;}
+  .contact-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .contact-name{font-size:15px;font-weight:500;color:#1c1c1e;flex:1;}
+  @media(prefers-color-scheme:dark){.contact-name{color:#f5f5f7;}}
+  /* Discover */
+  .discover-card{background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:20px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);}
+  @media(prefers-color-scheme:dark){.discover-card{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
+  .discover-user-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .discover-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;}
+  .discover-uname{font-size:14px;font-weight:600;color:#1c1c1e;line-height:1.2;}
+  .discover-time{font-size:11px;color:#aeaeb2;margin-top:1px;}
+  @media(prefers-color-scheme:dark){.discover-uname{color:#f5f5f7;}}
+  .discover-content{font-size:14px;color:#3c3c3e;line-height:1.65;}
+  @media(prefers-color-scheme:dark){.discover-content{color:#ebebf5;}}
+  /* Me page */
+  .me-avatar-wrap{width:80px;height:80px;border-radius:50%;overflow:hidden;cursor:pointer;flex-shrink:0;background:linear-gradient(145deg,rgba(200,200,200,.4),rgba(160,160,160,.3));display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.5);box-shadow:0 4px 18px rgba(0,0,0,0.1);}
+  .me-avatar-wrap img{width:100%;height:100%;object-fit:cover;}
+  .me-setting-card{background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+  @media(prefers-color-scheme:dark){.me-setting-card{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
+  .me-setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;font-size:14px;color:#1c1c1e;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  @media(prefers-color-scheme:dark){.me-setting-row{color:#f5f5f7;}}
+  .me-setting-row:not(:last-child){border-bottom:1px solid rgba(0,0,0,0.05);}
+  @media(prefers-color-scheme:dark){.me-setting-row:not(:last-child){border-bottom-color:rgba(255,255,255,0.07);}}
+  .me-setting-row:active{background:rgba(0,0,0,0.03);}
+  @media(prefers-color-scheme:dark){.me-setting-row:active{background:rgba(255,255,255,0.03);}}
+  .chat-action-btn{width:32px;height:32px;border-radius:50%;background:rgba(142,142,147,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .25s ease-out;}
+  .chat-action-btn:active{opacity:.5;}
+  @media(prefers-color-scheme:dark){.chat-hdr-title-text{color:#f5f5f7!important;}}
+
+  /* ── Subtab bar (Chats / Group / Friends / All) ── */
+  .chat-subtab-bar{display:flex;align-items:center;padding:0 16px;border-bottom:1px solid rgba(0,0,0,0.07);flex-shrink:0;background:rgba(255,255,255,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:0 0 20px 20px;overflow:hidden;margin-bottom:4px;}
+  @media(prefers-color-scheme:dark){.chat-subtab-bar{background:rgba(28,28,30,0.5);border-bottom-color:rgba(255,255,255,0.07);}}
+  .chat-subtab-tabs{display:flex;flex:1;gap:0;}
+  .chat-subtab-item{padding:10px 14px;font-size:13px;font-weight:500;color:#8e8e93;cursor:pointer;position:relative;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:color 0.35s ease-out,opacity 0.35s ease-out;}
+  .chat-subtab-item.active{color:#1c1c1e;font-weight:600;}
+  @media(prefers-color-scheme:dark){.chat-subtab-item.active{color:#f5f5f7;}}
+  .chat-subtab-item.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:calc(100% - 20px);height:2px;border-radius:1px;background:#8e8e93;transition:width 0.35s ease-out;}
+  .chat-subtab-search{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:opacity 0.3s ease-out;}
+  .chat-subtab-search:active{opacity:.4;}
+
+  /* ── Search bar (inline) ── */
+  @keyframes searchBarIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+  .chat-search-bar{
+    display:flex;align-items:center;gap:8px;padding:8px 16px;
+    background:rgba(255,255,255,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.18);border-bottom:1px solid rgba(0,0,0,0.06);
+    border-radius:20px;margin:6px 12px 2px;
+    animation:searchBarIn 0.25s ease-out;
+  }
+  @media(prefers-color-scheme:dark){.chat-search-bar{background:rgba(0,0,0,0.5);border-color:rgba(255,255,255,0.08);border-bottom-color:rgba(255,255,255,0.07);}}
+  .chat-search-input{flex:1;border:none;background:transparent;outline:none;font-size:14px;color:#1c1c1e;font-family:inherit;}
+  @media(prefers-color-scheme:dark){.chat-search-input{color:#f5f5f7;}}
+  .chat-search-input::placeholder{color:#aeaeb2;}
+  .chat-search-clear{font-size:12px;color:#8e8e93;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;padding:2px 4px;}
+
+  /* ── Discover / WeChat Moments style ── */
+  .moments-card{background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  @media(prefers-color-scheme:dark){.moments-card{background:rgba(44,44,46,0.85);border-color:rgba(255,255,255,0.09);}}
+  .moments-user-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .moments-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .moments-meta{flex:1;min-width:0;}
+  .moments-uname{font-size:15px;font-weight:700;color:#1c1c1e;line-height:1.25;}
+  @media(prefers-color-scheme:dark){.moments-uname{color:#f5f5f7;}}
+  .moments-time{font-size:11px;color:#aeaeb2;margin-top:2px;}
+  .moments-text{font-size:14px;color:#3c3c3e;line-height:1.65;margin-bottom:10px;}
+  @media(prefers-color-scheme:dark){.moments-text{color:#ebebf5;}}
+  .moments-img-grid{display:grid;gap:4px;margin-bottom:10px;}
+  .moments-img-grid.cols-1{grid-template-columns:1fr;max-width:180px;}
+  .moments-img-grid.cols-2{grid-template-columns:1fr 1fr;}
+  .moments-img-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  .moments-img-cell{aspect-ratio:1;border-radius:8px;background:linear-gradient(135deg,rgba(200,200,200,.35),rgba(160,160,160,.25));overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .moments-img-cell img{width:100%;height:100%;object-fit:cover;}
+  .moments-actions{display:flex;align-items:center;border-top:1px solid rgba(0,0,0,0.06);padding-top:9px;gap:0;}
+  @media(prefers-color-scheme:dark){.moments-actions{border-top-color:rgba(255,255,255,0.07);}}
+  .moments-action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:#8e8e93;cursor:pointer;padding:3px 0;-webkit-tap-highlight-color:transparent;transition:opacity 0.3s cubic-bezier(0.25,0.46,0.45,0.94);}
+  .moments-action-btn:active{opacity:.5;}
+  .moments-action-sep{width:1px;height:16px;background:rgba(0,0,0,0.08);flex-shrink:0;}
+  @media(prefers-color-scheme:dark){.moments-action-sep{background:rgba(255,255,255,0.1);}}
+  /* ── Moments WeChat-style header ── */
+  .moments-hero{position:relative;width:100%;margin:-8px -0px 0;overflow:visible;}
+  .moments-hero-bg{width:100%;height:140px;background:linear-gradient(135deg,#c7c7cc 0%,#8e8e93 100%);background-size:cover;background-position:center;cursor:pointer;position:relative;}
+  .moments-hero-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.18));pointer-events:none;}
+  .moments-hero-change-btn{position:absolute;bottom:10px;right:12px;width:28px;height:28px;border-radius:14px;background:rgba(0,0,0,0.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;border:1px solid rgba(255,255,255,0.25);transition:opacity 0.22s ease;}
+  .moments-hero-change-btn:active{opacity:0.6;}
+  .moments-hero-float{display:flex;flex-direction:column;align-items:center;margin-top:-32px;padding:0 16px 16px;position:relative;z-index:4;}
+  .moments-hero-avatar{width:64px;height:64px;border-radius:50%;border:2.5px solid #fff;background:linear-gradient(145deg,#c7c7cc,#8e8e93);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.18);flex-shrink:0;transition:opacity 0.3s ease-out;}
+  .moments-hero-avatar:active{opacity:0.65;}
+  .moments-hero-avatar img{width:100%;height:100%;object-fit:cover;}
+  .moments-hero-name{font-size:18px;font-weight:700;color:#1c1c1e;margin-top:8px;letter-spacing:-.2px;cursor:pointer;transition:opacity 0.2s ease;}
+  .moments-hero-name:active{opacity:0.6;}
+  @media(prefers-color-scheme:dark){.moments-hero-name{color:#f5f5f7;}}
+  .moments-hero-bio{font-size:13px;color:#8e8e93;margin-top:3px;text-align:center;cursor:pointer;transition:opacity 0.2s ease;}
+  .moments-hero-bio:active{opacity:0.6;}
+  .moments-hero-divider{width:100%;height:1px;background:rgba(0,0,0,0.07);margin-bottom:12px;}
+  @media(prefers-color-scheme:dark){.moments-hero-divider{background:rgba(255,255,255,0.08);}}
+  /* ── Contacts Redesign ── */
+  .contacts-page-wrap{padding:0 0 16px;}
+  .contacts-serif-title{font-family:'Times New Roman',Georgia,serif;font-size:35px;font-weight:500;color:#1c1c1e;padding:16px 16px 10px;letter-spacing:-.3px;text-align:center;}
+  @media(prefers-color-scheme:dark){.contacts-serif-title{color:#f5f5f7;}}
+  .contacts-avatar-scroll-outer{display:flex;justify-content:center;overflow:hidden;}
+  .contacts-avatar-scroll{display:flex;gap:14px;overflow-x:auto;padding:4px 16px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);}
+  .contacts-avatar-scroll::-webkit-scrollbar{display:none;}
+  .contacts-av-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .contacts-av-circle{width:52px;height:52px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(255,255,255,0.6);box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:opacity 0.3s ease-out;}
+  .contacts-av-circle:active{opacity:0.65;}
+  .contacts-av-label{font-size:11px;color:#8e8e93;max-width:54px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .contacts-action-row{display:flex;align-items:center;justify-content:space-between;padding:0 16px;margin-bottom:12px;gap:8px;}
+  .contacts-action-icon-btn{width:38px;height:38px;border-radius:20px;background:rgba(0,0,0,0.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94),background 0.3s ease;-webkit-tap-highlight-color:transparent;flex-shrink:0;color:#ffffff;}
+  @media(prefers-color-scheme:dark){.contacts-action-icon-btn{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.18);color:#ffffff;}}
+  .contacts-action-icon-btn:active{opacity:0.65;background:rgba(0,0,0,0.28);}
+  @media(prefers-color-scheme:dark){.contacts-action-icon-btn:active{opacity:0.65;background:rgba(255,255,255,0.32);}}
+  .contacts-action-icon-btn.delete-active{background:rgba(255,59,48,0.15);}
+  .contacts-manage-btn{flex:1;height:38px;border-radius:19px;background:rgba(255,255,255,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:#8e8e93;transition:background 0.3s ease;-webkit-tap-highlight-color:transparent;}
+  .contacts-manage-btn:active{background:rgba(142,142,147,0.25);}
+  @media(prefers-color-scheme:dark){.contacts-manage-btn{background:rgba(0,0,0,0.5);border-color:rgba(255,255,255,0.08);}}
+  .contacts-search-wrap{width:80%;margin:0 auto 12px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:9px 14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+  @media(prefers-color-scheme:dark){.contacts-search-wrap{background:rgba(0,0,0,0.5);border-color:rgba(255,255,255,0.08);}}
+  .contacts-search-input{flex:1;border:none;background:transparent;outline:none;font-size:14px;color:#1c1c1e;font-family:inherit;}
+  @media(prefers-color-scheme:dark){.contacts-search-input{color:#f5f5f7;}}
+  .contacts-search-input::placeholder{color:#aeaeb2;}
+  .contacts-group-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none;justify-content:center;}
+  .contacts-group-tabs::-webkit-scrollbar{display:none;}
+  .contacts-group-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;color:#8e8e93;cursor:pointer;white-space:nowrap;transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+  .contacts-group-tab.active{background:rgba(28,28,30,0.9);color:#fff;}
+  @media(prefers-color-scheme:dark){.contacts-group-tab.active{background:rgba(245,245,247,0.9);color:#1c1c1e;}}
+  .contacts-list-wrap{padding:0 16px;}
+  .contacts-item-new{display:flex;align-items:center;gap:12px;padding:4px 16px;background:rgba(255,255,255,0.5);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.55);border-radius:24px;margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.3s ease-out;position:relative;}
+  @media(prefers-color-scheme:dark){.contacts-item-new{background:rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.09);}}
+  .contacts-item-new:active{opacity:0.65;}
+  .contacts-item-new.delete-mode::before{content:'';position:absolute;inset:0;background:rgba(255,59,48,0.07);border-radius:16px;pointer-events:none;}
+  .contacts-item-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .contacts-item-info{flex:1;min-width:0;}
+  .contacts-item-name{font-size:14px;font-weight:600;color:#1c1c1e;line-height:1.3;}
+  @media(prefers-color-scheme:dark){.contacts-item-name{color:#f5f5f7;}}
+  .contacts-item-sub{font-size:11px;color:#aeaeb2;margin-top:1px;line-height:1.3;}
+  .contacts-delete-indicator{width:24px;height:24px;border-radius:50%;background:rgba(255,59,48,0.85);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -482,55 +733,37 @@
       <div class="music-panel-wrap" id="music-wrap">
         <button class="music-note-btn" id="music-toggle-btn" onclick="toggleMusicPanel()" aria-label="音乐">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
           </svg>
         </button>
         <div class="music-panel" id="music-panel">
-          <!-- hidden audio + file inputs -->
-          <audio id="music-audio"></audio>
-          <input type="file" id="music-disc-input" accept="image/*" style="display:none;">
-          <input type="file" id="music-audio-input" accept="audio/*" style="display:none;">
-          <input type="file" id="music-lrc-input" accept=".lrc,.txt" style="display:none;">
-          <!-- Row: disc + info -->
+          <!-- Row: disc left, info right -->
           <div style="display:flex;align-items:center;gap:10px;">
             <div class="music-disc" id="music-disc" onclick="document.getElementById('music-disc-input').click()" title="点击更换封面">
               <svg id="music-disc-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".35"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
               <img id="music-disc-img" style="display:none;" alt="disc">
             </div>
+            <input type="file" id="music-disc-input" accept="image/*" style="display:none;">
             <div style="flex:1;min-width:0;">
-              <div class="music-title" id="music-title-el" onclick="openMusicImport()" style="cursor:pointer;" title="点击导入音乐">Lofi Study Beats</div>
-              <div class="music-lyrics" id="music-lyrics-el" onclick="document.getElementById('music-lrc-input').click()" style="cursor:pointer;" title="点击导入歌词">在星空下漫步</div>
-              <!-- progress -->
-              <div class="music-progress" id="music-progress-bar" onclick="seekMusic(event)" style="cursor:pointer;margin-top:5px;">
-                <div class="music-progress-fill" id="music-progress-fill"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:9px;opacity:.35;margin-top:2px;">
-                <span id="music-time-cur">0:00</span><span id="music-time-dur">—</span>
-              </div>
+              <div class="music-title">Lofi Study Beats</div>
+              <div class="music-lyrics">在星空下漫步</div>
+              <div class="music-progress"><div class="music-progress-fill"></div></div>
             </div>
           </div>
           <!-- Controls -->
           <div class="music-controls">
-            <!-- Loop -->
-            <div class="music-ctrl-btn" id="music-loop-btn" onclick="toggleMusicLoop()" title="循环模式">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
-            </div>
+            <!-- Repeat -->
+            <div class="music-ctrl-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div>
             <!-- Prev -->
-            <div class="music-ctrl-btn" onclick="musicPrev()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
-            </div>
-            <!-- Play/Pause -->
-            <div class="music-ctrl-btn" id="music-play-btn" onclick="toggleMusicPlay()">
-              <svg id="music-play-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="5,3 17,10 5,17"/></svg>
-            </div>
+            <div class="music-ctrl-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></div>
+            <!-- Pause -->
+            <div class="music-ctrl-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="3" width="4" height="14" rx="1.5"/><rect x="12" y="3" width="4" height="14" rx="1.5"/></svg></div>
             <!-- Next -->
-            <div class="music-ctrl-btn" onclick="musicNext()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-            </div>
-            <!-- Cast (decorative) -->
-            <div class="music-ctrl-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8"/><path d="M12 18v2"/><path d="M2 10c3.3 0 6 2.7 6 6"/><path d="M2 6c5.5 0 10 4.5 10 10"/><path d="M2 14a2 2 0 012 2"/></svg>
-            </div>
+            <div class="music-ctrl-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></div>
+            <!-- Cast: monitor + signal waves -->
+            <div class="music-ctrl-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8"/><path d="M12 18v2"/><path d="M2 10c3.3 0 6 2.7 6 6"/><path d="M2 6c5.5 0 10 4.5 10 10"/><path d="M2 14a2 2 0 012 2"/></svg></div>
           </div>
         </div>
       </div>
@@ -547,24 +780,24 @@
             <path d="M2 20h8l3-8 4 16 3-8h8"/>
             <path d="M26 11c1.2-1.8 3.5-2.5 5.2-1.2s1.5 3.8 0 5.8L26 21l-5.2-5.4c-1.5-2-1.5-4.5 0-5.8s4-.6 5.2 1.2z" fill="#ffffff" opacity=".3"/>
           </svg>
+          <!-- Bottom fade overlay for smooth transition -->
           <div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to bottom,transparent,var(--card-bg));pointer-events:none;border-radius:0;"></div>
+          <!-- Change background button -->
           <div onclick="document.getElementById('anni-bg-input').click()" style="position:absolute;bottom:10px;right:10px;width:28px;height:28px;border-radius:14px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;border:1px solid rgba(255,255,255,0.2);" title="更换背景图">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           </div>
         </div>
         <div class="anni-info">
-          <div style="cursor:pointer;" onclick="openAnniPicker()">
-            <div style="font-size:17px;font-weight:500;" id="anni-title-el">此处添加纪念日</div>
-            <div style="font-size:13px;opacity:.45;margin-top:4px;" id="anni-date-label">点击选择日期</div>
+          <div>
+            <div style="font-size:17px;font-weight:500;">此处添加纪念日</div>
+            <div style="font-size:13px;opacity:.45;margin-top:4px;">2025年1月1日</div>
           </div>
           <div style="display:flex;align-items:baseline;gap:2px;">
             <span style="font-size:40px;font-weight:700;letter-spacing:-2px;line-height:1;" id="anni-days">0</span>
-            <span style="font-size:15px;font-weight:500;opacity:.6;" id="anni-unit">天</span>
+            <span style="font-size:15px;font-weight:500;opacity:.6;">天</span>
           </div>
         </div>
       </div>
-      <!-- Hidden date input for anni picker -->
-      <input type="date" id="anni-date-input" style="display:none;" onchange="applyAnniDate(this.value)">
 
       <!-- Icons 2x2 + Calendar — aligned, compact, airy -->
       <div style="display:flex;gap:8px;margin-top:16px;align-items:start;">
@@ -686,53 +919,16 @@ function updateTimes(){
   const ldf=document.getElementById('lock-date-full');
   if(ldf){const yy=now.getFullYear(),mm=pad(now.getMonth()+1),dd=pad(now.getDate());ldf.textContent=yy+'年'+mm+'月'+dd+'日 · '+DAYS_CN[now.getDay()];}
 }
-// ── Anniversary interactive ──
-function openAnniPicker(){
-  const inp=document.getElementById('anni-date-input');
-  const saved=localStorage.getItem('xsj_anni_date');
-  if(saved) inp.value=saved;
-  inp.click();
-  // also allow editing title
-  const t=document.getElementById('anni-title-el');
-  if(t) setTimeout(()=>{const v=prompt('纪念日名称',t.textContent||'此处添加纪念日');if(v!=null&&v.trim()){t.textContent=v.trim();localStorage.setItem('xsj_anni_title',v.trim());}},100);
-}
-function applyAnniDate(dateStr){
-  if(!dateStr)return;
-  localStorage.setItem('xsj_anni_date',dateStr);
-  updateAnni();
-}
 function updateAnni(){
-  const saved=localStorage.getItem('xsj_anni_date');
-  const title=localStorage.getItem('xsj_anni_title');
-  const titleEl=document.getElementById('anni-title-el');
-  const labelEl=document.getElementById('anni-date-label');
-  const daysEl=document.getElementById('anni-days');
-  const unitEl=document.getElementById('anni-unit');
-  if(title&&titleEl) titleEl.textContent=title;
-  if(saved){
-    const target=new Date(saved); const now=new Date();
-    const diff=Math.ceil((target-now)/864e5);
-    // Show date label
-    if(labelEl){
-      const d=target;
-      labelEl.textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';
-    }
-    if(daysEl) daysEl.textContent=Math.abs(diff);
-    if(unitEl) unitEl.textContent=diff>0?'天后':'天前';
-  } else {
-    // legacy fallback: ANNI_DATE constant
-    const t=new Date(ANNI_DATE),n=new Date();
-    if(daysEl) daysEl.textContent=Math.abs(Math.floor((n-t)/864e5));
-    if(unitEl) unitEl.textContent='天';
-    if(labelEl) labelEl.textContent='点击选择日期';
-  }
+  const t=new Date(ANNI_DATE),n=new Date();
+  document.getElementById('anni-days').textContent=Math.abs(Math.floor((n-t)/864e5));
 }
 
 // Boot
 window.addEventListener('DOMContentLoaded',()=>{
   updateTimes(); setInterval(updateTimes,10000);
   updateAnni(); loadUserData(); loadPhotos(); loadChatData(); buildCalendar();
-  loadWallpapers(); loadFontSettings();
+  loadWallpapers();
   setTimeout(()=>{
     const ls=document.getElementById('loading-screen');
     ls.classList.add('fade-out');
@@ -785,72 +981,27 @@ pc.addEventListener('scroll',()=>{
   document.getElementById('page-dots').querySelectorAll('.page-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
 });
 
-// Calendar — full weekly + monthly
-const CAL_EVENT_SEEDS=[2,5,8,12,15,19,22,27]; // fixed "event" days for decoration
-let calMode='weekly';
+// Calendar
 function buildCalendar(){
-  calMode=calMode||'weekly';
   const now=new Date();
   document.getElementById('cal-month-name').textContent=MONTHS_EN[now.getMonth()];
   document.getElementById('cal-day-num').textContent=now.getDate();
-  if(calMode==='weekly') buildWeekly(now);
-  else buildMonthly(now);
-}
-function buildWeekly(now){
   const grid=document.getElementById('cal-grid'); grid.innerHTML='';
-  const heads=['S','M','T','W','T','F','S'];
-  heads.forEach(h=>{const d=document.createElement('div');d.className='cal-grid-head';d.textContent=h;grid.appendChild(d);});
-  const dow=now.getDay();
-  const weekStart=new Date(now); weekStart.setDate(now.getDate()-dow);
+  ['S','M','T','W','T','F','S'].forEach(h=>{const d=document.createElement('div');d.className='cal-grid-head';d.textContent=h;grid.appendChild(d);});
+  const dow=now.getDay(),start=new Date(now);start.setDate(now.getDate()-dow);
   for(let i=0;i<7;i++){
-    const dt=new Date(weekStart); dt.setDate(weekStart.getDate()+i);
-    const cell=document.createElement('div'); cell.className='cal-grid-cell';
-    const isToday=dt.getDate()===now.getDate()&&dt.getMonth()===now.getMonth()&&dt.getFullYear()===now.getFullYear();
-    if(isToday){cell.classList.add('today');cell.style.background='var(--glass-bg)';cell.style.backdropFilter='blur(8px)';cell.style.webkitBackdropFilter='blur(8px)';}
-    const num=document.createElement('span'); num.textContent=dt.getDate(); cell.appendChild(num);
-    if(CAL_EVENT_SEEDS.includes(dt.getDate())&&dt.getMonth()===now.getMonth()){const dot=document.createElement('div');dot.className='cal-event-dot';cell.appendChild(dot);}
-    grid.appendChild(cell);
-  }
-}
-function buildMonthly(now){
-  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
-  const heads=['S','M','T','W','T','F','S'];
-  heads.forEach(h=>{const d=document.createElement('div');d.className='cal-grid-head';d.textContent=h;grid.appendChild(d);});
-  const y=now.getFullYear(), m=now.getMonth();
-  const firstDay=new Date(y,m,1).getDay();
-  const daysInMonth=new Date(y,m+1,0).getDate();
-  const daysInPrev=new Date(y,m,0).getDate();
-  // prev month padding
-  for(let i=firstDay-1;i>=0;i--){
+    const dt=new Date(start);dt.setDate(start.getDate()+i);
     const cell=document.createElement('div');cell.className='cal-grid-cell';
-    cell.style.opacity='.2';
-    const num=document.createElement('span');num.textContent=daysInPrev-i;cell.appendChild(num);
-    grid.appendChild(cell);
-  }
-  for(let d=1;d<=daysInMonth;d++){
-    const cell=document.createElement('div');cell.className='cal-grid-cell';
-    const isToday=d===now.getDate();
-    if(isToday){cell.classList.add('today');cell.style.background='var(--glass-bg)';cell.style.backdropFilter='blur(8px)';cell.style.webkitBackdropFilter='blur(8px)';}
-    const num=document.createElement('span');num.textContent=d;cell.appendChild(num);
-    if(CAL_EVENT_SEEDS.includes(d)){const dot=document.createElement('div');dot.className='cal-event-dot';cell.appendChild(dot);}
-    grid.appendChild(cell);
-  }
-  // next month padding to fill last row
-  const totalCells=firstDay+daysInMonth;
-  const remainder=totalCells%7===0?0:7-(totalCells%7);
-  for(let d=1;d<=remainder;d++){
-    const cell=document.createElement('div');cell.className='cal-grid-cell';
-    cell.style.opacity='.2';
-    const num=document.createElement('span');num.textContent=d;cell.appendChild(num);
+    if(dt.getDate()===now.getDate()&&dt.getMonth()===now.getMonth()){cell.classList.add('today');cell.style.background='var(--glass-bg)';cell.style.backdropFilter='blur(10px)';cell.style.webkitBackdropFilter='blur(10px)';}
+    const num=document.createElement('span');num.textContent=dt.getDate();cell.appendChild(num);
+    if(i===2||i===5){const dot=document.createElement('div');dot.className='cal-event-dot';cell.appendChild(dot);}
     grid.appendChild(cell);
   }
 }
 function switchCalTab(tab){
-  calMode=tab;
   const w=document.getElementById('cal-weekly'),m=document.getElementById('cal-monthly');
   if(tab==='weekly'){w.classList.add('active','glass');m.classList.remove('active','glass');}
   else{m.classList.add('active','glass');w.classList.remove('active','glass');}
-  buildCalendar();
 }
 
 // ── Image compression utility ──
@@ -1008,7 +1159,7 @@ const APPS={
   chat:{t:'Chat',b:'<div style="display:flex;flex-direction:column;gap:10px;"><div class="glass-card" style="padding:14px;border-radius:16px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:20px;background:var(--subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:500;">助手</div><div style="font-size:12px;opacity:.4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">你好！有什么可以帮你的？</div></div><div style="font-size:10px;opacity:.3;flex-shrink:0;">刚刚</div></div><div class="glass-card" style="padding:14px;border-radius:16px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:20px;background:var(--subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:500;">创作伙伴</div><div style="font-size:12px;opacity:.4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">上次的故事写得真好...</div></div><div style="font-size:10px;opacity:.3;flex-shrink:0;">3分钟</div></div></div>'},
   forum:{t:'论坛',b:'<div class="glass-card" style="padding:16px;border-radius:16px;margin-bottom:12px;"><div style="font-size:14px;font-weight:500;">热门话题</div><div style="margin-top:10px;font-size:13px;opacity:.6;line-height:2;">• 新角色分享<br>• 创作心得交流<br>• 世界观讨论</div></div><div class="glass-card" style="padding:14px;border-radius:14px;"><div style="font-size:12px;opacity:.4;margin-bottom:8px;">最新帖子</div><div style="font-size:13px;line-height:2;">「如何让AI角色更有深度？」— 12回复<br>「分享我的城市世界观」— 8回复</div></div>'},
   game:{t:'游戏',b:'<div style="text-align:center;padding:32px 0;"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:.2;margin:0 auto;display:block;"><rect x="2" y="6" width="20" height="12" rx="3"/><circle cx="8" cy="12" r="1.5"/><path d="M15 10l1 1 1-1m-1 1v2"/></svg><div style="font-size:16px;font-weight:500;margin-top:16px;">互动游戏</div><div style="font-size:12px;opacity:.4;margin-top:6px;">文字冒险、角色扮演</div></div><div class="glass-card" style="padding:14px;border-radius:14px;margin-bottom:8px;"><div style="font-size:13px;font-weight:500;">文字冒险</div></div><div class="glass-card" style="padding:14px;border-radius:14px;"><div style="font-size:13px;font-weight:500;">猜谜挑战</div></div>'},
-  beautify:{t:'美化',b:'__beautify__'},
+  beautify:{t:'美化',b:'<div class="glass-card" style="padding:18px;border-radius:16px;margin-bottom:16px;"><div style="font-size:15px;font-weight:500;margin-bottom:6px;">主题定制</div><p style="font-size:13px;opacity:.5;">自定义聊天界面、气泡样式和字体。</p></div><div style="display:flex;gap:10px;"><div class="glass-card" style="flex:1;padding:16px;border-radius:16px;text-align:center;"><div style="width:36px;height:36px;border-radius:18px;background:#000;margin:0 auto 6px;"></div><div style="font-size:11px;">深邃黑</div></div><div class="glass-card" style="flex:1;padding:16px;border-radius:16px;text-align:center;"><div style="width:36px;height:36px;border-radius:18px;background:#fff;border:1px solid rgba(0,0,0,.1);margin:0 auto 6px;"></div><div style="font-size:11px;">纯净白</div></div><div class="glass-card" style="flex:1;padding:16px;border-radius:16px;text-align:center;"><div style="width:36px;height:36px;border-radius:18px;background:linear-gradient(135deg,#ccc,#888);margin:0 auto 6px;"></div><div style="font-size:11px;">银灰调</div></div></div>'},
   shop:{t:'商城',b:'<div class="glass-card" style="padding:18px;border-radius:16px;margin-bottom:16px;"><div style="font-size:15px;font-weight:500;">精选推荐</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="glass-card" style="padding:16px;border-radius:16px;text-align:center;"><div style="width:40px;height:40px;border-radius:12px;background:var(--subtle);margin:0 auto 6px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div><div style="font-size:12px;font-weight:500;">角色包</div></div><div class="glass-card" style="padding:16px;border-radius:16px;text-align:center;"><div style="width:40px;height:40px;border-radius:12px;background:var(--subtle);margin:0 auto 6px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div style="font-size:12px;font-weight:500;">插件</div></div></div>'},
   view:{t:'查看',b:'<div class="glass-card" style="padding:18px;border-radius:16px;margin-bottom:12px;"><div style="font-size:15px;font-weight:500;margin-bottom:6px;">对话历史</div><p style="font-size:13px;opacity:.5;">查看和管理所有对话记录。</p></div><div class="glass-card" style="padding:12px 14px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;"><span style="font-size:13px;">与「助手」的对话</span><span style="font-size:11px;opacity:.3;">今天</span></div><div class="glass-card" style="padding:12px 14px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;"><span style="font-size:13px;">与「创作伙伴」的对话</span><span style="font-size:11px;opacity:.3;">昨天</span></div><div class="glass-card" style="padding:12px 14px;border-radius:12px;display:flex;justify-content:space-between;"><span style="font-size:13px;">群组讨论</span><span style="font-size:11px;opacity:.3;">3天前</span></div>'},
   pet:{t:'宠物',b:'<div style="text-align:center;padding:28px 0;"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:.2;margin:0 auto;display:block;"><ellipse cx="7" cy="5" rx="2.5" ry="3"/><ellipse cx="17" cy="5" rx="2.5" ry="3"/><ellipse cx="4" cy="12" rx="2" ry="2.5"/><ellipse cx="20" cy="12" rx="2" ry="2.5"/><path d="M8 17c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg><div style="font-size:16px;font-weight:500;margin-top:14px;">我的宠物</div><div style="font-size:12px;opacity:.4;margin-top:6px;">领养AI宠物</div></div><div class="glass-card active-scale" style="padding:14px;border-radius:16px;text-align:center;cursor:pointer;"><div style="font-size:14px;font-weight:500;">开始领养</div></div>'},
@@ -1016,7 +1167,7 @@ const APPS={
   search:{t:'搜索',b:'<div class="glass-card" style="padding:10px 14px;border-radius:16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" placeholder="搜索聊天、角色、设置..." style="border:none;background:none;outline:none;font-size:14px;width:100%;color:var(--text);font-family:inherit;"></div><div style="font-size:12px;opacity:.4;margin-bottom:10px;">最近搜索</div><div class="glass-card" style="padding:10px 14px;border-radius:12px;margin-bottom:6px;font-size:13px;">助手</div><div class="glass-card" style="padding:10px 14px;border-radius:12px;margin-bottom:6px;font-size:13px;">世界观设定</div><div class="glass-card" style="padding:10px 14px;border-radius:12px;font-size:13px;">创作伙伴</div>'}
 };
 function openApp(name){
-  if(name==='beautify'){openBeautifyApp();return;}
+  if(name==='chat'){openChatApp();return;}
   const app=APPS[name];if(!app)return;
   const ov=document.getElementById('app-overlay'),ct=document.getElementById('app-content');
   ct.innerHTML='<div class="app-back" onclick="closeApp()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><div class="app-title">'+app.t+'</div>'+app.b;
@@ -1024,369 +1175,637 @@ function openApp(name){
 }
 function closeApp(){const ov=document.getElementById('app-overlay');ov.classList.remove('show');setTimeout(()=>ov.style.display='none',250);}
 
-// ── Beautify / Font Manager ──
-function openBeautifyApp(){
+// ── Chat App Module ──
+const CHAT_STATE={currentTab:'chats',chatSubTab:'chats',searchQuery:'',searchVisible:false,contactsGroup:'all',contactsDeleteMode:false,contactsSearch:''};
+
+const CHAT_MESSAGES=[
+  {name:'云朵',preview:'最近忙什么呢？还好吗',time:'09:24',type:'friend'},
+  {name:'小鹿',preview:'下次一定要一起出去玩！',time:'昨天',type:'friend'},
+  {name:'夜行者',preview:'那本书你看完了吗？',time:'周一',type:'friend'},
+  {name:'花花',preview:'下周会议记得准时哦～',time:'周日',type:'friend'},
+  {name:'创作小分队',preview:'新作品分享给大家了！',time:'周五',type:'group'},
+  {name:'同城兴趣群',preview:'周末活动大家报名了吗',time:'周四',type:'group'}
+];
+
+function chatGetData(){
+  try{
+    const s=localStorage.getItem('xsj_chat_module');
+    if(s)return JSON.parse(s);
+  }catch(e){}
+  return {
+    contacts:{groups:[
+      {name:'好友',contacts:[
+        {name:'云朵',initials:'云'},{name:'小鹿',initials:'鹿'},{name:'夜行者',initials:'夜'}
+      ]},
+      {name:'同事',contacts:[
+        {name:'花花',initials:'花'}
+      ]}
+    ]},
+    discovers:[
+      {user:'云朵',time:'1小时前',content:'今天天气真好，适合出去走走 🌸 决定一个人去公园坐坐。'},
+      {user:'小鹿',time:'3小时前',content:'刚读完一本很棒的书，故事里每一个细节都让人动容。强烈推荐！'},
+      {user:'夜行者',time:'昨天',content:'深夜的城市有一种特别的安静，让人忍不住一直走下去。'}
+    ]
+  };
+}
+function chatSaveData(data){localStorage.setItem('xsj_chat_module',JSON.stringify(data));}
+
+function openChatApp(){
   const ov=document.getElementById('app-overlay'),ct=document.getElementById('app-content');
-  const fs=localStorage.getItem('xsj_font_size')||'14';
-  const ls=localStorage.getItem('xsj_letter_spacing')||'0';
-  const fc=localStorage.getItem('xsj_font_color')||'';
-  ct.innerHTML=`
-<div class="app-back" onclick="closeApp()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
-<div class="app-title">美化</div>
-<div class="glass-card" id="font-preview" style="padding:16px;border-radius:16px;margin-bottom:14px;font-size:${fs}px;letter-spacing:${ls}px;${fc?'color:'+fc:''}">
-  The quick brown fox jumps over the lazy dog · 中文字体示例
-</div>
-<div class="glass-card" style="padding:14px;border-radius:16px;margin-bottom:10px;">
-  <div style="font-size:13px;font-weight:500;margin-bottom:10px;opacity:.7;">导入字体</div>
-  <div style="display:flex;flex-direction:column;gap:8px;">
-    <button onclick="document.getElementById('font-file-inp').click()" style="background:var(--subtle);border:none;padding:9px 12px;border-radius:10px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;">📁 上传字体文件 (.ttf .otf .woff .woff2)</button>
-    <input id="font-file-inp" type="file" accept=".ttf,.otf,.woff,.woff2" style="display:none;" onchange="loadFontFile(this)">
-    <div style="display:flex;gap:6px;">
-      <input id="font-url-inp" type="text" placeholder="粘贴 Google Fonts CSS URL 或字体文件链接" style="flex:1;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--subtle);color:var(--text);font-size:12px;outline:none;">
-      <button onclick="loadFontURL()" style="background:var(--subtle);border:1px solid var(--glass-border);padding:8px 12px;border-radius:10px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap;">应用</button>
+  ct.style.padding='0';ct.style.overflow='hidden';ct.style.display='flex';ct.style.flexDirection='column';ct.style.height='100%';
+  ct.innerHTML=buildChatAppHTML();
+  ov.style.display='block';
+  requestAnimationFrame(()=>ov.classList.add('show'));
+  chatInitHeader();
+  // Load persisted extra chat messages
+  try{const extra=JSON.parse(localStorage.getItem('xsj_extra_msgs')||'[]');extra.forEach(m=>{if(!CHAT_MESSAGES.find(x=>x.name===m.name))CHAT_MESSAGES.unshift(m);});}catch(e){}
+  chatSwitchTab('chats');
+}
+
+function buildChatAppHTML(){
+  return `<div class="chat-app-container">
+  <div id="chat-hdr-wrap" class="chat-app-header glass-card" style="border-radius:28px 28px 0 0;border-left:none;border-right:none;border-top:none;transition:opacity 0.22s ease;">
+    <div class="chat-hdr-top">
+      <div class="app-back" style="margin-bottom:0;" onclick="closeChatApp()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </div>
+      <span style="flex:1;text-align:center;font-size:20px;font-weight:500;letter-spacing:1px;color:#1c1c1e;pointer-events:none;font-family:'Times New Roman',Georgia,'Noto Serif',serif;" class="chat-hdr-title-text">Chat</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5;"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+    </div>
+    <div class="chat-app-user-row">
+      <div class="chat-app-avatar" id="chat-hdr-avatar" onclick="chatChangeAvatar()">
+        <img id="chat-hdr-av-img" style="display:none;width:100%;height:100%;object-fit:cover;">
+        <svg id="chat-hdr-av-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>
+      </div>
+      <div class="chat-app-userinfo">
+        <div class="chat-app-username" id="chat-hdr-name">用户名</div>
+        <div class="chat-app-bio" id="chat-hdr-bio" onclick="chatEditBio()">I loved you from the start…</div>
+      </div>
     </div>
   </div>
-</div>
-<div class="glass-card" style="padding:14px;border-radius:16px;margin-bottom:10px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <span style="font-size:13px;font-weight:500;opacity:.7;">字体颜色</span>
-    <input type="color" id="font-color-inp" value="${fc||'#1c1c1e'}" onchange="applyFontColor(this.value)" style="width:36px;height:28px;border:none;border-radius:8px;cursor:pointer;background:none;">
+  <!-- Subtab bar: only shown when currentTab=chats -->
+  <div class="chat-subtab-bar" id="chat-subtab-bar">
+    <div class="chat-subtab-tabs">
+      <div class="chat-subtab-item active" id="csub-chats" onclick="chatSubSwitch('chats')">Chats</div>
+      <div class="chat-subtab-item" id="csub-group" onclick="chatSubSwitch('group')">Group</div>
+      <div class="chat-subtab-item" id="csub-friends" onclick="chatSubSwitch('friends')">Friends</div>
+      <div class="chat-subtab-item" id="csub-all" onclick="chatAddChatEntry()" style="color:#1c1c1e;font-weight:600;">+Add</div>
+    </div>
+    <div class="chat-subtab-search" onclick="chatToggleSearch()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+    </div>
   </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <span style="font-size:13px;opacity:.7;">字号 <span id="font-size-val">${fs}</span>px</span>
-    <input type="range" id="font-size-inp" min="12" max="24" step="1" value="${fs}" oninput="applyFontSize(this.value)" style="width:55%;accent-color:var(--text);">
+  <!-- Inline search bar (hidden by default) -->
+  <div class="chat-search-bar" id="chat-search-bar" style="display:none;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input class="chat-search-input" id="chat-search-input" placeholder="搜索聊天…" oninput="chatDoSearch(this.value)" autocomplete="off">
+    <span class="chat-search-clear" onclick="chatClearSearch()">取消</span>
   </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;">
-    <span style="font-size:13px;opacity:.7;">字距 <span id="font-ls-val">${ls}</span>px</span>
-    <input type="range" id="font-ls-inp" min="0" max="4" step="0.5" value="${ls}" oninput="applyLetterSpacing(this.value)" style="width:55%;accent-color:var(--text);">
+  <div class="chat-app-body" id="chat-app-body"></div>
+  <div class="chat-tabbar-fade"></div>
+  <div class="chat-app-tabbar">
+    <div class="chat-tab-item active" id="chat-tab-chats" onclick="chatSwitchTab('chats')">
+      <svg class="chat-tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="chat-tab-label">Chats</span>
+    </div>
+    <div class="chat-tab-item" id="chat-tab-contacts" onclick="chatSwitchTab('contacts')">
+      <!-- Double-person icon for Contacts -->
+      <svg class="chat-tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="7.5" r="2.5" opacity=".6"/><path d="M21 21c0-2.5-1.8-4.5-4-5.2" opacity=".6"/></svg>
+      <span class="chat-tab-label">Contacts</span>
+    </div>
+    <div class="chat-tab-item" id="chat-tab-discover" onclick="chatSwitchTab('discover')">
+      <svg class="chat-tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      <span class="chat-tab-label">Discover</span>
+    </div>
+    <div class="chat-tab-item" id="chat-tab-me" onclick="chatSwitchTab('me')">
+      <!-- Gear icon for Me -->
+      <svg class="chat-tab-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1.08-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 005 15.4a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001.08 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span class="chat-tab-label">Me</span>
+    </div>
   </div>
-</div>
-<button onclick="resetFontSettings()" style="width:100%;background:var(--subtle);border:1px solid var(--glass-border);padding:10px;border-radius:12px;font-size:13px;color:var(--text);cursor:pointer;margin-top:4px;">重置字体设置</button>
-  `;
-  ov.style.display='block';requestAnimationFrame(()=>ov.classList.add('show'));
+  <input type="file" id="chat-av-file-input" accept="image/*" style="display:none;" onchange="chatHandleAvatarFile(this)">
+</div>`;
 }
-function loadFontFile(inp){
-  const f=inp.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=function(e){
-    const name='CustomFont_'+Date.now();
-    const ff=new FontFace(name, e.target.result);
-    ff.load().then(function(loaded){
-      document.fonts.add(loaded);
-      applyGlobalFont(name);
-      localStorage.setItem('xsj_font_name',name);
-      localStorage.setItem('xsj_font_data',e.target.result);
-      updateFontPreview();
-    }).catch(err=>alert('字体加载失败: '+err));
-  };
-  r.readAsArrayBuffer(f);
-  inp.value='';
+
+function closeChatApp(){
+  const ct=document.getElementById('app-content');
+  ct.style.padding='';ct.style.overflow='';ct.style.display='';ct.style.flexDirection='';ct.style.height='';
+  closeApp();
 }
-function loadFontURL(){
-  const url=(document.getElementById('font-url-inp')||{}).value||'';
-  if(!url.trim())return;
-  if(url.includes('fonts.googleapis.com')||url.includes('fonts.gstatic.com')||url.endsWith('.css')){
-    const link=document.createElement('link');link.rel='stylesheet';link.href=url;
-    document.head.appendChild(link);
-    link.onload=function(){
-      const fam=url.match(/family=([^&:]+)/);
-      if(fam){const fn=decodeURIComponent(fam[1]).replace(/\+/g,' ');applyGlobalFont(fn);localStorage.setItem('xsj_font_name',fn);localStorage.setItem('xsj_font_url',url);}
-      updateFontPreview();
-    };
-  } else {
-    const name='URLFont_'+Date.now();
-    const ff=new FontFace(name,'url('+url+')');
-    ff.load().then(function(loaded){
-      document.fonts.add(loaded);applyGlobalFont(name);
-      localStorage.setItem('xsj_font_name',name);localStorage.setItem('xsj_font_url',url);
-      updateFontPreview();
-    }).catch(()=>alert('无法加载字体，请检查URL'));
+
+function chatInitHeader(){
+  const name=localStorage.getItem('xsj_name'),bio=localStorage.getItem('xsj_chat_bio')||'I loved you from the start…';
+  const avatar=localStorage.getItem('xsj_avatar');
+  const hn=document.getElementById('chat-hdr-name');if(hn&&name)hn.textContent=name;
+  const hb=document.getElementById('chat-hdr-bio');if(hb)hb.textContent=bio;
+  if(avatar){
+    const img=document.getElementById('chat-hdr-av-img'),svg=document.getElementById('chat-hdr-av-svg');
+    if(img){img.src=avatar;img.style.display='block';}
+    if(svg)svg.style.display='none';
   }
 }
-function applyGlobalFont(name){
-  document.body.style.fontFamily='"'+name+'",-apple-system,BlinkMacSystemFont,sans-serif';
+
+function chatSwitchTab(tab){
+  CHAT_STATE.currentTab=tab;
+  // Reset search when switching main tabs
+  CHAT_STATE.searchQuery='';CHAT_STATE.searchVisible=false;
+  // Reset contacts state when leaving contacts
+  if(tab!=='contacts'){CHAT_STATE.contactsDeleteMode=false;CHAT_STATE.contactsSearch='';}
+  ['chats','contacts','discover','me'].forEach(t=>{
+    const el=document.getElementById('chat-tab-'+t);
+    if(el)el.classList.toggle('active',t===tab);
+  });
+  // Show/hide header for discover and me tabs
+  const hdrWrap=document.getElementById('chat-hdr-wrap');
+  if(hdrWrap){
+    const hideHdr=(tab==='discover'||tab==='me');
+    hdrWrap.style.display=hideHdr?'none':'block';
+  }
+  // Show subtab bar only for chats tab
+  const subtab=document.getElementById('chat-subtab-bar');
+  const searchBar=document.getElementById('chat-search-bar');
+  if(subtab)subtab.style.display=tab==='chats'?'flex':'none';
+  if(searchBar)searchBar.style.display='none';
+  const body=document.getElementById('chat-app-body');if(!body)return;
+  // Adjust body padding for discover tab (hero extends to edges)
+  body.style.padding=tab==='discover'?'0':'';
+  const page=document.createElement('div');page.className='chat-page';
+  if(tab==='discover')page.style.padding='0';
+  if(tab==='chats')page.innerHTML=chatBuildChats();
+  else if(tab==='contacts')page.innerHTML=chatBuildContacts();
+  else if(tab==='discover')page.innerHTML=chatBuildDiscover();
+  else if(tab==='me')page.innerHTML=chatBuildMe();
+  body.innerHTML='';body.appendChild(page);body.scrollTop=0;
 }
-function applyFontColor(val){
-  document.documentElement.style.setProperty('--text',val);
-  localStorage.setItem('xsj_font_color',val);
-  const v=document.getElementById('font-color-inp');if(v)v.value=val;
-  updateFontPreview();
+
+/* ── Chats Tab ── */
+function chatBuildChats(){
+  let msgs=CHAT_MESSAGES;
+  // Filter by subtab
+  if(CHAT_STATE.chatSubTab==='group') msgs=msgs.filter(m=>m.type==='group');
+  else if(CHAT_STATE.chatSubTab==='friends') msgs=msgs.filter(m=>m.type==='friend');
+  // Filter by search query
+  if(CHAT_STATE.searchQuery){
+    const q=CHAT_STATE.searchQuery.toLowerCase();
+    msgs=msgs.filter(m=>m.name.toLowerCase().includes(q)||m.preview.toLowerCase().includes(q));
+  }
+  if(!msgs.length){
+    return `<div style="height:8px;"></div><div style="text-align:center;padding:48px 0;color:#aeaeb2;font-size:14px;">无聊天记录</div>`;
+  }
+  const items=msgs.map(m=>`
+    <div class="chat-list-item" onclick="chatShowMsg('${m.name}')">
+      <div class="chat-list-av">
+        ${m.type==='group'
+          ?`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="8" r="2.5"/><path d="M3 20c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="17" cy="8" r="2.5" opacity=".7"/><path d="M21 20c0-2.8-1.8-4.5-4-5" opacity=".7"/></svg>`
+          :`<span style="font-size:16px;font-weight:600;color:#fff;">${m.name[0]}</span>`
+        }
+      </div>
+      <div class="chat-list-info">
+        <div class="chat-list-name">${m.name}</div>
+        <div class="chat-list-preview">${m.preview}</div>
+      </div>
+      <div class="chat-list-time">${m.time}</div>
+    </div>`).join('');
+  return `<div style="height:20px;"></div><div class="chat-list-card">${items}</div>`;
 }
-function applyFontSize(val){
-  document.documentElement.style.setProperty('--ui-fs',val+'px');
-  document.body.style.fontSize=val+'px';
-  localStorage.setItem('xsj_font_size',val);
-  const v=document.getElementById('font-size-val');if(v)v.textContent=val;
-  updateFontPreview();
+function chatShowMsg(name){alert('与「'+name+'」的聊天详情功能即将开放 ✨');}
+
+/* ── Subtab switch ── */
+function chatSubSwitch(sub){
+  CHAT_STATE.chatSubTab=sub;
+  ['chats','group','friends'].forEach(s=>{
+    const el=document.getElementById('csub-'+s);
+    if(el)el.classList.toggle('active',s===sub);
+  });
+  const body=document.getElementById('chat-app-body');
+  if(!body)return;
+  const page=document.createElement('div');page.className='chat-page';
+  page.innerHTML=chatBuildChats();
+  body.innerHTML='';body.appendChild(page);body.scrollTop=0;
 }
-function applyLetterSpacing(val){
-  document.body.style.letterSpacing=val+'px';
-  localStorage.setItem('xsj_letter_spacing',val);
-  const v=document.getElementById('font-ls-val');if(v)v.textContent=val;
-  updateFontPreview();
+
+/* ── Add new chat entry (+Add button) ── */
+function chatAddChatEntry(){
+  const name=prompt('联系人 / 群聊名称');
+  if(!name||!name.trim())return;
+  const typeStr=prompt('类型？输入 1=好友  2=群聊','1');
+  const type=typeStr==='2'?'group':'friend';
+  const now=new Date();
+  const timeStr=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  CHAT_MESSAGES.unshift({name:name.trim(),preview:'新对话',time:timeStr,type});
+  // Also persist to localStorage
+  const saved=JSON.parse(localStorage.getItem('xsj_extra_msgs')||'[]');
+  saved.unshift({name:name.trim(),preview:'新对话',time:timeStr,type});
+  localStorage.setItem('xsj_extra_msgs',JSON.stringify(saved));
+  const body=document.getElementById('chat-app-body');
+  if(body){const page=document.createElement('div');page.className='chat-page';page.innerHTML=chatBuildChats();body.innerHTML='';body.appendChild(page);}
 }
-function updateFontPreview(){
-  const p=document.getElementById('font-preview');if(!p)return;
-  const fs=localStorage.getItem('xsj_font_size')||'14';
-  const ls=localStorage.getItem('xsj_letter_spacing')||'0';
-  const fc=localStorage.getItem('xsj_font_color')||'';
-  p.style.fontSize=fs+'px';p.style.letterSpacing=ls+'px';
-  if(fc)p.style.color=fc;
+
+/* ── Search ── */
+function chatToggleSearch(){
+  CHAT_STATE.searchVisible=!CHAT_STATE.searchVisible;
+  const bar=document.getElementById('chat-search-bar');
+  if(!bar)return;
+  bar.style.display=CHAT_STATE.searchVisible?'flex':'none';
+  if(CHAT_STATE.searchVisible){
+    setTimeout(()=>{const inp=document.getElementById('chat-search-input');if(inp)inp.focus();},50);
+  } else {
+    chatClearSearch();
+  }
 }
-function resetFontSettings(){
-  ['xsj_font_name','xsj_font_data','xsj_font_url','xsj_font_color','xsj_font_size','xsj_letter_spacing'].forEach(k=>localStorage.removeItem(k));
-  document.body.style.fontFamily='';document.body.style.fontSize='';document.body.style.letterSpacing='';
-  document.documentElement.style.removeProperty('--text');
-  openBeautifyApp();
+function chatDoSearch(val){
+  CHAT_STATE.searchQuery=val;
+  if(CHAT_STATE.currentTab==='chats'){
+    const body=document.getElementById('chat-app-body');
+    if(!body)return;
+    const page=document.createElement('div');page.className='chat-page';
+    page.innerHTML=chatBuildChats();
+    body.innerHTML='';body.appendChild(page);
+  }
 }
-function loadFontSettings(){
-  const fs=localStorage.getItem('xsj_font_size');
-  const ls=localStorage.getItem('xsj_letter_spacing');
-  const fc=localStorage.getItem('xsj_font_color');
-  const fn=localStorage.getItem('xsj_font_name');
-  const fd=localStorage.getItem('xsj_font_data');
-  const fu=localStorage.getItem('xsj_font_url');
-  if(fs)document.body.style.fontSize=fs+'px';
-  if(ls)document.body.style.letterSpacing=ls+'px';
-  if(fc)document.documentElement.style.setProperty('--text',fc);
-  if(fn&&fd){try{const ff=new FontFace(fn,fd);ff.load().then(l=>{document.fonts.add(l);applyGlobalFont(fn);});}catch(e){}}
-  else if(fn&&fu&&(fu.includes('.css')||fu.includes('googleapis'))){const link=document.createElement('link');link.rel='stylesheet';link.href=fu;document.head.appendChild(link);link.onload=()=>applyGlobalFont(fn);}
+function chatClearSearch(){
+  CHAT_STATE.searchQuery='';CHAT_STATE.searchVisible=false;
+  const bar=document.getElementById('chat-search-bar');if(bar)bar.style.display='none';
+  const inp=document.getElementById('chat-search-input');if(inp)inp.value='';
+  if(CHAT_STATE.currentTab==='chats'){
+    const body=document.getElementById('chat-app-body');
+    if(!body)return;
+    const page=document.createElement('div');page.className='chat-page';
+    page.innerHTML=chatBuildChats();
+    body.innerHTML='';body.appendChild(page);
+  }
+}
+
+/* ── Contacts Tab (Redesigned) ── */
+function chatBuildContacts(){
+  const data=chatGetData();
+  const groups=data.contacts.groups;
+  const allContacts=groups.reduce((a,g)=>a.concat(g.contacts),[]);
+  const dm=CHAT_STATE.contactsDeleteMode;
+  const sq=CHAT_STATE.contactsSearch||'';
+  const selGroup=CHAT_STATE.contactsGroup||'all';
+
+  // Scrollable avatar row
+  let avRowHTML='';
+  allContacts.forEach(c=>{
+    const init=c.initials||c.name[0]||'?';
+    const avImg=c.avatar?`<img src="${c.avatar}" style="width:100%;height:100%;object-fit:cover;">`:`<span style="font-size:16px;font-weight:700;color:#fff;">${init}</span>`;
+    avRowHTML+=`<div class="contacts-av-item" onclick="chatShowContact('${c.name}')">
+      <div class="contacts-av-circle">${avImg}</div>
+      <div class="contacts-av-label">${c.name}</div>
+    </div>`;
+  });
+
+  // Group tabs
+  let tabsHTML=`<div class="contacts-group-tab ${selGroup==='all'?'active':''}" onclick="contactsSwitchGroup('all')">全部</div>`;
+  groups.forEach(g=>{
+    tabsHTML+=`<div class="contacts-group-tab ${selGroup===g.name?'active':''}" onclick="contactsSwitchGroup('${g.name}')">${g.name}</div>`;
+  });
+
+  // Filter contacts
+  let filtered=selGroup==='all'?allContacts:((groups.find(g=>g.name===selGroup)||{contacts:[]}).contacts);
+  if(sq)filtered=filtered.filter(c=>c.name.toLowerCase().includes(sq.toLowerCase()));
+
+  // Contact list
+  let listHTML='';
+  if(!filtered.length){
+    listHTML=`<div style="text-align:center;padding:40px 0;color:#aeaeb2;font-size:14px;font-style:italic;">暂无联系人</div>`;
+  } else {
+    filtered.forEach(c=>{
+      const init=c.initials||c.name[0]||'?';
+      const avImg=c.avatar?`<img src="${c.avatar}" style="width:100%;height:100%;object-fit:cover;">`:`<span style="font-size:16px;font-weight:700;color:#fff;">${init}</span>`;
+      const delBtn=dm?`<div class="contacts-delete-indicator" onclick="contactsDeleteItem('${c.name}',event)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>`:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>`;
+      listHTML+=`<div class="contacts-item-new${dm?' delete-mode':''}" onclick="${dm?'':'chatShowContact(\''+c.name+'\')'}">
+        <div class="contacts-item-av">${avImg}</div>
+        <div class="contacts-item-info">
+          <div class="contacts-item-name">${c.name}</div>
+          ${c.phone?`<div class="contacts-item-sub">${c.phone}</div>`:''}
+        </div>
+        ${delBtn}
+      </div>`;
+    });
+  }
+
+  return `<div class="contacts-page-wrap">
+    <div class="contacts-serif-title">Contacts</div>
+    <div class="contacts-avatar-scroll-outer"><div class="contacts-avatar-scroll">${avRowHTML||'<div style="color:#aeaeb2;font-size:13px;padding:16px 0;">暂无联系人</div>'}</div></div>
+    <div class="contacts-action-row">
+      <div class="contacts-action-icon-btn" title="添加联系人" onclick="chatAddContact()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
+      </div>
+      <div class="contacts-manage-btn" onclick="contactsManageGroups()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        管理分组
+      </div>
+      <div class="contacts-action-icon-btn${dm?' delete-active':''}" title="删除模式" onclick="contactsToggleDelete()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="${dm?'#ff3b30':'currentColor'}" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </div>
+    </div>
+    <div class="contacts-search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="contacts-search-input" id="contacts-search-inp" placeholder="搜索联系人…" value="${sq}" oninput="contactsDoSearch(this.value)" autocomplete="off">
+    </div>
+    <div class="contacts-group-tabs">${tabsHTML}</div>
+    <div class="contacts-list-wrap">${listHTML}</div>
+  </div>`;
+}
+
+function contactsSwitchGroup(g){
+  CHAT_STATE.contactsGroup=g;
+  _contactsRefresh();
+}
+function contactsToggleDelete(){
+  CHAT_STATE.contactsDeleteMode=!CHAT_STATE.contactsDeleteMode;
+  _contactsRefresh();
+}
+function contactsDoSearch(val){
+  CHAT_STATE.contactsSearch=val;
+  _contactsRefresh();
+}
+function contactsManageGroups(){
+  const data=chatGetData();
+  const cur=data.contacts.groups.map(g=>g.name).join('、');
+  const v=prompt('当前分组：'+cur+'\n\n输入新分组名称（留空取消）：');
+  if(!v||!v.trim())return;
+  data.contacts.groups.push({name:v.trim(),contacts:[]});
+  chatSaveData(data);
+  CHAT_STATE.contactsGroup=v.trim();
+  _contactsRefresh();
+}
+function contactsDeleteItem(name,ev){
+  ev.stopPropagation();
+  if(!confirm('删除联系人「'+name+'」？'))return;
+  const data=chatGetData();
+  data.contacts.groups.forEach(g=>{g.contacts=g.contacts.filter(c=>c.name!==name);});
+  chatSaveData(data);
+  _contactsRefresh();
+}
+function _contactsRefresh(){
+  const body=document.getElementById('chat-app-body');if(!body)return;
+  const page=document.createElement('div');page.className='chat-page';
+  page.innerHTML=chatBuildContacts();
+  body.innerHTML='';body.appendChild(page);
+  // Restore focus to search if active
+  if(CHAT_STATE.contactsSearch){const inp=document.getElementById('contacts-search-inp');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}}
+}
+function chatAddContact(){
+  const name=prompt('输入联系人姓名');
+  if(!name||!name.trim())return;
+  const data=chatGetData();
+  const groupNames=data.contacts.groups.map((g,i)=>(i+1)+'. '+g.name).join('\n');
+  const groupIdx=prompt('选择分组（输入编号）：\n'+groupNames,'1');
+  const idx=parseInt(groupIdx)-1;
+  const group=data.contacts.groups[isNaN(idx)||idx<0||idx>=data.contacts.groups.length?0:idx];
+  group.contacts.push({name:name.trim(),initials:name.trim()[0]});
+  chatSaveData(data);
+  CHAT_STATE.contactsGroup=group.name;
+  _contactsRefresh();
+}
+function chatShowContact(name){alert('联系人「'+name+'」的详情功能即将开放 ✨');}
+
+/* ── Discover Tab (WeChat Moments style) ── */
+function chatBuildDiscover(){
+  const data=chatGetData();
+  // Default discovers with image counts for demo
+  const defaultDiscovers=[
+    {user:'云朵',time:'1小时前',content:'今天天气真好，适合出去走走 🌸 决定一个人去公园坐坐。',imgs:3},
+    {user:'小鹿',time:'3小时前',content:'刚读完一本很棒的书，故事里每一个细节都让人动容。强烈推荐！',imgs:1},
+    {user:'夜行者',time:'昨天',content:'深夜的城市有一种特别的安静，让人忍不走下去。',imgs:0}
+  ];
+  const discovers=data.discovers;
+
+  // Independent discover profile data (separate from global user)
+  const dName=localStorage.getItem('xsj_discover_name')||'我的朋友圈';
+  const dBio=localStorage.getItem('xsj_discover_bio')||'分享生活的每一刻 ✨';
+  const dAvatar=localStorage.getItem('xsj_discover_avatar')||'';
+  const momentsBg=localStorage.getItem('xsj_moments_bg')||'';
+  const avHTML=dAvatar
+    ?`<img src="${dAvatar}" style="width:100%;height:100%;object-fit:cover;">`
+    :`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>`;
+  const bgStyle=momentsBg?`style="background-image:url(${momentsBg});background-size:cover;background-position:center;"`:
+    `style="background:linear-gradient(135deg,#a8c0d0 0%,#b8a4c4 50%,#c4a4a8 100%);"`;
+
+  let html=`<div class="moments-hero">
+    <div class="moments-hero-bg" id="moments-hero-bg" ${bgStyle} onclick="document.getElementById('moments-bg-input').click()">
+      <div class="moments-hero-change-btn" title="更换背景图">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </div>
+    </div>
+    <div class="moments-hero-float">
+      <div class="moments-hero-avatar" onclick="document.getElementById('discover-av-input').click()">${avHTML}</div>
+      <div class="moments-hero-name" id="moments-hero-name" onclick="discoverEditName()">${dName}</div>
+      <div class="moments-hero-bio" id="moments-hero-bio" onclick="discoverEditBio()">${dBio}</div>
+    </div>
+    <div class="moments-hero-divider"></div>
+    <input type="file" id="moments-bg-input" accept="image/*" style="display:none;" onchange="chatHandleMomentsBg(this)">
+    <input type="file" id="discover-av-input" accept="image/*" style="display:none;" onchange="discoverHandleAvatar(this)">
+  </div>
+  <div style="display:flex;justify-content:flex-end;align-items:center;padding:0 16px 10px;">
+    <div class="chat-action-btn" onclick="chatPostDiscover()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
+    </div>
+  </div>`;
+
+
+  let cardsHtml='';
+  discovers.forEach((d,idx)=>{
+    // Determine img count — use stored count or default demo
+    const imgCount=d.imgs!==undefined?d.imgs:(idx<defaultDiscovers.length?defaultDiscovers[idx].imgs:0);
+    const colClass=imgCount===1?'cols-1':imgCount===2?'cols-2':'cols-3';
+    let imgGrid='';
+    if(imgCount>0){
+      imgGrid=`<div class="moments-img-grid ${colClass}">`;
+      for(let i=0;i<imgCount;i++){
+        imgGrid+=`<div class="moments-img-cell">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".25"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>`;
+      }
+      imgGrid+='</div>';
+    }
+    const initials=(d.user||'?')[0];
+    cardsHtml+=`<div class="moments-card">
+      <div class="moments-user-row">
+        <div class="moments-av">
+          <span style="font-size:16px;font-weight:700;color:#fff;">${initials}</span>
+        </div>
+        <div class="moments-meta">
+          <div class="moments-uname">${d.user}</div>
+          <div class="moments-time">${d.time}</div>
+        </div>
+      </div>
+      ${d.content?`<div class="moments-text">${d.content}</div>`:''}
+      ${imgGrid}
+      <div class="moments-actions">
+        <div class="moments-action-btn" onclick="alert('点赞功能即将上线 ❤️')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <span>点赞</span>
+        </div>
+        <div class="moments-action-sep"></div>
+        <div class="moments-action-btn" onclick="alert('评论功能即将上线 💬')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span>评论</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  return html+`<div style="padding:0 16px 8px;">${cardsHtml}</div>`;
+}
+function chatPostDiscover(){
+  const content=prompt('分享你的动态');
+  if(!content||!content.trim())return;
+  const data=chatGetData();
+  const name=localStorage.getItem('xsj_name')||'我';
+  data.discovers.unshift({user:name,time:'刚刚',content:content.trim(),imgs:0});
+  chatSaveData(data);chatSwitchTab('discover');
+}
+function chatHandleMomentsBg(input){
+  const f=input.files[0];if(!f)return;
+  compressImage(f,800,0.82,function(src){
+    localStorage.setItem('xsj_moments_bg',src);
+    const bg=document.getElementById('moments-hero-bg');
+    if(bg){bg.style.backgroundImage='url('+src+')';bg.style.backgroundSize='cover';bg.style.backgroundPosition='center';}
+  });
+  input.value='';
+}
+function discoverEditName(){
+  const cur=localStorage.getItem('xsj_discover_name')||'我的朋友圈';
+  const v=prompt('编辑朋友圈昵称',cur);
+  if(v===null)return;
+  const name=v.trim()||'我的朋友圈';
+  localStorage.setItem('xsj_discover_name',name);
+  const el=document.getElementById('moments-hero-name');if(el)el.textContent=name;
+}
+function discoverEditBio(){
+  const cur=localStorage.getItem('xsj_discover_bio')||'分享生活的每一刻 ✨';
+  const v=prompt('编辑朋友圈签名',cur);
+  if(v===null)return;
+  const bio=v.trim()||'分享生活的每一刻 ✨';
+  localStorage.setItem('xsj_discover_bio',bio);
+  const el=document.getElementById('moments-hero-bio');if(el)el.textContent=bio;
+}
+function discoverHandleAvatar(input){
+  const f=input.files[0];if(!f)return;
+  compressImage(f,200,0.82,function(src){
+    localStorage.setItem('xsj_discover_avatar',src);
+    const av=document.querySelector('.moments-hero-avatar');
+    if(av)av.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+  });
+  input.value='';
+}
+
+/* ── Me Tab ── */
+function chatBuildMe(){
+  const name=localStorage.getItem('xsj_name')||'用户名';
+  const bio=localStorage.getItem('xsj_chat_bio')||'I loved you from the start…';
+  const avatar=localStorage.getItem('xsj_avatar');
+  const avHTML=avatar
+    ?`<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;">`
+    :`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>`;
+  return `<div style="height:8px;"></div>
+    <div style="display:flex;align-items:center;gap:16px;padding:8px 0 20px;">
+      <div class="me-avatar-wrap" onclick="chatChangeAvatar()">${avHTML}</div>
+      <div style="flex:1;min-width:0;">
+        <div id="me-page-name" style="font-size:20px;font-weight:700;color:#1c1c1e;cursor:pointer;letter-spacing:-.2px;" onclick="chatEditName()">${name}</div>
+        <div id="me-page-bio" style="font-size:13px;color:#8e8e93;margin-top:5px;cursor:pointer;" onclick="chatEditBio()">${bio}</div>
+      </div>
+    </div>
+    <div class="me-setting-card" style="margin-bottom:12px;">
+      <div class="me-setting-row"><span>我的相册</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      <div class="me-setting-row"><span>我的收藏</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      <div class="me-setting-row"><span>我的动态</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+    </div>
+    <div class="me-setting-card">
+      <div class="me-setting-row">
+        <span>深色模式跟随系统</span>
+        <div style="width:40px;height:24px;border-radius:12px;background:#8e8e93;position:relative;flex-shrink:0;">
+          <div style="position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+        </div>
+      </div>
+      <div class="me-setting-row"><span>通知</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      <div class="me-setting-row"><span>隐私</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      <div class="me-setting-row"><span>关于</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+    </div>
+    <div style="height:16px;"></div>`;
+}
+
+/* ── Editable fields ── */
+function chatEditName(){
+  const cur=localStorage.getItem('xsj_name')||'用户名';
+  const v=prompt('编辑用户名',cur);
+  if(v===null||!v.trim())return;
+  const name=v.trim();
+  localStorage.setItem('xsj_name',name);
+  // Update header
+  const hn=document.getElementById('chat-hdr-name');if(hn)hn.textContent=name;
+  // Update Me page if visible
+  const mn=document.getElementById('me-page-name');if(mn)mn.textContent=name;
+  // Update main screen username
+  const mu=document.getElementById('username');if(mu)mu.textContent=name;
+}
+function chatEditBio(){
+  const cur=localStorage.getItem('xsj_chat_bio')||'I loved you from the start…';
+  const v=prompt('编辑签名',cur);
+  if(v===null)return;
+  const bio=v.trim()||'I loved you from the start…';
+  localStorage.setItem('xsj_chat_bio',bio);
+  const hb=document.getElementById('chat-hdr-bio');if(hb)hb.textContent=bio;
+  const mb=document.getElementById('me-page-bio');if(mb)mb.textContent=bio;
+}
+function chatChangeAvatar(){
+  const inp=document.getElementById('chat-av-file-input');if(inp)inp.click();
+}
+function chatHandleAvatarFile(input){
+  const f=input.files[0];if(!f)return;
+  compressImage(f,200,0.75,function(src){
+    localStorage.setItem('xsj_avatar',src);
+    // Update chat header avatar
+    const img=document.getElementById('chat-hdr-av-img'),svg=document.getElementById('chat-hdr-av-svg');
+    if(img){img.src=src;img.style.display='block';}
+    if(svg)svg.style.display='none';
+    // Update main screen avatar
+    const mai=document.getElementById('avatar-img');if(mai){mai.src=src;mai.style.display='block';}
+    const map=document.getElementById('avatar-placeholder');if(map)map.style.display='none';
+    // Re-render me tab if open
+    if(CHAT_STATE.currentTab==='me')chatSwitchTab('me');
+  });
+  input.value='';
 }
 
 // ── Music Panel ──
-let isMusicPanelOpen=false;
-let musicLoopMode=0; // 0=none 1=single 2=list
-let musicPlaylist=[]; // [{title,src,lrcText,cover}]
-let musicIdx=0;
-let musicLrc=[]; // [{time,text}]
-let musicLrcInterval=null;
-
-const LOOP_ICONS=[
-  // 0: no loop
-  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".35"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>`,
-  // 1: single loop
-  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/><text x="11" y="15" font-size="7" fill="currentColor" stroke="none">1</text></svg>`,
-  // 2: list loop
-  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>`,
-];
-const PLAY_ICON=`<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="5,3 17,10 5,17"/></svg>`;
-const PAUSE_ICON=`<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><rect x="4" y="3" width="4" height="14" rx="1.5"/><rect x="12" y="3" width="4" height="14" rx="1.5"/></svg>`;
-
-function toggleMusicPanel(){
-  isMusicPanelOpen=!isMusicPanelOpen;
-  const panel=document.getElementById('music-panel');
-  const disc=document.getElementById('music-disc');
-  const audio=document.getElementById('music-audio');
-  if(isMusicPanelOpen){
+let isMusicPanelOpen = false;
+function toggleMusicPanel() {
+  isMusicPanelOpen = !isMusicPanelOpen;
+  const panel = document.getElementById('music-panel');
+  const disc = document.getElementById('music-disc');
+  if (isMusicPanelOpen) {
     panel.classList.add('open');
-    requestAnimationFrame(()=>panel.classList.add('animated'));
-    if(audio&&!audio.paused) disc.classList.add('spinning');
+    requestAnimationFrame(() => panel.classList.add('animated'));
+    disc.classList.add('spinning');
   } else {
     panel.classList.remove('animated');
-    setTimeout(function(){if(!isMusicPanelOpen)panel.classList.remove('open');},200);
+    setTimeout(function(){ if (!isMusicPanelOpen) panel.classList.remove('open'); }, 200);
     disc.classList.remove('spinning');
   }
 }
-
-function toggleMusicPlay(){
-  const audio=document.getElementById('music-audio');
-  const disc=document.getElementById('music-disc');
-  if(!audio)return;
-  if(audio.src&&audio.src!==window.location.href){
-    if(audio.paused){audio.play();disc.classList.add('spinning');}
-    else{audio.pause();disc.classList.remove('spinning');}
-  } else {
-    document.getElementById('music-audio-input').click();
-  }
-  updatePlayIcon();
-}
-
-function updatePlayIcon(){
-  const audio=document.getElementById('music-audio');
-  const btn=document.getElementById('music-play-btn');
-  if(!btn)return;
-  btn.innerHTML=(!audio||audio.paused)?PLAY_ICON:PAUSE_ICON;
-}
-
-function toggleMusicLoop(){
-  musicLoopMode=(musicLoopMode+1)%3;
-  const audio=document.getElementById('music-audio');
-  if(audio) audio.loop=(musicLoopMode===1);
-  const btn=document.getElementById('music-loop-btn');
-  if(btn) btn.innerHTML=LOOP_ICONS[musicLoopMode];
-  localStorage.setItem('xsj_music_loop',musicLoopMode);
-}
-
-function musicPrev(){
-  if(musicPlaylist.length>1){
-    musicIdx=(musicIdx-1+musicPlaylist.length)%musicPlaylist.length;
-    loadMusicTrack(musicIdx);
-  } else {
-    const audio=document.getElementById('music-audio');
-    if(audio){audio.currentTime=0;if(audio.paused)audio.play();}
-  }
-}
-function musicNext(){
-  if(musicPlaylist.length>1){
-    musicIdx=(musicIdx+1)%musicPlaylist.length;
-    loadMusicTrack(musicIdx);
-  } else {
-    const audio=document.getElementById('music-audio');
-    if(audio){audio.currentTime=0;if(audio.paused)audio.play();}
-  }
-}
-function loadMusicTrack(idx){
-  if(!musicPlaylist[idx])return;
-  const track=musicPlaylist[idx];
-  const audio=document.getElementById('music-audio');
-  audio.src=track.src;
-  const t=document.getElementById('music-title-el');if(t)t.textContent=track.title||'未知歌曲';
-  if(track.cover){
-    const img=document.getElementById('music-disc-img');
-    const svg=document.getElementById('music-disc-svg');
-    if(img){img.src=track.cover;img.style.display='block';}
-    if(svg)svg.style.display='none';
-  }
-  if(track.lrcText) parseLrc(track.lrcText);
-  else musicLrc=[];
-  audio.play();
-  document.getElementById('music-disc').classList.add('spinning');
-  updatePlayIcon();
-}
-function seekMusic(e){
-  const audio=document.getElementById('music-audio');
-  if(!audio||!audio.duration)return;
-  const bar=document.getElementById('music-progress-bar');
-  const rect=bar.getBoundingClientRect();
-  const pct=(e.clientX-rect.left)/rect.width;
-  audio.currentTime=pct*audio.duration;
-}
-function fmtTime(s){
-  if(!s||isNaN(s))return'0:00';
-  const m=Math.floor(s/60),ss=Math.floor(s%60);
-  return m+':'+(ss<10?'0':'')+ss;
-}
-function parseLrc(text){
-  musicLrc=[];
-  const lines=text.split('\n');
-  lines.forEach(line=>{
-    const m=line.match(/\[(\d+):(\d+\.?\d*)\](.*)/);
-    if(m) musicLrc.push({time:parseInt(m[1])*60+parseFloat(m[2]),text:m[3].trim()});
+document.getElementById('music-disc-input').addEventListener('change', function(e) {
+  const f = e.target.files[0]; if (!f) return;
+  compressImage(f, 150, 0.8, function(src) {
+    const img = document.getElementById('music-disc-img');
+    const svg = document.getElementById('music-disc-svg');
+    img.src = src; img.style.display = 'block';
+    if (svg) svg.style.display = 'none';
+    localStorage.setItem('musicDiscImage', src);
   });
-  musicLrc.sort((a,b)=>a.time-b.time);
-}
-function updateLrcDisplay(currentTime){
-  if(!musicLrc.length)return;
-  let cur=musicLrc[0];
-  for(let i=0;i<musicLrc.length;i++){if(musicLrc[i].time<=currentTime)cur=musicLrc[i]; else break;}
-  const el=document.getElementById('music-lyrics-el');
-  if(el&&cur) el.textContent=cur.text||'♪';
-}
-
-// Audio event bindings (set up once)
-(function setupMusicAudio(){
-  const audio=document.getElementById('music-audio');
-  if(!audio)return;
-  audio.addEventListener('timeupdate',function(){
-    const fill=document.getElementById('music-progress-fill');
-    const cur=document.getElementById('music-time-cur');
-    const dur=document.getElementById('music-time-dur');
-    if(fill&&audio.duration) fill.style.width=(audio.currentTime/audio.duration*100)+'%';
-    if(cur) cur.textContent=fmtTime(audio.currentTime);
-    if(dur) dur.textContent=fmtTime(audio.duration);
-    updateLrcDisplay(audio.currentTime);
-  });
-  audio.addEventListener('ended',function(){
-    if(musicLoopMode===2&&musicPlaylist.length>1) musicNext();
-    else if(musicLoopMode===0){
-      document.getElementById('music-disc').classList.remove('spinning');
-      updatePlayIcon();
-    }
-  });
-  audio.addEventListener('play',()=>{updatePlayIcon();document.getElementById('music-disc').classList.add('spinning');});
-  audio.addEventListener('pause',()=>{updatePlayIcon();document.getElementById('music-disc').classList.remove('spinning');});
-  // Restore loop mode
-  const saved=localStorage.getItem('xsj_music_loop');
-  if(saved){musicLoopMode=parseInt(saved)||0;audio.loop=(musicLoopMode===1);}
-  const lb=document.getElementById('music-loop-btn');if(lb)lb.innerHTML=LOOP_ICONS[musicLoopMode];
-})();
-
-// Music import dialog
-function openMusicImport(){
-  const choice=confirm('上传本地音频文件？\n确定=上传文件  取消=输入URL');
-  if(choice) document.getElementById('music-audio-input').click();
-  else {
-    const url=prompt('输入音频URL（MP3/M4A/OGG）');
-    if(url&&url.trim()) applyMusicURL(url.trim());
-  }
-}
-function applyMusicURL(url){
-  const title=prompt('歌曲名称','未知歌曲')||'未知歌曲';
-  const track={title,src:url,lrcText:'',cover:''};
-  musicPlaylist=[track]; musicIdx=0;
-  loadMusicTrack(0);
-  saveMusicState();
-}
-function saveMusicState(){
-  try{
-    const light=musicPlaylist.map(t=>({title:t.title,src:t.src.startsWith('blob:')?'':t.src,lrcText:t.lrcText,cover:t.cover}));
-    localStorage.setItem('xsj_music_playlist',JSON.stringify(light));
-    localStorage.setItem('xsj_music_idx',musicIdx);
-  }catch(e){}
-}
-
-// Audio file input
-document.getElementById('music-audio-input').addEventListener('change',function(e){
-  const f=e.target.files[0];if(!f)return;
-  const url=URL.createObjectURL(f);
-  const title=f.name.replace(/\.[^.]+$/,'');
-  const track={title,src:url,lrcText:'',cover:''};
-  // try to preserve cover from existing playlist entry
-  if(musicPlaylist[musicIdx]&&musicPlaylist[musicIdx].cover) track.cover=musicPlaylist[musicIdx].cover;
-  musicPlaylist=[track]; musicIdx=0;
-  loadMusicTrack(0);
-  // store title
-  localStorage.setItem('xsj_music_title',title);
-  this.value='';
+  this.value = '';
 });
-
-// LRC file input
-document.getElementById('music-lrc-input').addEventListener('change',function(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=function(ev){
-    const text=ev.target.result;
-    parseLrc(text);
-    if(musicPlaylist[musicIdx]) musicPlaylist[musicIdx].lrcText=text;
-    localStorage.setItem('xsj_music_lrc',text);
-  };
-  r.readAsText(f,'UTF-8');
-  this.value='';
-});
-
-// Disc image input
-document.getElementById('music-disc-input').addEventListener('change',function(e){
-  const f=e.target.files[0];if(!f)return;
-  compressImage(f,150,0.8,function(src){
-    const img=document.getElementById('music-disc-img');
-    const svg=document.getElementById('music-disc-svg');
-    if(img){img.src=src;img.style.display='block';}
-    if(svg)svg.style.display='none';
-    localStorage.setItem('musicDiscImage',src);
-    if(musicPlaylist[musicIdx]) musicPlaylist[musicIdx].cover=src;
-  });
-  this.value='';
-});
-
-// Restore music state on load
-(function restoreMusic(){
-  const disc=localStorage.getItem('musicDiscImage');
-  if(disc){const img=document.getElementById('music-disc-img');const svg=document.getElementById('music-disc-svg');if(img){img.src=disc;img.style.display='block';}if(svg)svg.style.display='none';}
-  const title=localStorage.getItem('xsj_music_title');
-  if(title){const t=document.getElementById('music-title-el');if(t)t.textContent=title;}
-  const lrc=localStorage.getItem('xsj_music_lrc');if(lrc)parseLrc(lrc);
-  const lrcEl=document.getElementById('music-lyrics-el');
-  if(lrcEl&&musicLrc.length)lrcEl.textContent=musicLrc[0].text||'♪';
+(function() {
+  const saved = localStorage.getItem('musicDiscImage');
+  if (saved) {
+    const img = document.getElementById('music-disc-img');
+    const svg = document.getElementById('music-disc-svg');
+    if (img) { img.src = saved; img.style.display = 'block'; }
+    if (svg) svg.style.display = 'none';
+  }
 })();
 </script>
 </body>

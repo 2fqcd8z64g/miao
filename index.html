@@ -16,6 +16,7 @@
     --card-bg: rgba(255,255,255,0.18);
     --subtle: rgba(0,0,0,0.06);
     --text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    --safe-top: env(safe-area-inset-top, 0px);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -38,8 +39,8 @@
   }
   .glass{background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);}
   .glass-card{background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);box-shadow:var(--shadow);}
-  .active-scale{transition:transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94);}
-  .active-scale:active{transform:scale(0.96);}
+  .active-scale{transition:opacity 0.25s ease-out;}
+  .active-scale:active{opacity:0.7;}
 
   /* Loading */
   #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;background:var(--bg);}
@@ -179,8 +180,8 @@
 
   /* App Icons */
   .app-icon-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;}
-  .app-icon-wrap:active .app-icon-box{transform:scale(.9);}
-  .app-icon-box{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;transition:transform .15s ease;}
+  .app-icon-wrap:active .app-icon-box{opacity:0.7;}
+  .app-icon-box{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;transition:opacity .25s ease-out;}
   .app-icon-label{font-size:11px;opacity:.6;font-weight:400;}
 
   /* Page dots with pill animation */
@@ -228,8 +229,8 @@
   .time-sub{display:flex;align-items:center;gap:6px;margin-top:6px;opacity:.5;font-size:13px;}
 
   /* Anniversary */
-  .anni-card{border-radius:22px;overflow:hidden;transition:transform .2s ease;}
-  .anni-card:hover{transform:scale(1.015);}
+  .anni-card{border-radius:22px;overflow:hidden;transition:opacity .25s ease-out;}
+  .anni-card:hover{opacity:0.9;}
   .anni-img{height:96px;background:linear-gradient(135deg,var(--subtle) 0%,transparent 100%);position:relative;display:flex;align-items:flex-start;padding:12px;overflow:hidden;}
   .anni-info{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
 
@@ -247,8 +248,8 @@
   .cal-event-dot{width:2.5px;height:2.5px;border-radius:2px;background:var(--text);opacity:.35;}
 
   /* Photo Frames */
-  .photo-frame{width:100px;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--subtle);overflow:hidden;cursor:pointer;transition:transform .1s;flex-shrink:0;}
-  .photo-frame:active{transform:scale(.95);}
+  .photo-frame{width:100px;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--subtle);overflow:hidden;cursor:pointer;transition:opacity .25s ease-out;flex-shrink:0;}
+  .photo-frame:active{opacity:0.7;}
   .photo-frame img{width:100%;height:100%;object-fit:cover;}
 
   /* App Overlay — fills entire viewport on any screen */
@@ -274,8 +275,8 @@
     height:100%;width:100%;
     overflow:hidden;
   }
-  .app-back{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:20px;background:var(--subtle);transition:transform .1s;}
-  .app-back:active{transform:scale(.88);}
+  .app-back{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:20px;background:var(--subtle);transition:opacity .25s ease-out;}
+  .app-back:active{opacity:0.6;}
   .app-title{font-size:26px;font-weight:600;margin-bottom:24px;letter-spacing:-.5px;}
   .app-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:14px;margin-bottom:8px;}
   .app-toggle{width:44px;height:26px;border-radius:13px;background:var(--subtle);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
@@ -305,7 +306,7 @@
     cursor:pointer;transition:transform .1s ease;flex-shrink:0;
     color:var(--text);
   }
-  .music-note-btn:active{transform:scale(0.95);}
+  .music-note-btn:active{opacity:0.65;}
   /* Panel floats absolutely — does NOT push content below */
   .music-panel{
     display:none;
@@ -499,10 +500,10 @@
     background:linear-gradient(145deg,rgba(200,200,200,.4),rgba(160,160,160,.3));
     display:flex;align-items:center;justify-content:center;
     position:relative;flex-shrink:0;
-    transition:transform 0.2s ease,opacity 0.2s ease;
+    transition:opacity 0.25s ease-out;
     margin:0 auto;
   }
-  .me-avatar-circle:hover{transform:scale(0.95);}
+  .me-avatar-circle:hover{opacity:0.85;}
   .me-avatar-circle:active{opacity:0.75;}
   .me-avatar-circle .me-av-hover{
     position:absolute;inset:0;border-radius:50%;
@@ -661,7 +662,7 @@
   .contacts-search-input::placeholder{color:#aeaeb2;}
   .contacts-group-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none;justify-content:center;}
   .contacts-group-tabs::-webkit-scrollbar{display:none;}
-  .contacts-group-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;color:#8e8e93;cursor:pointer;white-space:nowrap;transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+  .contacts-group-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;color:#8e8e93;cursor:pointer;white-space:nowrap;transition:all 0.25s ease-out;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
   .contacts-group-tab.active{background:rgba(28,28,30,0.9);color:#fff;}
   @media(prefers-color-scheme:dark){.contacts-group-tab.active{background:rgba(245,245,247,0.9);color:#1c1c1e;}}
   .contacts-list-wrap{padding:0 16px;}
@@ -675,9 +676,8 @@
   .chat-bubble-menu{
     backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     border:1px solid var(--glass-border);
-    animation:bubbleMenuIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
   }
-  @keyframes bubbleMenuIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+  @keyframes bubbleMenuIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
   .chat-bubble-menu>div:active{background:rgba(0,0,0,0.06);}
   @media(prefers-color-scheme:dark){.chat-bubble-menu>div:active{background:rgba(255,255,255,0.06);}}
 
@@ -697,18 +697,18 @@
   @media(prefers-color-scheme:dark){
     .contacts-delete-indicator{background:rgba(60,60,62,0.7);border-color:rgba(255,255,255,0.15);}
   }
-  .contacts-delete-indicator:active{opacity:.6;transform:scale(0.92);}
+  .contacts-delete-indicator:active{opacity:.6;}
 
   /* ── Custom Modal System ── */
-  @keyframes modalIn{from{opacity:0;transform:translateY(-50%) translateX(-50%) scale(0.9);}to{opacity:1;transform:translateY(-50%) translateX(-50%) scale(1);}}
-  @keyframes modalOut{from{opacity:1;transform:translateY(-50%) translateX(-50%) scale(1);}to{opacity:0;transform:translateY(-50%) translateX(-50%) scale(0.9);}}
+  @keyframes modalIn{from{opacity:0;transform:translateY(calc(-50% + 12px)) translateX(-50%);}to{opacity:1;transform:translateY(-50%) translateX(-50%);}}
+  @keyframes modalOut{from{opacity:1;transform:translateY(-50%) translateX(-50%);}to{opacity:0;transform:translateY(calc(-50% + 12px)) translateX(-50%);}}
   @keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
   @keyframes overlayOut{from{opacity:1;}to{opacity:0;}}
   .xsj-modal-overlay{
     position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.42);
-    animation:overlayIn .2s ease forwards;
+    animation:overlayIn .25s ease-out forwards;
   }
-  .xsj-modal-overlay.closing{animation:overlayOut .2s ease forwards;}
+  .xsj-modal-overlay.closing{animation:overlayOut .25s ease-out forwards;}
   .xsj-modal{
     position:fixed;top:50%;left:50%;z-index:9999;
     transform:translateY(-50%) translateX(-50%);
@@ -718,7 +718,7 @@
     border:1px solid rgba(255,255,255,0.55);
     border-radius:28px;
     box-shadow:0 20px 60px rgba(0,0,0,0.18),0 4px 16px rgba(0,0,0,0.1);
-    animation:modalIn .2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+    animation:modalIn .25s ease-out forwards;
     overflow:hidden;
     user-select:none;-webkit-user-select:none;
   }
@@ -729,7 +729,7 @@
       box-shadow:0 20px 60px rgba(0,0,0,0.5),0 4px 16px rgba(0,0,0,0.3);
     }
   }
-  .xsj-modal.closing{animation:modalOut .2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;}
+  .xsj-modal.closing{animation:modalOut .25s ease-out forwards;}
   .xsj-modal-header{
     display:flex;align-items:center;justify-content:space-between;
     padding:18px 20px 14px;
@@ -743,7 +743,7 @@
     -webkit-tap-highlight-color:transparent;white-space:nowrap;
   }
   @media(prefers-color-scheme:dark){.xsj-modal-btn{color:#f5f5f7;}}
-  .xsj-modal-btn:active{transform:scale(0.97);opacity:.8;}
+  .xsj-modal-btn:active{opacity:.6;}
   .xsj-modal-btn.confirm{color:#1c1c1e;font-weight:600;}
   @media(prefers-color-scheme:dark){.xsj-modal-btn.confirm{color:#f5f5f7;}}
   .xsj-modal-title-wrap{text-align:center;flex:1;padding:0 8px;}
@@ -759,7 +759,7 @@
     transition:transform .15s ease,opacity .15s ease;-webkit-tap-highlight-color:transparent;
   }
   @media(prefers-color-scheme:dark){.xsj-modal-reset-btn{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.1);color:#8e8e93;}}
-  .xsj-modal-reset-btn:active{transform:scale(0.97);opacity:.8;}
+  .xsj-modal-reset-btn:active{opacity:.6;}
   /* Form controls inside modal */
   .xsj-field-label{font-size:12px;font-weight:500;color:#8e8e93;margin-bottom:6px;letter-spacing:.3px;}
   .xsj-field-wrap{margin-bottom:16px;}
@@ -1588,7 +1588,9 @@ function chatGetAllContacts(){
 
 function openChatApp(){
   const ov=document.getElementById('app-overlay'),ct=document.getElementById('app-content');
-  ct.style.padding='0';ct.style.overflow='hidden';ct.style.display='flex';ct.style.flexDirection='column';ct.style.height='100%';
+  ct.style.padding='0';
+  ct.style.paddingTop='env(safe-area-inset-top, 0px)';
+  ct.style.overflow='hidden';ct.style.display='flex';ct.style.flexDirection='column';ct.style.height='100%';
   ct.innerHTML=buildChatAppHTML();
   ov.style.display='block';
   requestAnimationFrame(()=>ov.classList.add('show'));
@@ -1823,16 +1825,22 @@ function chatLongPressMenu(nameOrEvt,nameOrEl,elArg){
   menu.className='chat-bubble-menu';
   menu.style.cssText=`
     position:fixed;z-index:9000;
-    top:50%;left:50%;transform:translate(-50%,-50%);
+    top:0;left:0;
     display:flex;flex-direction:row;align-items:center;gap:4px;
-    background:${menuBg};
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    background:${isDark?'rgba(0,0,0,0.4)':'rgba(255,255,255,0.3)'};
+    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     border:1px solid ${menuBorder};
     border-radius:24px;
-    padding:8px 16px;
-    box-shadow:0 8px 32px rgba(0,0,0,0.22);
+    padding:6px 12px;
+    box-shadow:0 4px 24px rgba(0,0,0,0.18);
     min-width:0;
+    opacity:0;
+    transition:opacity 0.25s ease-out,transform 0.25s ease-out;
+    transform:translateY(-6px);
+    pointer-events:none;
   `;
+  // Position after append so we know menu dimensions
+  document.body.appendChild(menu);
 
   const menuItems=[
     {label:isTop?'取消置顶':'置顶',icon:'<svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M557.728 688v288.384H466.24V688H227.52c-9.6 0-18.048-3.712-24.96-11.264A37.824 37.824 0 0 1 192 649.984c0-48.768 14.432-92.704 43.584-131.84 29.12-38.976 61.92-58.56 98.56-58.56V200.512c-19.296 0-35.84-7.552-50.048-22.656a76.16 76.16 0 0 1-21.12-53.6c0-20.672 7.04-38.4 21.12-53.6 13.984-14.976 30.72-22.656 50.048-22.656h355.584c19.296 0 35.84 7.552 50.048 22.656 13.984 15.104 21.152 32.928 21.152 53.6 0 20.672-7.04 38.4-21.12 53.6-14.112 15.232-30.784 22.656-50.08 22.656v258.944c36.64 0 69.568 19.584 98.56 58.56A215.424 215.424 0 0 1 832 649.984c0 10.272-3.456 19.328-10.528 26.752-7.04 7.424-15.36 11.264-24.96 11.264H557.76z" fill="currentColor"/></svg>',action:()=>chatToggleTop(name)},
@@ -1854,7 +1862,29 @@ function chatLongPressMenu(nameOrEvt,nameOrEl,elArg){
 
   overlay.addEventListener('click',()=>{overlay.remove();menu.remove();});
   document.body.appendChild(overlay);
-  document.body.appendChild(menu);
+  // Position menu relative to target element
+  requestAnimationFrame(()=>{
+    const mW=menu.offsetWidth||160;
+    const mH=menu.offsetHeight||48;
+    let top,left;
+    if(el&&el.getBoundingClientRect){
+      const r=el.getBoundingClientRect();
+      left=r.left+r.width/2-mW/2;
+      top=r.top-mH-8;
+      if(top<8)top=r.bottom+8;
+      left=Math.max(8,Math.min(left,window.innerWidth-mW-8));
+    } else {
+      top=window.innerHeight/2-mH/2;
+      left=window.innerWidth/2-mW/2;
+    }
+    menu.style.top=top+'px';
+    menu.style.left=left+'px';
+    menu.style.pointerEvents='auto';
+    requestAnimationFrame(()=>{
+      menu.style.opacity='1';
+      menu.style.transform='translateY(0)';
+    });
+  });
 }
 function chatToggleTop(name){
   const data=chatGetData();
@@ -2086,10 +2116,7 @@ function contactsManageGroups(){
   showModal({
     title:'管理分组',subtitle:'Manage Groups',
     contentHtml:`<div id="xsj-groups-list">${buildGroupRows(workingGroups)}</div>
-    <div class="xsj-add-group-row">
-      <input class="xsj-add-group-input" id="xsj-new-group-inp" placeholder="新分组名称..." autocomplete="off">
-      <div class="xsj-add-group-btn" onclick="(function(){const inp=document.getElementById('xsj-new-group-inp');const v=inp.value.trim();if(!v)return;window._workingGroups=window._workingGroups||[];workingGroups.push({name:v,contacts:[]});const listEl=document.getElementById('xsj-groups-list');if(listEl)listEl.innerHTML=buildGroupRows(workingGroups);inp.value='';})()">添加</div>
-    </div>`,
+    <div style="margin-top:8px;font-size:12px;color:#aeaeb2;text-align:center;">如需新增分组，请在 Chats 页面点击「+Add」按钮</div>`,
     onConfirm(){
       const d=chatGetData();
       // Merge: keep contacts from existing groups, new groups get empty contacts
@@ -2268,12 +2295,14 @@ function chatEditContact(name){
     const maskOpts=`<option value="" ${!c.mask?'selected':''}>无</option><option value="默认" ${c.mask==='默认'?'selected':''}>默认面具</option>`;
     window._editAvatar=c.avatar||'';
     window._editWorldBook=c.worldBook||'';
-    const avPreview=c.avatar?`<img src="${c.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">`:`<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);display:flex;align-items:center;justify-content:center;"><span style="font-size:28px;font-weight:700;color:#fff;">${(c.name||'?')[0]}</span></div>`;
+    const avPreview=c.avatar
+      ?`<img src="${escHtml(c.avatar)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+      :`<div style="width:100%;height:100%;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);display:flex;align-items:center;justify-content:center;"><span style="font-size:28px;font-weight:700;color:#fff;">${escHtml((c.name||'?')[0])}</span></div>`;
     const bodyHtml=`
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:16px;">
-        <div id="ec-av-preview" onclick="document.getElementById('ec-av-file').click()" style="width:80px;height:80px;border-radius:50%;cursor:pointer;overflow:hidden;border:2px dashed rgba(142,142,147,0.4);">${avPreview}</div>
+        <div id="ec-av-preview" onclick="document.getElementById('ec-av-file').click()" style="width:80px;height:80px;border-radius:50%;cursor:pointer;overflow:hidden;border:2px dashed rgba(142,142,147,0.4);display:flex;align-items:center;justify-content:center;background:rgba(142,142,147,0.12);flex-shrink:0;">${avPreview}</div>
         <div style="font-size:11px;color:#aeaeb2;margin-top:2px;">点击更换头像</div>
-        <input type="file" id="ec-av-file" accept="image/*" style="display:none" onchange="(function(inp){const f=inp.files[0];if(!f)return;compressImage(f,200,0.8,function(s){window._editAvatar=s;const p=document.getElementById('ec-av-preview');if(p)p.innerHTML='<img src=\\''+s+'\\'style=\\"width:100%;height:100%;object-fit:cover;\\">';});inp.value='';})(this)">
+        <input type="file" id="ec-av-file" accept="image/*" style="display:none" onchange="_ecAvatarChange(this)">
       </div>
       <div class="xsj-field-wrap"><div class="xsj-field-label">姓名 <span style="color:#ff3b30">*</span></div><input class="xsj-input" data-field="ecname" value="${escHtml(c.name)}" autocomplete="off"></div>
       <div class="xsj-field-wrap"><div class="xsj-field-label">性别</div>
@@ -2321,6 +2350,15 @@ function chatEditContact(name){
   },100);
 }
 
+function _ecAvatarChange(inp){
+  const f=inp.files[0];if(!f)return;
+  compressImage(f,200,0.8,function(s){
+    window._editAvatar=s;
+    const p=document.getElementById('ec-av-preview');
+    if(p){p.innerHTML='';const img=document.createElement('img');img.src=s;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%;';p.appendChild(img);}
+  });
+  inp.value='';
+}
 function chatSelectWorldBookEdit(){
   const books=[{name:'幻想世界观'},{name:'现代都市设定'},{name:'科幻背景'}];
   const opts=books.map((b,i)=>`<div class="xsj-field-wrap" style="margin-bottom:4px;"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;"><input type="radio" name="wbe-sel" value="${escHtml(b.name)}" ${i===0?'checked':''} style="accent-color:#1c1c1e;"> ${escHtml(b.name)}</label></div>`).join('');

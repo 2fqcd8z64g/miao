@@ -706,19 +706,102 @@
   .dsc-section-right:active{opacity:0.5;}
   .dsc-posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 8px;}
   .dsc-post-card{aspect-ratio:1;border-radius:8px;background:#e0e0e0;border:1px solid rgba(255,255,255,0.55);overflow:hidden;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;transition:opacity .25s ease-out;color:#3a3a3c;}
-  @media(prefers-color-scheme:dark){.dsc-post-card{background:#3a3a3c;border-color:rgba(255,255,255,0.09);color:#e5e5e7;}}
+  @media(prefers-color-scheme:dark){.dsc-post-card{background:#3a3a3c;border-color:rgba(255,255,255,0.09);color:#a1a1a6;}}
   .dsc-post-card:active{opacity:0.7;}
   .dsc-post-card img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+  /* ── New Moment Card (Friends section) ── */
   .dsc-friends-list{padding:0 16px 80px;}
-  .dsc-friend-card{background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:18px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:opacity .25s ease-out;}
-  @media(prefers-color-scheme:dark){.dsc-friend-card{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
-  .dsc-friend-card:active{opacity:0.72;}
-  .dsc-friend-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-  .dsc-friend-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .dsc-friend-name{font-size:14px;font-weight:600;color:#1c1c1e;line-height:1.2;}
-  @media(prefers-color-scheme:dark){.dsc-friend-name{color:#f5f5f7;}}
-  .dsc-friend-time{font-size:11px;color:#aeaeb2;margin-top:1px;}
-  .dsc-friend-text{font-size:14px;color:#3c3c3e;line-height:1.6;}
+  /* New card style: clean white, no glass */
+  .dsc-mc{
+    background:#ffffff;
+    border-radius:8px;
+    padding:12px;
+    margin-bottom:10px;
+    box-shadow:none;
+    position:relative;
+  }
+  @media(prefers-color-scheme:dark){.dsc-mc{background:#1c1c1e;}}
+  /* Header row */
+  .dsc-mc-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
+  .dsc-mc-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .dsc-mc-av img{width:100%;height:100%;object-fit:cover;}
+  .dsc-mc-meta{flex:1;min-width:0;}
+  .dsc-mc-name-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
+  .dsc-mc-name{font-size:16px;font-weight:600;color:#3a3a3c;line-height:1.2;white-space:nowrap;}
+  @media(prefers-color-scheme:dark){.dsc-mc-name{color:#f5f5f7;}}
+  .dsc-mc-id{font-size:10px;font-weight:400;color:#aeaeb2;white-space:nowrap;}
+  .dsc-mc-actions{display:flex;align-items:center;flex-shrink:0;margin-left:4px;align-self:flex-start;}
+  .dsc-mc-icon-btn{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#3a3a3c;transition:opacity .2s;-webkit-tap-highlight-color:transparent;}
+  @media(prefers-color-scheme:dark){.dsc-mc-icon-btn{color:#aeaeb2;}}
+  .dsc-mc-icon-btn:active{opacity:0.5;}
+  /* Three-dot menu button */
+  .dsc-mc-dots-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .2s;-webkit-tap-highlight-color:transparent;border-radius:50%;}
+  .dsc-mc-dots-btn:active{opacity:0.5;background:rgba(0,0,0,0.06);}
+  .dsc-mc-dots-btn svg circle{fill:#555;}
+  @media(prefers-color-scheme:dark){
+    .dsc-mc-dots-btn:active{background:rgba(255,255,255,0.06);}
+    .dsc-mc-dots-btn svg circle{fill:#888;}
+  }
+  /* Floating post action menu */
+  .dsc-post-menu{
+    position:fixed;z-index:9100;
+    display:flex;flex-direction:row;align-items:center;
+    background:rgba(255,255,255,0.88);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.55);
+    border-radius:16px;
+    padding:6px 4px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.14);
+    gap:2px;
+    opacity:0;
+    transform:translateY(-6px) scale(0.96);
+    transition:opacity 0.2s ease-out,transform 0.2s ease-out;
+    pointer-events:none;
+  }
+  @media(prefers-color-scheme:dark){
+    .dsc-post-menu{background:rgba(38,38,40,0.92);border-color:rgba(255,255,255,0.12);}
+  }
+  .dsc-post-menu.visible{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+  .dsc-post-menu-item{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:6px 14px;cursor:pointer;border-radius:12px;
+    color:#1c1c1e;font-size:12px;font-weight:500;
+    transition:background .15s ease;white-space:nowrap;
+    -webkit-tap-highlight-color:transparent;
+  }
+  @media(prefers-color-scheme:dark){.dsc-post-menu-item{color:#f5f5f7;}}
+  .dsc-post-menu-item:active{background:rgba(0,0,0,0.06);}
+  @media(prefers-color-scheme:dark){.dsc-post-menu-item:active{background:rgba(255,255,255,0.08);}}
+  .dsc-post-menu-item.danger{color:#ff3b30;}
+  .dsc-post-menu-sep{width:1px;height:32px;background:rgba(0,0,0,0.08);flex-shrink:0;}
+  @media(prefers-color-scheme:dark){.dsc-post-menu-sep{background:rgba(255,255,255,0.1);}}
+  /* Content — now lives inside .dsc-mc-meta */
+  .dsc-mc-text{font-size:12px;font-weight:400;color:#3a3a3c;line-height:1.5;margin-top:3px;word-break:break-word;}
+  @media(prefers-color-scheme:dark){.dsc-mc-text{color:#a1a1a6;}}
+  /* Image grid */
+  .dsc-mc-imgs{display:grid;gap:4px;margin-bottom:8px;}
+  .dsc-mc-imgs.n1{grid-template-columns:1fr;max-width:160px;}
+  .dsc-mc-imgs.n2,.dsc-mc-imgs.n3,.dsc-mc-imgs.many{grid-template-columns:repeat(3,1fr);}
+  .dsc-mc-img-cell{
+    aspect-ratio:1;border-radius:5px;
+    background:#e0e0e0;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;position:relative;
+  }
+  @media(prefers-color-scheme:dark){.dsc-mc-img-cell{background:#3a3a3c;}}
+  .dsc-mc-img-cell img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+  /* Footer */
+  .dsc-mc-footer{display:flex;align-items:center;justify-content:space-between;}
+  .dsc-mc-time{font-size:12px;color:#8e8e93;display:inline-block;transform:translateY(1.5px);}
+  .dsc-mc-btns{display:flex;align-items:center;gap:16px;}
+  .dsc-mc-btn{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#3a3a3c;transition:opacity .2s;-webkit-tap-highlight-color:transparent;}
+  @media(prefers-color-scheme:dark){.dsc-mc-btn{color:#aeaeb2;}}
+  .dsc-mc-btn:active{opacity:0.5;}
+  .dsc-mc-share{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#3a3a3c;-webkit-tap-highlight-color:transparent;}
+  @media(prefers-color-scheme:dark){.dsc-mc-share{color:#aeaeb2;}}
+  /* Keep old selectors so other code doesn't break */
+  .dsc-friend-card{display:none;}
+  .dsc-friend-row,.dsc-friend-av,.dsc-friend-name,.dsc-friend-time,.dsc-friend-text{}
   @media(prefers-color-scheme:dark){.dsc-friend-text{color:#ebebf5;}}
   .dsc-friend-imgs{display:grid;gap:4px;margin-top:8px;}
   .dsc-friend-imgs.cols-1{grid-template-columns:1fr;max-width:160px;}
@@ -2480,16 +2563,154 @@ function chatSelectWorldBookEdit(){
 }
 
 /* ── Discover Tab (Redesigned Personal Moments Page) ── */
+
+/* ── Pinyin conversion (common chars) ── */
+const PINYIN_MAP=(function(){
+  const m={};
+  const entries=[
+    ['小','XIAO'],['美','MEI'],['云','YUN'],['朵','DUO'],['鹿','LU'],
+    ['夜','YE'],['行','XING'],['者','ZHE'],['大','DA'],['中','ZHONG'],
+    ['小','XIAO'],['明','MING'],['红','HONG'],['花','HUA'],['草','CAO'],
+    ['木','MU'],['水','SHUI'],['火','HUO'],['土','TU'],['山','SHAN'],
+    ['海','HAI'],['天','TIAN'],['地','DI'],['人','REN'],['心','XIN'],
+    ['风','FENG'],['雨','YU'],['雪','XUE'],['月','YUE'],['星','XING'],
+    ['光','GUANG'],['影','YING'],['梦','MENG'],['情','QING'],['爱','AI'],
+    ['生','SHENG'],['命','MING'],['春','CHUN'],['夏','XIA'],['秋','QIU'],
+    ['冬','DONG'],['龙','LONG'],['凤','FENG'],['鸟','NIAO'],['鱼','YU'],
+    ['白','BAI'],['黑','HEI'],['青','QING'],['蓝','LAN'],['绿','LV'],
+    ['紫','ZI'],['金','JIN'],['银','YIN'],['玉','YU'],['石','SHI'],
+    ['阳','YANG'],['阴','YIN'],['静','JING'],['动','DONG'],['晴','QING'],
+    ['雷','LEI'],['电','DIAN'],['冰','BING'],['霜','SHUANG'],['露','LU'],
+    ['芸','YUN'],['萱','XUAN'],['薇','WEI'],['菊','JU'],['荷','HE'],
+    ['兰','LAN'],['梅','MEI'],['竹','ZHU'],['菊','JU'],['桃','TAO'],
+    ['李','LI'],['杏','XING'],['柳','LIU'],['松','SONG'],['柏','BAI'],
+    ['枫','FENG'],['橘','JU'],['桂','GUI'],['莲','LIAN'],['荷','HE'],
+    ['燕','YAN'],['鹰','YING'],['虎','HU'],['狼','LANG'],['熊','XIONG'],
+    ['猫','MAO'],['狗','GOU'],['兔','TU'],['鼠','SHU'],['牛','NIU'],
+    ['马','MA'],['羊','YANG'],['猪','ZHU'],['鸡','JI'],['蛇','SHE'],
+    ['猴','HOU'],['龟','GUI'],['鹤','HE'],['孔','KONG'],['雀','QUE'],
+    ['好','HAO'],['乐','LE'],['欢','HUAN'],['喜','XI'],['悦','YUE'],
+    ['怡','YI'],['安','AN'],['宁','NING'],['康','KANG'],['健','JIAN'],
+    ['勤','QIN'],['勇','YONG'],['智','ZHI'],['仁','REN'],['义','YI'],
+    ['礼','LI'],['信','XIN'],['忠','ZHONG'],['孝','XIAO'],['廉','LIAN'],
+    ['诗','SHI'],['书','SHU'],['画','HUA'],['乐','LE'],['舞','WU'],
+    ['琴','QIN'],['棋','QI'],['墨','MO'],['笔','BI'],['纸','ZHI'],
+    ['灵','LING'],['魂','HUN'],['神','SHEN'],['仙','XIAN'],['道','DAO'],
+    ['德','DE'],['慧','HUI'],['聪','CONG'],['睿','RUI'],['哲','ZHE'],
+    ['晨','CHEN'],['曦','XI'],['暮','MU'],['昕','XIN'],['昱','YU'],
+    ['晴','QING'],['霖','LIN'],['霞','XIA'],['霓','NI'],['彩','CAI'],
+    ['峰','FENG'],['岚','LAN'],['溪','XI'],['涛','TAO'],['浪','LANG'],
+    ['江','JIANG'],['河','HE'],['湖','HU'],['泉','QUAN'],['潮','CHAO'],
+    ['我','WO'],['你','NI'],['他','TA'],['她','TA'],['它','TA'],
+    ['用','YONG'],['户','HU'],['名','MING'],['号','HAO'],['昵','NI'],
+    ['称','CHENG'],['字','ZI'],['语','YU'],['话','HUA'],['声','SHENG'],
+  ];
+  entries.forEach(([c,p])=>{m[c]=p;});
+  return m;
+})();
+
+function nameToPinyin(name){
+  if(!name)return'USER';
+  let result='';
+  for(let i=0;i<name.length;i++){
+    const ch=name[i];
+    if(/[a-zA-Z]/.test(ch)){result+=ch.toUpperCase();}
+    else if(PINYIN_MAP[ch]){result+=PINYIN_MAP[ch];}
+    else if(/[\u4e00-\u9fff]/.test(ch)){
+      // Unknown CJK: use unicode codepoint rough approximation
+      const cp=ch.codePointAt(0);
+      const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      result+=letters[(cp-0x4e00)%26];
+    }
+    // skip spaces/punctuation
+  }
+  return result||'USER';
+}
+
+function formatMomentTime(ts){
+  const d=new Date(ts);
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const day=days[d.getDay()];
+  const hh=String(d.getHours()).padStart(2,'0');
+  const mm=String(d.getMinutes()).padStart(2,'0');
+  return day+' · '+hh+':'+mm;
+}
+
+function dscEnsureSamplePosts(){
+  const data=chatGetData();
+  if(!data.discovers){data.discovers=[];chatSaveData(data);}
+}
+
+function dscBuildMomentCard(post){
+  const name=post.authorName||post.user||'用户';
+  const pid='@_'+nameToPinyin(name);
+  const avatar=post.authorAvatar||post.img||'';
+  const avContent=avatar
+    ?`<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;">`
+    :`<span style="font-size:15px;font-weight:700;color:#fff;">${escHtml(name[0]||'?')}</span>`;
+  const timeStr=post.time?formatMomentTime(post.time):'';
+  const content=post.content||'';
+  const images=post.images||[];
+  if(post.img&&post.img&&!images.length){images.push(post.img);}
+
+  let imgGridHTML='';
+  if(images.length>0){
+    const nc=images.length===1?'n1':images.length<=3?'n'+images.length:'many';
+    imgGridHTML=`<div class="dsc-mc-imgs ${nc}">`;
+    images.forEach((item,i)=>{
+      const src=typeof item==='string'?item:(item&&item.type==='photo'?item.url:null);
+      if(src){
+        imgGridHTML+=`<div class="dsc-mc-img-cell" onclick="showToast('图片详情')"><img src="${escHtml(src)}" loading="lazy"></div>`;
+      } else if(item&&typeof item==='object'&&item.type==='text'){
+        imgGridHTML+=`<div class="dsc-mc-img-cell" style="background:#f0f0f2;flex-direction:column;gap:4px;" onclick="showToast('图片描述')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round" opacity=".6"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span style="font-size:9px;color:#8e8e93;text-align:center;padding:0 4px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${escHtml((item.description||'').substring(0,40))}</span></div>`;
+      } else {
+        imgGridHTML+=`<div class="dsc-mc-img-cell" onclick="showToast('图片详情')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".3"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
+      }
+    });
+    imgGridHTML+=`</div>`;
+  }
+
+  const postId=post.id||'';
+  return `<div class="dsc-mc">
+    <div class="dsc-mc-hdr">
+      <div class="dsc-mc-av">${avContent}</div>
+      <div class="dsc-mc-meta">
+        <div class="dsc-mc-name-row">
+          <span class="dsc-mc-name">${escHtml(name)}</span>
+          <span class="dsc-mc-id">${escHtml(pid)}</span>
+        </div>
+        ${content?`<div class="dsc-mc-text">${escHtml(content)}</div>`:''}
+      </div>
+      <div class="dsc-mc-actions" style="margin-top:-2px;margin-right:-2px;">
+        <div class="dsc-mc-dots-btn" title="更多" onclick="dscShowPostMenu('${escHtml(postId)}',this)">
+          <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2.2" fill="#555"/><circle cx="12" cy="12" r="2.2" fill="#555"/><circle cx="12" cy="19" r="2.2" fill="#555"/></svg>
+        </div>
+      </div>
+    </div>
+    ${imgGridHTML}
+    <div class="dsc-mc-footer">
+      <span class="dsc-mc-time">${escHtml(timeStr)}</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="dsc-mc-btn" title="点赞" onclick="dscToggleLike('${escHtml(postId)}',this)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <div class="dsc-mc-btn" title="评论" onclick="showToast('评论功能开发中')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.7 1.2 5.12 3.12 6.82L4 22l4.36-2.18A10.6 10.6 0 0012 20c5.52 0 10-4.03 10-9s-4.48-9-10-9z"/><path d="M8 11h.01M12 11h.01M16 11h.01" stroke-width="2.5"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function chatBuildDiscover(){
   const data=chatGetData();
-  const discovers=data.discovers||[];
+  dscEnsureSamplePosts();
+  const discovers=(chatGetData()).discovers||[];
 
   const dName=localStorage.getItem('discoverName')||localStorage.getItem('xsj_discover_name')||'用户昵称';
   const dBio=localStorage.getItem('discoverBio')||localStorage.getItem('xsj_discover_bio')||'记录生活的每一刻';
   const dAvatar=localStorage.getItem('discoverAvatar')||localStorage.getItem('xsj_avatar')||'';
   const dBg=localStorage.getItem('discoverBg')||'';
-  const userLocation=localStorage.getItem('userLocation')||localStorage.getItem('lock-info-city-text')||'广州';
-  const postsCount=discovers.length;
 
   const avHTML=dAvatar
     ?`<img src="${dAvatar}" style="width:100%;height:100%;object-fit:cover;">`
@@ -2498,52 +2719,36 @@ function chatBuildDiscover(){
     ?`background-image:url(${dBg});background-size:cover;background-position:center;`
     :`background:#e8e8ea;`;
 
-  // My posts (up to 3 shown in grid)
-  const myPosts=discovers.slice(0,3);
+  // My posts grid (up to 3) — only user posts, no AI
+  const myPosts=discovers.filter(p=>p.isAi!==true).slice(0,3);
+  const postsCount=discovers.filter(p=>p.isAi!==true).length;
   let gridHTML='';
   for(let i=0;i<3;i++){
     const post=myPosts[i];
-    const postImg=post&&post.img?`<img src="${post.img}" alt="">`:'';
+    const firstImgRaw=post&&post.images&&post.images[0]?post.images[0]:post&&post.img?post.img:'';
+    const firstImg=typeof firstImgRaw==='string'?firstImgRaw:(firstImgRaw&&firstImgRaw.type==='photo'?firstImgRaw.url:'');
     const postText=post?(post.content||'').substring(0,20):'';
-    const postPlaceholder=post?'':'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>';
+    const postPlaceholder='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>';
+    // Text-type image placeholder in grid
+    const hasTextImg=post&&post.images&&post.images[0]&&typeof post.images[0]==='object'&&post.images[0].type==='text';
     gridHTML+=`<div class="dsc-post-card" onclick="dscPostCardClick(${i})" data-post-idx="${i}">
-      ${postImg}
+      ${firstImg?`<img src="${escHtml(firstImg)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`:''}
       ${!post ? postPlaceholder : ''}
-      ${post&&!post.img?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;font-size:11px;color:#8e8e93;line-height:1.4;">${escHtml(postText)}</div>`:''}
-      <input type="file" id="dsc-post-img-${i}" accept="image/*" style="display:none;" onchange="dscUpdatePostImg(this,${i})">
+      ${post&&hasTextImg?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px;text-align:center;font-size:10px;color:inherit;line-height:1.4;">${escHtml((post.images[0].description||'').substring(0,30))}</div>`:''}
+      ${post&&!firstImg&&!hasTextImg?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;font-size:11px;color:inherit;line-height:1.4;">${escHtml(postText)}</div>`:''}
     </div>`;
   }
 
-  // Friends dynamic feed
-  const friendPosts=[
-    {name:'云朵',time:'1小时前',text:'今天天气真好，适合出去走走。决定一个人去公园坐坐。',imgs:3},
-    {name:'小鹿',time:'3小时前',text:'刚读完一本很棒的书，故事里每一个细节都让人动容。强烈推荐。',imgs:1},
-    {name:'夜行者',time:'昨天',text:'深夜的城市有一种特别的安静，让人忍不住走下去。',imgs:0}
-  ];
+  // Friends dynamic feed (all discovers)
   let friendsHTML='';
-  friendPosts.forEach(fp=>{
-    const init=fp.name[0];
-    let imgs='';
-    if(fp.imgs>0){
-      const colCls=fp.imgs===1?'cols-1':fp.imgs===2?'cols-2':'cols-3';
-      imgs=`<div class="dsc-friend-imgs ${colCls}">`;
-      for(let i=0;i<fp.imgs;i++){
-        imgs+=`<div class="dsc-friend-img-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
-      }
-      imgs+=`</div>`;
-    }
-    friendsHTML+=`<div class="dsc-friend-card" onclick="showToast('详情开发中')">
-      <div class="dsc-friend-row">
-        <div class="dsc-friend-av"><span style="font-size:15px;font-weight:700;color:#fff;">${init}</span></div>
-        <div>
-          <div class="dsc-friend-name">${escHtml(fp.name)}</div>
-          <div class="dsc-friend-time">${fp.time}</div>
-        </div>
-      </div>
-      <div class="dsc-friend-text">${escHtml(fp.text)}</div>
-      ${imgs}
-    </div>`;
-  });
+  if(discovers.length===0){
+    friendsHTML=`<div style="text-align:center;padding:40px 0;color:#aeaeb2;font-size:14px;">暂无动态，发布第一条吧 ✨</div>`;
+  } else {
+    discovers.forEach(post=>{
+      if(!post.id)post.id='p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+      friendsHTML+=dscBuildMomentCard(post);
+    });
+  }
 
   return `<div class="dsc-page" id="dsc-page-wrap">
     <!-- Top section: white bg with bottom radius -->
@@ -2570,18 +2775,18 @@ function chatBuildDiscover(){
       </div>
     </div>
     </div><!-- /dsc-top-section -->
-    <!-- My posts section (social media block shifted up 4px) -->
+    <!-- My posts section -->
     <div style="margin-top:-4px;">
     <div class="dsc-section-header">
       <span class="dsc-section-title">social media</span>
-      <div class="dsc-section-right" onclick="showToast('跳转全量朋友圈')">
+      <div class="dsc-section-right" onclick="showToast('全量朋友圈')">
         <span id="dsc-posts-count">${postsCount} posts</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
       </div>
     </div>
     <div class="dsc-posts-grid" id="dsc-posts-grid">${gridHTML}</div>
-    </div><!-- /social media wrapper -->
-    <!-- Divider between social media and friends -->
+    </div>
+    <!-- Divider -->
     <div class="dsc-section-divider"></div>
     <!-- Friends section -->
     <div class="dsc-section-header">
@@ -2609,9 +2814,7 @@ function dscHandleAvatar(input){
   compressImage(f,200,0.82,function(src){
     localStorage.setItem('discoverAvatar',src);
     const av=document.getElementById('dsc-avatar');
-    if(av){
-      av.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
-    }
+    if(av){av.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;}
   });
   input.value='';
 }
@@ -2642,53 +2845,360 @@ function dscEditBio(){
 function dscPostCardClick(idx){
   const data=chatGetData();
   const post=data.discovers&&data.discovers[idx];
-  if(post){showToast('详情开发中');}
-  else{document.getElementById('dsc-post-img-'+idx)&&document.getElementById('dsc-post-img-'+idx).click();}
+  if(post){showToast('详情：'+((post.content||'').substring(0,20)||'无内容'));}
 }
+// dscUpdatePostImg kept for legacy compat (no longer used by new FAB)
 function dscUpdatePostImg(input,idx){
   const f=input.files[0];if(!f)return;
   compressImage(f,400,0.82,function(src){
     const data=chatGetData();
     if(!data.discovers)data.discovers=[];
-    if(!data.discovers[idx])data.discovers[idx]={user:localStorage.getItem('xsj_name')||'我',time:'刚刚',content:'',img:src,imgs:1};
-    else data.discovers[idx].img=src;
-    chatSaveData(data);
-    // Update card image in-place
-    const card=document.querySelector(`.dsc-post-card[data-post-idx="${idx}"]`);
-    if(card){
-      const existImg=card.querySelector('img');
-      if(existImg){existImg.src=src;}
-      else{const img=document.createElement('img');img.src=src;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';card.insertBefore(img,card.firstChild);}
+    if(!data.discovers[idx]){
+      const myName=localStorage.getItem('xsj_name')||'我';
+      data.discovers[idx]={id:'p_'+Date.now(),authorId:'me',authorName:myName,authorAvatar:localStorage.getItem('xsj_avatar')||'',content:'',images:[src],time:Date.now(),likes:0,comments:[]};
+    } else {
+      if(!data.discovers[idx].images)data.discovers[idx].images=[];
+      data.discovers[idx].images[0]=src;
     }
+    chatSaveData(data);
+    chatSwitchTab('discover');
   });
   input.value='';
 }
+
+/* ── Three-dot floating menu for moment cards ── */
+let _dscActiveMenu=null;
+let _dscMenuOverlay=null;
+function dscShowPostMenu(postId, btnEl){
+  // Remove any existing menu
+  if(_dscActiveMenu){_dscActiveMenu.remove();_dscActiveMenu=null;}
+  if(_dscMenuOverlay){_dscMenuOverlay.remove();_dscMenuOverlay=null;}
+
+  const isDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+  // Backdrop overlay (invisible, just for outside-click detection)
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:9099;';
+  _dscMenuOverlay=overlay;
+  document.body.appendChild(overlay);
+
+  // Build menu
+  const menu=document.createElement('div');
+  menu.className='dsc-post-menu';
+  _dscActiveMenu=menu;
+
+  const items=[
+    {label:'编辑',icon:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,action:()=>{closeDscMenu();dscEditPost(postId);}},
+    {label:'删除',icon:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>`,danger:true,action:()=>{closeDscMenu();dscDeletePost(postId);}}
+  ];
+
+  items.forEach((item,i)=>{
+    if(i>0){
+      const sep=document.createElement('div');
+      sep.className='dsc-post-menu-sep';
+      menu.appendChild(sep);
+    }
+    const btn=document.createElement('div');
+    btn.className='dsc-post-menu-item'+(item.danger?' danger':'');
+    btn.innerHTML=`<span style="display:flex;align-items:center;">${item.icon}</span><span>${item.label}</span>`;
+    btn.addEventListener('click',(e)=>{e.stopPropagation();item.action();});
+    menu.appendChild(btn);
+  });
+
+  document.body.appendChild(menu);
+
+  // Position near the button
+  requestAnimationFrame(()=>{
+    const mW=menu.offsetWidth||120;
+    const mH=menu.offsetHeight||50;
+    const r=btnEl.getBoundingClientRect();
+    let top=r.bottom+6;
+    let left=r.right-mW;
+    if(top+mH>window.innerHeight-8)top=r.top-mH-6;
+    left=Math.max(8,Math.min(left,window.innerWidth-mW-8));
+    menu.style.top=top+'px';
+    menu.style.left=left+'px';
+    requestAnimationFrame(()=>menu.classList.add('visible'));
+  });
+
+  overlay.addEventListener('click',closeDscMenu);
+}
+function closeDscMenu(){
+  if(_dscActiveMenu){
+    _dscActiveMenu.classList.remove('visible');
+    const m=_dscActiveMenu;
+    setTimeout(()=>{if(m.parentNode)m.remove();},200);
+    _dscActiveMenu=null;
+  }
+  if(_dscMenuOverlay){_dscMenuOverlay.remove();_dscMenuOverlay=null;}
+}
+
+/* ── Post: New ── */
+function dscSetImageMode(mode){
+  window._dscImageMode=mode;
+  const btnPhoto=document.getElementById('dsc-mode-photo');
+  const btnText=document.getElementById('dsc-mode-text');
+  const photoArea=document.getElementById('dsc-photo-upload-area');
+  const textArea=document.getElementById('dsc-text-desc-area');
+  const activeBg='rgba(0,0,0,0.12)';
+  const inactiveBg='rgba(0,0,0,0.04)';
+  if(btnPhoto)btnPhoto.style.background=mode==='photo'?activeBg:inactiveBg;
+  if(btnText)btnText.style.background=mode==='text'?activeBg:inactiveBg;
+  if(btnPhoto)btnPhoto.style.fontWeight=mode==='photo'?'600':'400';
+  if(btnText)btnText.style.fontWeight=mode==='text'?'600':'400';
+  if(photoArea)photoArea.style.display=mode==='photo'?'block':'none';
+  if(textArea)textArea.style.display=mode==='text'?'block':'none';
+}
+
 function dscPostNew(){
-  let _newPostImg='';
+  window._dscNewImages=[];
+  window._dscImageMode='photo';
+  const myName=localStorage.getItem('xsj_name')||'我';
+  const imgPreviewId='dsc-new-imgs-wrap';
   showModal({
     title:'发布动态',subtitle:'New Moment',
-    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">动态内容</div><textarea class="xsj-textarea" data-field="content" placeholder="分享你的动态..." rows="3" style="resize:none;"></textarea></div>
-    <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
-      <div id="dsc-new-img-preview" onclick="document.getElementById('dsc-new-img-file').click()" style="width:60px;height:60px;border-radius:10px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:1.5px dashed rgba(0,0,0,0.15);">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    contentHtml:`
+    <div class="xsj-field-wrap">
+      <div class="xsj-field-label">动态内容</div>
+      <textarea class="xsj-textarea" data-field="content" id="dsc-new-content" placeholder="分享你的动态..." rows="3" style="resize:none;"></textarea>
+    </div>
+    <div class="xsj-field-wrap">
+      <div class="xsj-field-label" style="margin-bottom:8px;">选择图片模式</div>
+      <div style="display:flex;gap:8px;">
+        <div id="dsc-mode-photo" onclick="dscSetImageMode('photo')" style="flex:1;padding:8px 0;border-radius:12px;background:rgba(0,0,0,0.12);text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;">📷 真实照片</div>
+        <div id="dsc-mode-text" onclick="dscSetImageMode('text')" style="flex:1;padding:8px 0;border-radius:12px;background:rgba(0,0,0,0.04);text-align:center;font-size:13px;font-weight:400;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;">✏️ 文字描述</div>
       </div>
-      <input type="file" id="dsc-new-img-file" accept="image/*" style="display:none;" onchange="(function(inp){const f=inp.files[0];if(!f)return;compressImage(f,400,0.82,function(s){window._newPostImg=s;const p=document.getElementById('dsc-new-img-preview');if(p){p.innerHTML='';const im=document.createElement('img');im.src=s;im.style.cssText='width:100%;height:100%;object-fit:cover;';p.appendChild(im);}});inp.value='';})(this)">
-      <div style="font-size:12px;color:#aeaeb2;">点击添加图片（可选）</div>
+    </div>
+    <div id="dsc-photo-upload-area">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div class="xsj-field-label" style="margin-bottom:0;">图片（可多选）</div>
+        <div id="dsc-ai-desc-btn" onclick="dscAiDescribeImages()" style="display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:14px;background:rgba(0,122,255,0.10);color:#007aff;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(0,122,255,0.18);-webkit-tap-highlight-color:transparent;transition:opacity .15s;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          AI 描述图片
+        </div>
+      </div>
+      <div id="${imgPreviewId}" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div onclick="document.getElementById('dsc-new-img-multi').click()" style="width:56px;height:56px;border-radius:10px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.15);flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
+        </div>
+        <input type="file" id="dsc-new-img-multi" accept="image/*" multiple style="display:none;" onchange="dscHandleNewImages(this)">
+        <span style="font-size:12px;color:#aeaeb2;">点击添加图片（可多选）</span>
+      </div>
+    </div>
+    <div id="dsc-text-desc-area" style="display:none;">
+      <div class="xsj-field-label" style="margin-bottom:8px;">图片描述</div>
+      <div style="border-radius:10px;background:rgba(0,0,0,0.04);border:1.5px dashed rgba(0,0,0,0.12);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;min-height:60px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1" stroke-linecap="round" opacity=".5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </div>
+      <textarea class="xsj-textarea" id="dsc-img-desc-input" placeholder="请输入图片描述…" rows="3" style="resize:none;"></textarea>
     </div>`,
     onConfirm(d){
       const content=(d.content||'').trim();
-      if(!content&&!window._newPostImg){showToast('请输入内容或添加图片');return;}
+      const mode=window._dscImageMode||'photo';
+      let images=[];
+      if(mode==='photo'){
+        images=window._dscNewImages||[];
+        if(!content&&!images.length){showToast('请输入内容或添加图片');return;}
+      } else {
+        const descEl=document.getElementById('dsc-img-desc-input');
+        const desc=(descEl?descEl.value:'').trim();
+        if(!content&&!desc){showToast('请输入内容或图片描述');return;}
+        if(desc)images=[{type:'text',description:desc,placeholderImage:true}];
+      }
       const data=chatGetData();
       if(!data.discovers)data.discovers=[];
-      const name=localStorage.getItem('xsj_name')||'我';
-      const newPost={user:name,time:'刚刚',content,img:window._newPostImg||'',imgs:window._newPostImg?1:0};
+      const myAvatar=localStorage.getItem('xsj_avatar')||localStorage.getItem('meAvatar')||'';
+      const newPost={
+        id:'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+        authorId:'me',
+        authorName:myName,
+        authorAvatar:myAvatar,
+        content:content,
+        images:images,
+        time:Date.now(),
+        likes:0,
+        comments:[],
+        isAi:false,
+        isUser:true
+      };
       data.discovers.unshift(newPost);
       chatSaveData(data);
-      window._newPostImg='';
+      window._dscNewImages=[];
       chatSwitchTab('discover');
     }
   });
 }
+
+/* ── AI Image Description ── */
+async function dscAiDescribeImages(){
+  const imgs=window._dscNewImages||[];
+  if(!imgs.length){showToast('请先上传图片');return;}
+  const btn=document.getElementById('dsc-ai-desc-btn');
+  const ta=document.getElementById('dsc-new-content');
+  if(!btn||!ta)return;
+  btn.style.opacity='0.5';
+  btn.style.pointerEvents='none';
+  btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" dur="0.8s" values="0 12 12;360 12 12" repeatCount="indefinite"/></circle></svg> AI 描述中…`;
+  try {
+    // Build content array with the first image (or all images)
+    const imageContents=imgs.slice(0,3).map(src=>{
+      // src is a data URL like "data:image/jpeg;base64,..."
+      const match=src.match(/^data:(image\/[^;]+);base64,(.+)$/);
+      if(!match)return null;
+      return {type:'image',source:{type:'base64',media_type:match[1],data:match[2]}};
+    }).filter(Boolean);
+    imageContents.push({type:'text',text:'请用中文简洁描述这张（或这几张）图片的内容，适合作为朋友圈动态文字，50字以内，不要带引号。'});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:200,
+        messages:[{role:'user',content:imageContents}]
+      })
+    });
+    const json=await resp.json();
+    const text=(json.content||[]).map(c=>c.type==='text'?c.text:'').join('').trim();
+    if(text){
+      ta.value=text;
+      // Also set the data-field value by dispatching input event
+      ta.dispatchEvent(new Event('input',{bubbles:true}));
+      showToast('AI描述已填入 ✓');
+    } else {
+      showToast('AI描述失败，请重试');
+    }
+  } catch(e){
+    showToast('AI描述失败，请重试');
+  } finally {
+    if(btn){
+      btn.style.opacity='1';btn.style.pointerEvents='auto';
+      btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg> AI 描述图片`;
+    }
+  }
+}
+
+/* ── Toggle Like ── */
+function dscToggleLike(postId,btnEl){
+  const data=chatGetData();
+  if(!data.discovers)return;
+  const post=data.discovers.find(p=>p.id===postId);
+  if(!post)return;
+  post._liked=!post._liked;
+  post.likes=(post.likes||0)+(post._liked?1:-1);
+  if(post.likes<0)post.likes=0;
+  chatSaveData(data);
+  // Animate the like button
+  const svg=btnEl&&btnEl.querySelector('svg');
+  if(svg)svg.style.fill=post._liked?'#ff3b30':'none';
+  if(svg)svg.style.stroke=post._liked?'#ff3b30':'currentColor';
+  showToast(post._liked?'已点赞 ❤️':'取消点赞');
+}
+window.dscHandleNewImages=function(input){
+  const files=Array.from(input.files);
+  if(!files.length)return;
+  const wrap=document.getElementById('dsc-new-imgs-wrap');
+  files.forEach(f=>{
+    compressImage(f,600,0.82,function(src){
+      window._dscNewImages=window._dscNewImages||[];
+      window._dscNewImages.push(src);
+      if(wrap){
+        const cell=document.createElement('div');
+        cell.style.cssText='width:56px;height:56px;border-radius:8px;overflow:hidden;flex-shrink:0;position:relative;';
+        const img=document.createElement('img');img.src=src;img.style.cssText='width:100%;height:100%;object-fit:cover;';
+        cell.appendChild(img);wrap.appendChild(cell);
+      }
+      // Show AI describe button once at least one image is added
+      const aiBtn=document.getElementById('dsc-ai-desc-btn');
+      if(aiBtn)aiBtn.style.display='flex';
+    });
+  });
+  input.value='';
+};
+
+/* ── Post: Edit ── */
+function dscEditPost(postId){
+  const data=chatGetData();
+  if(!data.discovers)return;
+  const postIdx=data.discovers.findIndex(p=>p.id===postId);
+  if(postIdx<0){showToast('动态不存在');return;}
+  const post=data.discovers[postIdx];
+  window._dscEditImages=(post.images||[]).slice();
+  if(post.img&&!window._dscEditImages.length)window._dscEditImages=[post.img];
+
+  let previewHTML='';
+  window._dscEditImages.forEach((src,i)=>{
+    previewHTML+=`<div style="width:56px;height:56px;border-radius:8px;overflow:hidden;flex-shrink:0;position:relative;"><img src="${escHtml(src)}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+  });
+
+  showModal({
+    title:'编辑动态',subtitle:'Edit Moment',
+    contentHtml:`
+    <div class="xsj-field-wrap">
+      <div class="xsj-field-label">动态内容</div>
+      <textarea class="xsj-textarea" data-field="econtent" rows="3" style="resize:none;">${escHtml(post.content||'')}</textarea>
+    </div>
+    <div class="xsj-field-label" style="margin-bottom:8px;">图片</div>
+    <div id="dsc-edit-imgs-wrap" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">${previewHTML}</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div onclick="document.getElementById('dsc-edit-img-multi').click()" style="width:56px;height:56px;border-radius:10px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.15);flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
+      </div>
+      <input type="file" id="dsc-edit-img-multi" accept="image/*" multiple style="display:none;" onchange="dscHandleEditImages(this)">
+      <span style="font-size:12px;color:#aeaeb2;">添加更多图片</span>
+      <span style="font-size:12px;color:#ff3b30;cursor:pointer;" onclick="window._dscEditImages=[];document.getElementById('dsc-edit-imgs-wrap').innerHTML='';">清空</span>
+    </div>`,
+    onConfirm(d){
+      const content=(d.econtent||'').trim();
+      if(!content&&(!window._dscEditImages||!window._dscEditImages.length)){showToast('请输入内容或添加图片');return;}
+      data.discovers[postIdx]={
+        ...post,
+        content:content,
+        images:window._dscEditImages||[],
+        img:window._dscEditImages&&window._dscEditImages[0]||post.img||''
+      };
+      chatSaveData(data);
+      window._dscEditImages=[];
+      chatSwitchTab('discover');
+      showToast('动态已更新 ✓');
+    }
+  });
+}
+window.dscHandleEditImages=function(input){
+  const files=Array.from(input.files);
+  if(!files.length)return;
+  const wrap=document.getElementById('dsc-edit-imgs-wrap');
+  files.forEach(f=>{
+    compressImage(f,600,0.82,function(src){
+      window._dscEditImages=window._dscEditImages||[];
+      window._dscEditImages.push(src);
+      if(wrap){
+        const cell=document.createElement('div');
+        cell.style.cssText='width:56px;height:56px;border-radius:8px;overflow:hidden;flex-shrink:0;position:relative;';
+        const img=document.createElement('img');img.src=src;img.style.cssText='width:100%;height:100%;object-fit:cover;';
+        cell.appendChild(img);wrap.appendChild(cell);
+      }
+    });
+  });
+  input.value='';
+};
+
+/* ── Post: Delete ── */
+function dscDeletePost(postId){
+  showModal({
+    title:'删除动态',subtitle:'Delete Moment',
+    contentHtml:`<div class="xsj-confirm-text">确认删除这条动态吗？<br><span style="font-size:13px;color:#8e8e93;">此操作无法撤销</span></div>`,
+    onConfirm(){
+      const data=chatGetData();
+      if(!data.discovers)return;
+      data.discovers=data.discovers.filter(p=>p.id!==postId);
+      chatSaveData(data);
+      chatSwitchTab('discover');
+      showToast('动态已删除');
+    }
+  });
+}
+
 // Legacy compat
 function chatPostDiscover(){dscPostNew();}
 function chatHandleMomentsBg(input){dscHandleBg(input);}

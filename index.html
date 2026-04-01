@@ -611,7 +611,7 @@
   .chat-search-input::placeholder{color:#aeaeb2;}
   .chat-search-clear{font-size:12px;color:#8e8e93;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;padding:2px 4px;}
 
-  /* ── Discover / WeChat Moments style ── */
+  /* ── Discover / Moments new design ── */
   .moments-card{background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
   @media(prefers-color-scheme:dark){.moments-card{background:rgba(44,44,46,0.85);border-color:rgba(255,255,255,0.09);}}
   .moments-user-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -629,28 +629,64 @@
   .moments-img-cell{aspect-ratio:1;border-radius:8px;background:linear-gradient(135deg,rgba(200,200,200,.35),rgba(160,160,160,.25));overflow:hidden;display:flex;align-items:center;justify-content:center;}
   .moments-img-cell img{width:100%;height:100%;object-fit:cover;}
   .moments-actions{display:flex;align-items:center;border-top:1px solid rgba(0,0,0,0.06);padding-top:9px;gap:0;}
+  /* ── Discover page redesign ── */
+  .dsc-page{width:100%;position:relative;}
+  .dsc-page::-webkit-scrollbar{display:none;}
+  .dsc-title-bar{position:absolute;top:0;left:0;right:0;z-index:10;text-align:center;padding-top:10px;padding-bottom:40px;background:linear-gradient(to bottom,rgba(255,255,255,0.6),transparent);pointer-events:none;}
+  @media(prefers-color-scheme:dark){.dsc-title-bar{background:linear-gradient(to bottom,rgba(0,0,0,0.45),transparent);}}
+  .dsc-title-text{font-family:'Times New Roman',Georgia,'Noto Serif',serif;font-size:25px;font-weight:500;color:#1c1c1e;letter-spacing:.5px;}
+  @media(prefers-color-scheme:dark){.dsc-title-text{color:#f5f5f7;}}
+  .dsc-hero-bg{width:100%;height:200px;background:#e8e8ea;background-size:cover;background-position:center;cursor:pointer;flex-shrink:0;position:relative;}
+  @media(prefers-color-scheme:dark){.dsc-hero-bg{background:#2c2c2e;}}
+  .dsc-avatar-area{display:flex;flex-direction:column;align-items:center;margin-top:-40px;position:relative;z-index:5;}
+  .dsc-avatar{width:80px;height:80px;border-radius:50%;border:2px solid #ffffff;background:linear-gradient(145deg,#c7c7cc,#8e8e93);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;transition:opacity 0.3s ease-out;}
+  .dsc-avatar:active{opacity:0.7;}
+  .dsc-avatar img{width:100%;height:100%;object-fit:cover;}
+  .dsc-avatar-dot{position:absolute;bottom:4px;right:4px;width:10px;height:10px;border-radius:50%;background:#a8a8aa;border:2px solid #fff;z-index:2;pointer-events:none;}
+  .dsc-username{font-size:20px;font-weight:600;color:#1c1c1e;margin-top:10px;cursor:pointer;transition:opacity .2s;}
+  .dsc-username:active{opacity:0.6;}
+  @media(prefers-color-scheme:dark){.dsc-username{color:#f5f5f7;}}
+  .dsc-bio{font-size:14px;color:#8e8e93;margin-top:4px;text-align:center;cursor:pointer;transition:opacity .2s;}
+  .dsc-bio:active{opacity:0.6;}
+  .dsc-weather-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:10px;}
+  .dsc-weather-item{display:flex;align-items:center;gap:5px;font-size:17px;color:#3c3c3e;}
+  @media(prefers-color-scheme:dark){.dsc-weather-item{color:#ebebf5;}}
+  .dsc-weather-item svg{color:#1c1c1e;flex-shrink:0;}
+  @media(prefers-color-scheme:dark){.dsc-weather-item svg{color:#f5f5f7;}}
+  .dsc-section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;margin-top:4px;}
+  .dsc-section-title{font-family:'Times New Roman',Georgia,'Noto Serif',serif;font-size:16px;font-weight:600;color:#1c1c1e;}
+  @media(prefers-color-scheme:dark){.dsc-section-title{color:#f5f5f7;}}
+  .dsc-section-right{display:flex;align-items:center;gap:4px;font-size:14px;color:#8e8e93;cursor:pointer;transition:opacity .2s;-webkit-tap-highlight-color:transparent;}
+  .dsc-section-right:active{opacity:0.5;}
+  .dsc-posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 8px;}
+  .dsc-post-card{aspect-ratio:1;border-radius:10px;background:rgba(255,255,255,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);overflow:hidden;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;transition:opacity .25s ease-out;}
+  @media(prefers-color-scheme:dark){.dsc-post-card{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
+  .dsc-post-card:active{opacity:0.7;}
+  .dsc-post-card img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+  .dsc-friends-list{padding:0 16px 80px;}
+  .dsc-friend-card{background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);border-radius:18px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:opacity .25s ease-out;}
+  @media(prefers-color-scheme:dark){.dsc-friend-card{background:rgba(44,44,46,0.8);border-color:rgba(255,255,255,0.09);}}
+  .dsc-friend-card:active{opacity:0.72;}
+  .dsc-friend-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .dsc-friend-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .dsc-friend-name{font-size:14px;font-weight:600;color:#1c1c1e;line-height:1.2;}
+  @media(prefers-color-scheme:dark){.dsc-friend-name{color:#f5f5f7;}}
+  .dsc-friend-time{font-size:11px;color:#aeaeb2;margin-top:1px;}
+  .dsc-friend-text{font-size:14px;color:#3c3c3e;line-height:1.6;}
+  @media(prefers-color-scheme:dark){.dsc-friend-text{color:#ebebf5;}}
+  .dsc-friend-imgs{display:grid;gap:4px;margin-top:8px;}
+  .dsc-friend-imgs.cols-1{grid-template-columns:1fr;max-width:160px;}
+  .dsc-friend-imgs.cols-2{grid-template-columns:1fr 1fr;}
+  .dsc-friend-imgs.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  .dsc-friend-img-cell{aspect-ratio:1;border-radius:7px;background:linear-gradient(135deg,rgba(200,200,200,.35),rgba(160,160,160,.25));overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .dsc-friend-img-cell img{width:100%;height:100%;object-fit:cover;}
+  .dsc-fab{position:fixed;bottom:calc(88px + env(safe-area-inset-bottom,0));right:20px;z-index:600;width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.55);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.12);transition:opacity .25s ease-out;-webkit-tap-highlight-color:transparent;}
+  @media(prefers-color-scheme:dark){.dsc-fab{background:rgba(44,44,46,0.85);border-color:rgba(255,255,255,0.12);}}
+  .dsc-fab:active{opacity:0.65;}
   @media(prefers-color-scheme:dark){.moments-actions{border-top-color:rgba(255,255,255,0.07);}}
   .moments-action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:#8e8e93;cursor:pointer;padding:3px 0;-webkit-tap-highlight-color:transparent;transition:opacity 0.3s cubic-bezier(0.25,0.46,0.45,0.94);}
   .moments-action-btn:active{opacity:.5;}
   .moments-action-sep{width:1px;height:16px;background:rgba(0,0,0,0.08);flex-shrink:0;}
-  @media(prefers-color-scheme:dark){.moments-action-sep{background:rgba(255,255,255,0.1);}}
-  /* ── Moments WeChat-style header ── */
-  .moments-hero{position:relative;width:100%;margin:-8px -0px 0;overflow:visible;}
-  .moments-hero-bg{width:100%;height:140px;background:linear-gradient(135deg,#c7c7cc 0%,#8e8e93 100%);background-size:cover;background-position:center;cursor:pointer;position:relative;}
-  .moments-hero-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.18));pointer-events:none;}
-  .moments-hero-change-btn{position:absolute;bottom:10px;right:12px;width:28px;height:28px;border-radius:14px;background:rgba(0,0,0,0.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;border:1px solid rgba(255,255,255,0.25);transition:opacity 0.22s ease;}
-  .moments-hero-change-btn:active{opacity:0.6;}
-  .moments-hero-float{display:flex;flex-direction:column;align-items:center;margin-top:-32px;padding:0 16px 16px;position:relative;z-index:4;}
-  .moments-hero-avatar{width:64px;height:64px;border-radius:50%;border:2.5px solid #fff;background:linear-gradient(145deg,#c7c7cc,#8e8e93);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.18);flex-shrink:0;transition:opacity 0.3s ease-out;}
-  .moments-hero-avatar:active{opacity:0.65;}
-  .moments-hero-avatar img{width:100%;height:100%;object-fit:cover;}
-  .moments-hero-name{font-size:18px;font-weight:700;color:#1c1c1e;margin-top:8px;letter-spacing:-.2px;cursor:pointer;transition:opacity 0.2s ease;}
-  .moments-hero-name:active{opacity:0.6;}
-  @media(prefers-color-scheme:dark){.moments-hero-name{color:#f5f5f7;}}
-  .moments-hero-bio{font-size:13px;color:#8e8e93;margin-top:3px;text-align:center;cursor:pointer;transition:opacity 0.2s ease;}
-  .moments-hero-bio:active{opacity:0.6;}
-  .moments-hero-divider{width:100%;height:1px;background:rgba(0,0,0,0.07);margin-bottom:12px;}
-  @media(prefers-color-scheme:dark){.moments-hero-divider{background:rgba(255,255,255,0.08);}}
   /* ── Contacts Redesign ── */
   .contacts-page-wrap{padding:0 0 16px;}
   .contacts-serif-title{font-family:'Times New Roman',Georgia,serif;font-size:35px;font-weight:500;color:#1c1c1e;padding:16px 16px 10px;letter-spacing:-.3px;text-align:center;}
@@ -659,7 +695,7 @@
   .contacts-avatar-scroll{display:flex;gap:14px;overflow-x:auto;padding:4px 16px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);}
   .contacts-avatar-scroll::-webkit-scrollbar{display:none;}
   .contacts-av-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-  .contacts-av-circle{width:52px;height:52px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(255,255,255,0.6);box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:opacity 0.3s ease-out;}
+  .contacts-av-circle{width:57px;height:57px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1.5px solid #ffffff;transition:opacity 0.3s ease-out;}
   .contacts-av-circle:active{opacity:0.65;}
   .contacts-av-label{font-size:11px;color:#8e8e93;max-width:54px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .contacts-action-row{display:flex;align-items:center;justify-content:space-between;padding:0 16px;margin-bottom:12px;gap:8px;}
@@ -2390,149 +2426,223 @@ function chatSelectWorldBookEdit(){
   });
 }
 
-/* ── Discover Tab (WeChat Moments style) ── */
+/* ── Discover Tab (Redesigned Personal Moments Page) ── */
 function chatBuildDiscover(){
   const data=chatGetData();
-  // Default discovers with image counts for demo
-  const defaultDiscovers=[
-    {user:'云朵',time:'1小时前',content:'今天天气真好，适合出去走走 🌸 决定一个人去公园坐坐。',imgs:3},
-    {user:'小鹿',time:'3小时前',content:'刚读完一本很棒的书，故事里每一个细节都让人动容。强烈推荐！',imgs:1},
-    {user:'夜行者',time:'昨天',content:'深夜的城市有一种特别的安静，让人忍不走下去。',imgs:0}
-  ];
-  const discovers=data.discovers;
+  const discovers=data.discovers||[];
 
-  // Independent discover profile data (separate from global user)
-  const dName=localStorage.getItem('xsj_discover_name')||'我的朋友圈';
-  const dBio=localStorage.getItem('xsj_discover_bio')||'分享生活的每一刻 ✨';
-  const dAvatar=localStorage.getItem('xsj_discover_avatar')||'';
-  const momentsBg=localStorage.getItem('xsj_moments_bg')||'';
+  const dName=localStorage.getItem('discoverName')||localStorage.getItem('xsj_discover_name')||'用户昵称';
+  const dBio=localStorage.getItem('discoverBio')||localStorage.getItem('xsj_discover_bio')||'记录生活的每一刻';
+  const dAvatar=localStorage.getItem('discoverAvatar')||localStorage.getItem('xsj_avatar')||'';
+  const dBg=localStorage.getItem('discoverBg')||'';
+  const userLocation=localStorage.getItem('userLocation')||localStorage.getItem('lock-info-city-text')||'广州';
+  const postsCount=discovers.length;
+
   const avHTML=dAvatar
     ?`<img src="${dAvatar}" style="width:100%;height:100%;object-fit:cover;">`
-    :`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>`;
-  const bgStyle=momentsBg?`style="background-image:url(${momentsBg});background-size:cover;background-position:center;"`:
-    `style="background:linear-gradient(135deg,#a8c0d0 0%,#b8a4c4 50%,#c4a4a8 100%);"`;
+    :`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>`;
+  const bgStyleStr=dBg
+    ?`background-image:url(${dBg});background-size:cover;background-position:center;`
+    :`background:#e8e8ea;`;
 
-  let html=`<div class="moments-hero">
-    <div class="moments-hero-bg" id="moments-hero-bg" ${bgStyle} onclick="document.getElementById('moments-bg-input').click()">
-      <div class="moments-hero-change-btn" title="更换背景图">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-      </div>
-    </div>
-    <div class="moments-hero-float">
-      <div class="moments-hero-avatar" onclick="document.getElementById('discover-av-input').click()">${avHTML}</div>
-      <div class="moments-hero-name" id="moments-hero-name" onclick="discoverEditName()">${dName}</div>
-      <div class="moments-hero-bio" id="moments-hero-bio" onclick="discoverEditBio()">${dBio}</div>
-    </div>
-    <div class="moments-hero-divider"></div>
-    <input type="file" id="moments-bg-input" accept="image/*" style="display:none;" onchange="chatHandleMomentsBg(this)">
-    <input type="file" id="discover-av-input" accept="image/*" style="display:none;" onchange="discoverHandleAvatar(this)">
-  </div>
-  <div style="display:flex;justify-content:flex-end;align-items:center;padding:0 16px 10px;">
-    <div class="chat-action-btn" onclick="chatPostDiscover()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
-    </div>
-  </div>`;
+  // My posts (up to 3 shown in grid)
+  const myPosts=discovers.slice(0,3);
+  let gridHTML='';
+  for(let i=0;i<3;i++){
+    const post=myPosts[i];
+    const postImg=post&&post.img?`<img src="${post.img}" alt="">`:'';
+    const postText=post?(post.content||'').substring(0,20):'';
+    const postPlaceholder=post?'':'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>';
+    gridHTML+=`<div class="dsc-post-card" onclick="dscPostCardClick(${i})" data-post-idx="${i}">
+      ${postImg}
+      ${!post&&postPlaceholder}
+      ${post&&!post.img?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;font-size:11px;color:#8e8e93;line-height:1.4;">${escHtml(postText)}</div>`:''}
+      <input type="file" id="dsc-post-img-${i}" accept="image/*" style="display:none;" onchange="dscUpdatePostImg(this,${i})">
+    </div>`;
+  }
 
-
-  let cardsHtml='';
-  discovers.forEach((d,idx)=>{
-    // Determine img count — use stored count or default demo
-    const imgCount=d.imgs!==undefined?d.imgs:(idx<defaultDiscovers.length?defaultDiscovers[idx].imgs:0);
-    const colClass=imgCount===1?'cols-1':imgCount===2?'cols-2':'cols-3';
-    let imgGrid='';
-    if(imgCount>0){
-      imgGrid=`<div class="moments-img-grid ${colClass}">`;
-      for(let i=0;i<imgCount;i++){
-        imgGrid+=`<div class="moments-img-cell">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".25"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        </div>`;
+  // Friends dynamic feed
+  const friendPosts=[
+    {name:'云朵',time:'1小时前',text:'今天天气真好，适合出去走走。决定一个人去公园坐坐。',imgs:3},
+    {name:'小鹿',time:'3小时前',text:'刚读完一本很棒的书，故事里每一个细节都让人动容。强烈推荐。',imgs:1},
+    {name:'夜行者',time:'昨天',text:'深夜的城市有一种特别的安静，让人忍不住走下去。',imgs:0}
+  ];
+  let friendsHTML='';
+  friendPosts.forEach(fp=>{
+    const init=fp.name[0];
+    let imgs='';
+    if(fp.imgs>0){
+      const colCls=fp.imgs===1?'cols-1':fp.imgs===2?'cols-2':'cols-3';
+      imgs=`<div class="dsc-friend-imgs ${colCls}">`;
+      for(let i=0;i<fp.imgs;i++){
+        imgs+=`<div class="dsc-friend-img-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
       }
-      imgGrid+='</div>';
+      imgs+=`</div>`;
     }
-    const initials=(d.user||'?')[0];
-    cardsHtml+=`<div class="moments-card">
-      <div class="moments-user-row">
-        <div class="moments-av">
-          <span style="font-size:16px;font-weight:700;color:#fff;">${initials}</span>
-        </div>
-        <div class="moments-meta">
-          <div class="moments-uname">${d.user}</div>
-          <div class="moments-time">${d.time}</div>
+    friendsHTML+=`<div class="dsc-friend-card" onclick="showToast('详情开发中')">
+      <div class="dsc-friend-row">
+        <div class="dsc-friend-av"><span style="font-size:15px;font-weight:700;color:#fff;">${init}</span></div>
+        <div>
+          <div class="dsc-friend-name">${escHtml(fp.name)}</div>
+          <div class="dsc-friend-time">${fp.time}</div>
         </div>
       </div>
-      ${d.content?`<div class="moments-text">${d.content}</div>`:''}
-      ${imgGrid}
-      <div class="moments-actions">
-        <div class="moments-action-btn" onclick="showToast('点赞功能即将上线 ❤️')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          <span>点赞</span>
-        </div>
-        <div class="moments-action-sep"></div>
-        <div class="moments-action-btn" onclick="showToast('评论功能即将上线 💬')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          <span>评论</span>
-        </div>
-      </div>
+      <div class="dsc-friend-text">${escHtml(fp.text)}</div>
+      ${imgs}
     </div>`;
   });
-  return html+`<div style="padding:0 16px 8px;">${cardsHtml}</div>`;
+
+  return `<div class="dsc-page" id="dsc-page-wrap">
+    <!-- Title bar floating above hero -->
+    <div class="dsc-title-bar">
+      <span class="dsc-title-text">MOMENTS</span>
+    </div>
+    <!-- Hero background -->
+    <div class="dsc-hero-bg" id="dsc-hero-bg" style="${bgStyleStr}" onclick="document.getElementById('dsc-bg-input').click()"></div>
+    <input type="file" id="dsc-bg-input" accept="image/*" style="display:none;" onchange="dscHandleBg(this)">
+    <!-- Avatar + profile -->
+    <div class="dsc-avatar-area">
+      <div class="dsc-avatar" id="dsc-avatar" onclick="document.getElementById('dsc-av-input').click()">
+        ${avHTML}
+        <div class="dsc-avatar-dot"></div>
+      </div>
+      <input type="file" id="dsc-av-input" accept="image/*" style="display:none;" onchange="dscHandleAvatar(this)">
+      <div class="dsc-username" id="dsc-username" onclick="dscEditName()">${escHtml(dName)}</div>
+      <div class="dsc-bio" id="dsc-bio" onclick="dscEditBio()">${escHtml(dBio)}</div>
+      <div class="dsc-weather-row">
+        <div class="dsc-weather-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+          <span>晴 24°C</span>
+        </div>
+        <div class="dsc-weather-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span id="dsc-location">${escHtml(userLocation)}</span>
+        </div>
+      </div>
+    </div>
+    <!-- My posts section -->
+    <div class="dsc-section-header">
+      <span class="dsc-section-title">social media</span>
+      <div class="dsc-section-right" onclick="showToast('跳转全量朋友圈')">
+        <span id="dsc-posts-count">${postsCount} posts</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </div>
+    <div class="dsc-posts-grid" id="dsc-posts-grid">${gridHTML}</div>
+    <!-- Friends section -->
+    <div class="dsc-section-header">
+      <span class="dsc-section-title" style="font-family:'Times New Roman',Georgia,'Noto Serif',serif;">Friends</span>
+    </div>
+    <div class="dsc-friends-list">${friendsHTML}</div>
+    <!-- FAB -->
+    <div class="dsc-fab" onclick="dscPostNew()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
+    </div>
+  </div>`;
 }
-function chatPostDiscover(){
-  showModal({
-    title:'发布动态',subtitle:'Share a Moment',
-    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">动态内容</div><textarea class="xsj-textarea" data-field="content" placeholder="分享你的动态..." rows="4" style="resize:none;"></textarea></div>`,
-    onConfirm(d){
-      const content=d.content.trim();
-      if(!content)return;
-      const data=chatGetData();
-      const name=localStorage.getItem('xsj_name')||'我';
-      data.discovers.unshift({user:name,time:'刚刚',content,imgs:0});
-      chatSaveData(data);chatSwitchTab('discover');
-    }
-  });
-}
-function chatHandleMomentsBg(input){
+
+function dscHandleBg(input){
   const f=input.files[0];if(!f)return;
   compressImage(f,800,0.82,function(src){
-    localStorage.setItem('xsj_moments_bg',src);
-    const bg=document.getElementById('moments-hero-bg');
+    localStorage.setItem('discoverBg',src);
+    const bg=document.getElementById('dsc-hero-bg');
     if(bg){bg.style.backgroundImage='url('+src+')';bg.style.backgroundSize='cover';bg.style.backgroundPosition='center';}
   });
   input.value='';
 }
-function discoverEditName(){
-  const cur=localStorage.getItem('xsj_discover_name')||'我的朋友圈';
-  showModal({
-    title:'编辑昵称',subtitle:'Edit Display Name',
-    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">朋友圈昵称</div><input class="xsj-input" data-field="val" placeholder="请输入昵称..." value="${escHtml(cur)}" autocomplete="off"></div>`,
-    onConfirm(d){
-      const name=d.val.trim()||'我的朋友圈';
-      localStorage.setItem('xsj_discover_name',name);
-      const el=document.getElementById('moments-hero-name');if(el)el.textContent=name;
-    }
-  });
-}
-function discoverEditBio(){
-  const cur=localStorage.getItem('xsj_discover_bio')||'分享生活的每一刻 ✨';
-  showModal({
-    title:'编辑签名',subtitle:'Edit Bio',
-    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">朋友圈签名</div><input class="xsj-input" data-field="val" placeholder="请输入签名..." value="${escHtml(cur)}" autocomplete="off"></div>`,
-    onConfirm(d){
-      const bio=d.val.trim()||'分享生活的每一刻 ✨';
-      localStorage.setItem('xsj_discover_bio',bio);
-      const el=document.getElementById('moments-hero-bio');if(el)el.textContent=bio;
-    }
-  });
-}
-function discoverHandleAvatar(input){
+function dscHandleAvatar(input){
   const f=input.files[0];if(!f)return;
   compressImage(f,200,0.82,function(src){
-    localStorage.setItem('xsj_discover_avatar',src);
-    const av=document.querySelector('.moments-hero-avatar');
-    if(av)av.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+    localStorage.setItem('discoverAvatar',src);
+    const av=document.getElementById('dsc-avatar');
+    if(av){
+      const dot=av.querySelector('.dsc-avatar-dot');
+      av.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+      if(dot)av.appendChild(dot);
+    }
   });
   input.value='';
 }
+function dscEditName(){
+  const cur=localStorage.getItem('discoverName')||'用户昵称';
+  showModal({
+    title:'编辑昵称',subtitle:'Edit Name',
+    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">昵称</div><input class="xsj-input" data-field="val" placeholder="请输入昵称..." value="${escHtml(cur)}" autocomplete="off"></div>`,
+    onConfirm(d){
+      const name=(d.val||'').trim()||'用户昵称';
+      localStorage.setItem('discoverName',name);
+      const el=document.getElementById('dsc-username');if(el)el.textContent=name;
+    }
+  });
+}
+function dscEditBio(){
+  const cur=localStorage.getItem('discoverBio')||'记录生活的每一刻';
+  showModal({
+    title:'编辑简介',subtitle:'Edit Bio',
+    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">个人简介</div><input class="xsj-input" data-field="val" placeholder="请输入简介..." value="${escHtml(cur)}" autocomplete="off"></div>`,
+    onConfirm(d){
+      const bio=(d.val||'').trim()||'记录生活的每一刻';
+      localStorage.setItem('discoverBio',bio);
+      const el=document.getElementById('dsc-bio');if(el)el.textContent=bio;
+    }
+  });
+}
+function dscPostCardClick(idx){
+  const data=chatGetData();
+  const post=data.discovers&&data.discovers[idx];
+  if(post){showToast('详情开发中');}
+  else{document.getElementById('dsc-post-img-'+idx)&&document.getElementById('dsc-post-img-'+idx).click();}
+}
+function dscUpdatePostImg(input,idx){
+  const f=input.files[0];if(!f)return;
+  compressImage(f,400,0.82,function(src){
+    const data=chatGetData();
+    if(!data.discovers)data.discovers=[];
+    if(!data.discovers[idx])data.discovers[idx]={user:localStorage.getItem('xsj_name')||'我',time:'刚刚',content:'',img:src,imgs:1};
+    else data.discovers[idx].img=src;
+    chatSaveData(data);
+    // Update card image in-place
+    const card=document.querySelector(`.dsc-post-card[data-post-idx="${idx}"]`);
+    if(card){
+      const existImg=card.querySelector('img');
+      if(existImg){existImg.src=src;}
+      else{const img=document.createElement('img');img.src=src;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';card.insertBefore(img,card.firstChild);}
+    }
+  });
+  input.value='';
+}
+function dscPostNew(){
+  let _newPostImg='';
+  showModal({
+    title:'发布动态',subtitle:'New Moment',
+    contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">动态内容</div><textarea class="xsj-textarea" data-field="content" placeholder="分享你的动态..." rows="3" style="resize:none;"></textarea></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+      <div id="dsc-new-img-preview" onclick="document.getElementById('dsc-new-img-file').click()" style="width:60px;height:60px;border-radius:10px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:1.5px dashed rgba(0,0,0,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </div>
+      <input type="file" id="dsc-new-img-file" accept="image/*" style="display:none;" onchange="(function(inp){const f=inp.files[0];if(!f)return;compressImage(f,400,0.82,function(s){window._newPostImg=s;const p=document.getElementById('dsc-new-img-preview');if(p){p.innerHTML='';const im=document.createElement('img');im.src=s;im.style.cssText='width:100%;height:100%;object-fit:cover;';p.appendChild(im);}});inp.value='';})(this)">
+      <div style="font-size:12px;color:#aeaeb2;">点击添加图片（可选）</div>
+    </div>`,
+    onConfirm(d){
+      const content=(d.content||'').trim();
+      if(!content&&!window._newPostImg){showToast('请输入内容或添加图片');return;}
+      const data=chatGetData();
+      if(!data.discovers)data.discovers=[];
+      const name=localStorage.getItem('xsj_name')||'我';
+      const newPost={user:name,time:'刚刚',content,img:window._newPostImg||'',imgs:window._newPostImg?1:0};
+      data.discovers.unshift(newPost);
+      chatSaveData(data);
+      window._newPostImg='';
+      chatSwitchTab('discover');
+    }
+  });
+}
+// Legacy compat
+function chatPostDiscover(){dscPostNew();}
+function chatHandleMomentsBg(input){dscHandleBg(input);}
+function discoverEditName(){dscEditName();}
+function discoverEditBio(){dscEditBio();}
+function discoverHandleAvatar(input){dscHandleAvatar(input);}
 
 /* ── Me Tab ── */
 function chatBuildMe(){

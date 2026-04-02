@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>小手机</title>
@@ -160,9 +160,9 @@
   #main-screen.entering{opacity:0;transform:translateY(20px);}
 
   /* Pages */
-  .pages-container{width:100vw;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;display:flex;scrollbar-width:none;}
+  .pages-container{width:100vw;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;display:flex;scrollbar-width:none;touch-action:pan-x;}
   .pages-container::-webkit-scrollbar{display:none;}
-  .page{min-width:100vw;width:100vw;height:100%;scroll-snap-align:start;overflow-y:auto;overflow-x:hidden;padding-top:calc(16px + env(safe-area-inset-top,0));padding-bottom:calc(140px + env(safe-area-inset-bottom,0));padding-left:16px;padding-right:16px;scrollbar-width:none;}
+  .page{min-width:100vw;width:100vw;height:100%;scroll-snap-align:start;overflow-y:hidden;overflow-x:hidden;padding-top:calc(16px + env(safe-area-inset-top,0));padding-bottom:calc(140px + env(safe-area-inset-bottom,0));padding-left:16px;padding-right:16px;scrollbar-width:none;}
   .page::-webkit-scrollbar{display:none;}
 
   /* FIXED bottom controls overlay */
@@ -2011,6 +2011,12 @@ function chatSwitchTab(tab){
   else if(tab==='discover')page.innerHTML=chatBuildDiscover();
   else if(tab==='me')page.innerHTML=chatBuildMe();
   body.innerHTML='';body.appendChild(page);body.scrollTop=0;
+  if(tab==='discover'){
+    requestAnimationFrame(()=>{
+      const savedBg=localStorage.getItem('discoverBg');
+      if(savedBg){const bgEl=document.getElementById('dsc-hero-bg');if(bgEl)_safeBgUrl(bgEl,savedBg);}
+    });
+  }
   if(tab==='chats')setTimeout(chatAttachLongPress,50);
   if(tab==='contacts')setTimeout(chatAttachContactsLongPress,50);
 }
@@ -2917,7 +2923,11 @@ function chatBuildDiscover(){
 function dscHandleBg(input){
   const f=input.files[0];if(!f)return;
   compressImage(f,800,0.82,function(src){
-    localStorage.setItem('discoverBg',src);
+    try{
+      localStorage.setItem('discoverBg',src);
+    }catch(e){
+      showToast('⚠️ 存储空间不足，背景图无法持久化');
+    }
     const bg=document.getElementById('dsc-hero-bg');
     if(bg){ _safeBgUrl(bg, src); }
   });
@@ -2927,6 +2937,8 @@ function dscHandleAvatar(input){
   const f=input.files[0];if(!f)return;
   compressImage(f,200,0.82,function(src){
     localStorage.setItem('discoverAvatar',src);
+    // Sync to main avatar key so new posts use the latest discover avatar
+    XSJ.set(XSJ.AVATAR,src);
     const av=document.getElementById('dsc-avatar');
     if(av){av.innerHTML=`<img src="${src.replace(/"/g,'&quot;')}" style="width:100%;height:100%;object-fit:cover;">`;}
   });

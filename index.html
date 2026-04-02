@@ -43,7 +43,7 @@
   .active-scale:active{opacity:0.7;}
 
   /* Loading */
-  #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;background:var(--bg);}
+  #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;background:var(--bg);transition:opacity .3s ease;}
   /* Heart-trace overlay container */
   .loading-heart-container{position:relative;display:inline-flex;align-items:center;justify-content:center;width:220px;height:140px;}
   .loader-text{position:relative;z-index:1;font-size:24px;font-weight:500;color:var(--text);letter-spacing:1px;margin-top:18px;}
@@ -62,7 +62,6 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* Loading fade */
-  #loading-screen{transition:opacity .3s ease;}
   #loading-screen.fade-out{opacity:0;}
 
   /* Lock Screen */
@@ -713,14 +712,14 @@
   .dsc-friends-list{padding:0 16px 80px;}
   /* New card style: clean white, no glass */
   .dsc-mc{
-    background:#ffffff;
+    background:var(--card-bg);
+    border:1px solid var(--glass-border);
     border-radius:8px;
     padding:12px;
     margin-bottom:10px;
-    box-shadow:none;
+    box-shadow:var(--shadow);
     position:relative;
   }
-  @media(prefers-color-scheme:dark){.dsc-mc{background:#1c1c1e;}}
   /* Header row */
   .dsc-mc-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
   .dsc-mc-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,#c7c7cc,#8e8e93);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;}
@@ -1334,11 +1333,60 @@ function pad(n){return n<10?'0'+n:''+n;}
 /* ── escHtml helper ── */
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+/* ── Unified localStorage helper (single source of truth for key names) ── */
+const XSJ = {
+  // Read a value; returns fallback if missing or parse error
+  get(key, fallback) {
+    try {
+      const v = localStorage.getItem(key);
+      return (v === null || v === undefined) ? fallback : v;
+    } catch(e) { return fallback; }
+  },
+  // Write a value; silently handles QuotaExceededError
+  set(key, value) {
+    try { localStorage.setItem(key, value); return true; }
+    catch(e) {
+      if(e && (e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')){
+        showToast('⚠️ 存储空间不足，请清理图片后重试');
+      }
+      return false;
+    }
+  },
+  // Canonical key aliases — always use these, never raw strings scattered around
+  AVATAR:   'xsj_avatar',
+  NAME:     'xsj_name',
+  BIO:      'xsj_bio',
+  STATUS:   'userStatus',
+  USER_ID:  'userId',
+  USER_BIO: 'userBio',
+};
+
+/* ── Key-name migration: run once to merge legacy duplicate keys ── */
+(function _migrateKeys(){
+  try {
+    // avatar: merge meAvatar → xsj_avatar
+    const legacyAv = localStorage.getItem('meAvatar');
+    if(legacyAv && !localStorage.getItem('xsj_avatar')) {
+      localStorage.setItem('xsj_avatar', legacyAv);
+    }
+    localStorage.removeItem('meAvatar');  // remove legacy duplicate
+    // name: merge userName → xsj_name
+    const legacyName = localStorage.getItem('userName');
+    if(legacyName && !localStorage.getItem('xsj_name')) {
+      localStorage.setItem('xsj_name', legacyName);
+    }
+    localStorage.removeItem('userName');  // remove legacy duplicate
+  } catch(e) {}
+})();
+
 /* ── Toast ── */
 function showToast(msg,dur){
   const t=document.createElement('div');t.className='xsj-toast';t.textContent=msg;document.body.appendChild(t);
   setTimeout(()=>{t.style.animation='toastOut .25s ease forwards';setTimeout(()=>t.remove(),260);},(dur||2000));
 }
+
+/* ── Modal stack counter (prevents overflow flickering when modals overlap) ── */
+let _modalOpenCount = 0;
 
 /* ── Core showModal ── */
 function showModal(opts){
@@ -1361,6 +1409,7 @@ function showModal(opts){
     ${footerHTML}`;
 
   overlay.appendChild(modal);document.body.appendChild(overlay);
+  _modalOpenCount++;
   document.body.style.overflow='hidden';
 
   // Focus first input
@@ -1368,7 +1417,11 @@ function showModal(opts){
 
   function closeModal(){
     overlay.classList.add('closing');modal.classList.add('closing');
-    setTimeout(()=>{overlay.remove();document.body.style.overflow='';},200);
+    setTimeout(()=>{
+      overlay.remove();
+      _modalOpenCount = Math.max(0, _modalOpenCount - 1);
+      if(_modalOpenCount === 0) document.body.style.overflow='';
+    },200);
   }
   function collectData(){
     const d={};
@@ -1461,12 +1514,19 @@ window.addEventListener('DOMContentLoaded',()=>{
 (function(){
   const track=document.getElementById('unlock-track'),thumb=document.getElementById('unlock-thumb');
   let dragging=false,sx=0,tl=0;
-  const maxT=()=>track.offsetWidth-thumb.offsetWidth-6;
-  function start(e){dragging=true;sx=e.touches?e.touches[0].clientX:e.clientX;tl=0;e.preventDefault();}
+  // Guard: ensure maxT is always a positive number; if track is hidden offsetWidth=0
+  const maxT=()=>Math.max(20, track.offsetWidth - thumb.offsetWidth - 6);
+  function start(e){
+    // Only allow dragging when lock screen is actually visible
+    const lk=document.getElementById('lock-screen');
+    if(!lk||lk.style.display==='none')return;
+    dragging=true;sx=e.touches?e.touches[0].clientX:e.clientX;tl=0;e.preventDefault();
+  }
   function move(e){if(!dragging)return;const cx=e.touches?e.touches[0].clientX:e.clientX;let dx=Math.max(0,Math.min(cx-sx,maxT()));thumb.style.transform='translateX('+dx+'px)';tl=dx;e.preventDefault();}
   function end(){
     if(!dragging)return;dragging=false;
-    if(tl>=maxT()*.8){
+    const mt=maxT();
+    if(mt > 10 && tl >= mt * 0.8){
       const lk=document.getElementById('lock-screen');
       const ms=document.getElementById('main-screen');
       lk.classList.remove('visible');
@@ -1521,23 +1581,38 @@ function switchCalTab(tab){
 }
 
 // ── Image compression utility ──
-function compressImage(file, maxW, quality, cb) {
+function compressImage(file, maxW, quality, cb, onError) {
+  const _fail = function(msg) {
+    showToast(msg || '图片处理失败，请重试');
+    if (typeof onError === 'function') onError(msg);
+  };
+  // Guard: 15 MB hard limit before reading
+  if (file && file.size > 15 * 1024 * 1024) {
+    _fail('图片过大，请选择 15MB 以内的图片');
+    return;
+  }
   const reader = new FileReader();
+  reader.onerror = function() { _fail('图片读取失败'); };
   reader.onload = function(ev) {
     const img = new Image();
+    img.onerror = function() { _fail('图片格式不支持，请使用 JPG / PNG / WebP'); };
     img.onload = function() {
-      const scale = Math.min(1, maxW / img.width);
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      // Keep PNG for transparency, otherwise JPEG
-      const isTransparentPng = file.type === 'image/png';
-      const dataUrl = isTransparentPng
-        ? canvas.toDataURL('image/png')
-        : canvas.toDataURL('image/jpeg', quality);
-      cb(dataUrl);
+      try {
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        // Keep PNG for transparency, otherwise JPEG
+        const isTransparentPng = file.type === 'image/png';
+        const dataUrl = isTransparentPng
+          ? canvas.toDataURL('image/png')
+          : canvas.toDataURL('image/jpeg', quality);
+        cb(dataUrl);
+      } catch(e) {
+        _fail('图片压缩失败，可能是图片尺寸过大');
+      }
     };
     img.src = ev.target.result;
   };
@@ -1546,7 +1621,7 @@ function compressImage(file, maxW, quality, cb) {
 
 // User data
 function loadUserData(){
-  const n=localStorage.getItem('xsj_name'),b=localStorage.getItem('xsj_bio'),a=localStorage.getItem('xsj_avatar');
+  const n=XSJ.get(XSJ.NAME,''), b=XSJ.get(XSJ.BIO,''), a=XSJ.get(XSJ.AVATAR,'');
   if(n) document.getElementById('username').textContent=n;
   if(b) document.getElementById('user-bio').textContent=b;
   if(a){const img=document.getElementById('avatar-img');img.src=a;img.style.display='block';document.getElementById('avatar-placeholder').style.display='none';}
@@ -1563,7 +1638,7 @@ document.getElementById('avatar-input').addEventListener('change',function(e){
   compressImage(f,200,0.75,function(d){
     const img=document.getElementById('avatar-img');img.src=d;img.style.display='block';
     document.getElementById('avatar-placeholder').style.display='none';
-    localStorage.setItem('xsj_avatar',d);
+    XSJ.set(XSJ.AVATAR,d);
   });
   this.value='';
 });
@@ -1575,15 +1650,22 @@ document.getElementById('lock-av-input').addEventListener('change',function(e){
   });
   this.value='';
 });
+// ── Safe CSS url() setter — escapes double-quotes to prevent CSS injection ──
+function _safeBgUrl(el, src) {
+  if(!el||!src)return;
+  el.style.backgroundImage='url("'+src.replace(/"/g,'%22')+'")';
+  el.style.backgroundSize='cover';
+  el.style.backgroundPosition='center';
+}
 function loadWallpapers(){
   const lw=localStorage.getItem('xsj_wp_lock'),mw=localStorage.getItem('xsj_wp_main');
-  if(lw) document.getElementById('lock-screen').style.backgroundImage='url('+lw+')';
-  if(mw) document.getElementById('main-screen').style.backgroundImage='url('+mw+')';
+  if(lw) _safeBgUrl(document.getElementById('lock-screen'),lw);
+  if(mw) _safeBgUrl(document.getElementById('main-screen'),mw);
 }
 document.getElementById('wp-lock-input').addEventListener('change',function(e){
   const f=e.target.files[0];if(!f)return;
   compressImage(f,800,0.8,function(d){
-    document.getElementById('lock-screen').style.backgroundImage='url('+d+')';
+    _safeBgUrl(document.getElementById('lock-screen'),d);
     localStorage.setItem('xsj_wp_lock',d);
   });
   this.value='';
@@ -1591,7 +1673,7 @@ document.getElementById('wp-lock-input').addEventListener('change',function(e){
 document.getElementById('wp-main-input').addEventListener('change',function(e){
   const f=e.target.files[0];if(!f)return;
   compressImage(f,800,0.8,function(d){
-    document.getElementById('main-screen').style.backgroundImage='url('+d+')';
+    _safeBgUrl(document.getElementById('main-screen'),d);
     localStorage.setItem('xsj_wp_main',d);
   });
   this.value='';
@@ -1670,9 +1752,7 @@ function loadPhotos(){for(let i=0;i<3;i++){const d=localStorage.getItem('xsj_p'+
 function setAnniBg(src){
   const area=document.getElementById('anni-img-area');
   if(!area)return;
-  area.style.backgroundImage='url('+src+')';
-  area.style.backgroundSize='cover';
-  area.style.backgroundPosition='center';
+  _safeBgUrl(area, src);
   // Hide the default SVG
   const svg=area.querySelector('svg:first-child');
   if(svg)svg.style.display='none';
@@ -1733,11 +1813,18 @@ function chatGetData(){
     const s=localStorage.getItem('xsj_chat_module');
     if(s){
       const d=JSON.parse(s);
+      // ── Version migration ──
+      if(!d.version){ d.version=1; }
+      // Ensure required keys exist (safe migration)
+      if(!d.contacts){ d.contacts={groups:[]}; }
+      if(!Array.isArray(d.contacts.groups)){ d.contacts.groups=[]; }
+      if(!d.discovers){ d.discovers=[]; }
       return d;
     }
   }catch(e){}
   // Default: only AI assistant, no preset friends
   return {
+    version:1,
     contacts:{groups:[
       {name:'AI',contacts:[{...AI_ASSISTANT}]}
     ]},
@@ -1755,7 +1842,15 @@ function chatGetData(){
   }catch(e){}
 })();
 function chatSaveData(data){
-  localStorage.setItem('xsj_chat_module',JSON.stringify(data));
+  try {
+    localStorage.setItem('xsj_chat_module', JSON.stringify(data));
+  } catch(e) {
+    if (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
+      showToast('⚠️ 存储空间不足，请到「我」→ 设置中清理图片后重试');
+    } else {
+      showToast('数据保存失败，请重试');
+    }
+  }
 }
 
 // Generate unique ID
@@ -1865,9 +1960,9 @@ function closeChatApp(){
 }
 
 function chatInitHeader(){
-  const name=localStorage.getItem('xsj_name'),status=localStorage.getItem('userStatus')||'·在线';
-  const bio=localStorage.getItem('userBio')||'I loved you from the start...';
-  const avatar=localStorage.getItem('xsj_avatar')||localStorage.getItem('meAvatar');
+  const name=XSJ.get(XSJ.NAME,''),status=XSJ.get(XSJ.STATUS,'·在线');
+  const bio=XSJ.get(XSJ.USER_BIO,'I loved you from the start...');
+  const avatar=XSJ.get(XSJ.AVATAR,'');
   const hn=document.getElementById('chat-hdr-name');if(hn&&name)hn.textContent=name;
   const hs=document.getElementById('chat-hdr-status');if(hs)hs.textContent=status;
   const hb=document.getElementById('chat-hdr-bio');if(hb)hb.textContent=bio;
@@ -1956,7 +2051,7 @@ function chatBuildChats(){
           ?`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="8" r="2.5"/><path d="M3 20c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="17" cy="8" r="2.5" opacity=".7"/><path d="M21 20c0-2.8-1.8-4.5-4-5.2" opacity=".7"/></svg>`
           :`<span style="font-size:16px;font-weight:600;color:#fff;">${m.name[0]}</span>`;
     const topBadge=m.isTop?`<svg width="14" height="14" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="margin-left:4px;vertical-align:middle;flex-shrink:0;pointer-events:none;"><path d="M557.728 688v288.384H466.24V688H227.52c-9.6 0-18.048-3.712-24.96-11.264A37.824 37.824 0 0 1 192 649.984c0-48.768 14.432-92.704 43.584-131.84 29.12-38.976 61.92-58.56 98.56-58.56V200.512c-19.296 0-35.84-7.552-50.048-22.656a76.16 76.16 0 0 1-21.12-53.6c0-20.672 7.04-38.4 21.12-53.6 13.984-14.976 30.72-22.656 50.048-22.656h355.584c19.296 0 35.84 7.552 50.048 22.656 13.984 15.104 21.152 32.928 21.152 53.6 0 20.672-7.04 38.4-21.12 53.6-14.112 15.232-30.784 22.656-50.08 22.656v258.944c36.64 0 69.568 19.584 98.56 58.56A215.424 215.424 0 0 1 832 649.984c0 10.272-3.456 19.328-10.528 26.752-7.04 7.424-15.36 11.264-24.96 11.264H557.76z" fill="#9C9C9C"/></svg>`:'';
-    return `<div class="chat-list-item" data-contact-name="${escHtml(m.name)}" data-is-top="${m.isTop?'1':'0'}" data-is-ai="${m.isAi?'1':'0'}" onclick="chatShowMsg('${escHtml(m.name)}')" oncontextmenu="chatLongPressMenu(event,'${escHtml(m.name)}',this);return false;">
+    return `<div class="chat-list-item" data-contact-name="${escHtml(m.name)}" data-is-top="${m.isTop?'1':'0'}" data-is-ai="${m.isAi?'1':'0'}" onclick="chatShowMsg('${escHtml(m.name)}')" >
       <div class="chat-list-av" style="overflow:hidden;">${avContent}</div>
       <div class="chat-list-info">
         <div class="chat-list-name" style="display:flex;align-items:center;">${escHtml(m.name)}${topBadge}</div>
@@ -1973,9 +2068,11 @@ function chatShowMsg(name){showToast('聊天功能开发中 🚀');}
 let _longPressTimer=null;
 function chatAttachLongPress(){
   document.querySelectorAll('#chat-list-card .chat-list-item').forEach(el=>{
+    if(el._lpBound) return;   // ← 防止重复绑定
+    el._lpBound = true;
     el.addEventListener('touchstart',function(e){
       const name=el.dataset.contactName;
-      _longPressTimer=setTimeout(()=>{e.preventDefault();chatLongPressMenu(name,el);},500);
+      _longPressTimer=setTimeout(()=>{chatLongPressMenu(name,el);},500);
     },{passive:true});
     el.addEventListener('touchend',()=>clearTimeout(_longPressTimer),{passive:true});
     el.addEventListener('touchmove',()=>clearTimeout(_longPressTimer),{passive:true});
@@ -1983,6 +2080,8 @@ function chatAttachLongPress(){
 }
 function chatAttachContactsLongPress(){
   document.querySelectorAll('.contacts-item-new[data-contact-name]').forEach(el=>{
+    if(el._lpBound) return;   // ← 防止重复绑定
+    el._lpBound = true;
     el.addEventListener('touchstart',function(e){
       const name=el.dataset.contactName;
       _longPressTimer=setTimeout(()=>{chatLongPressMenu(name,el);},500);
@@ -2131,9 +2230,11 @@ function chatAddChatEntry(){
       const now=new Date();
       const timeStr=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
       CHAT_MESSAGES.unshift({name:d.name.trim(),preview:'新对话',time:timeStr,type:d.type||'friend'});
-      const saved=JSON.parse(localStorage.getItem('xsj_extra_msgs')||'[]');
-      saved.unshift({name:d.name.trim(),preview:'新对话',time:timeStr,type:d.type||'friend'});
-      localStorage.setItem('xsj_extra_msgs',JSON.stringify(saved));
+      try{
+        const saved=JSON.parse(localStorage.getItem('xsj_extra_msgs')||'[]');
+        saved.unshift({name:d.name.trim(),preview:'新对话',time:timeStr,type:d.type||'friend'});
+        localStorage.setItem('xsj_extra_msgs',JSON.stringify(saved));
+      }catch(e){}
       const body=document.getElementById('chat-app-body');
       if(body){const page=document.createElement('div');page.className='chat-page';page.innerHTML=chatBuildChats();body.innerHTML='';body.appendChild(page);}
     }
@@ -2239,7 +2340,7 @@ function chatBuildContacts(){
         rightEl=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeaeb2" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>`;
       }
       const subText=c.persona?`<div class="contacts-item-sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${escHtml(c.persona)}</div>`:'';
-      listHTML+=`<div class="contacts-item-new${dm?' delete-mode':''}" data-contact-name="${escHtml(c.name)}" data-is-top="${c.isTop?'1':'0'}" onclick="${dm?'':'chatShowContact(\''+escHtml(c.name)+'\')'}" oncontextmenu="chatLongPressMenu('${escHtml(c.name)}',this);return false;">
+      listHTML+=`<div class="contacts-item-new${dm?' delete-mode':''}" data-contact-name="${escHtml(c.name)}" data-is-top="${c.isTop?'1':'0'}" onclick="${dm?'':'chatShowContact(\''+escHtml(c.name)+'\')'}">
         <div class="contacts-item-av">${avImg}</div>
         <div class="contacts-item-info">
           <div class="contacts-item-name" style="display:flex;align-items:center;">${escHtml(c.name)}${topBadgeC}${aiTag}</div>
@@ -2298,11 +2399,14 @@ function contactsManageGroups(){
     </div>`).join('');
   }
   let workingGroups=data.contacts.groups.map(g=>({name:g.name,contacts:g.contacts}));
-  window._modalDelGroup=function(idx){
+  // Use a closure-scoped function instead of window._modalDelGroup to avoid global pollution
+  function _localDelGroup(idx){
     workingGroups.splice(idx,1);
     const listEl=document.getElementById('xsj-groups-list');
     if(listEl)listEl.innerHTML=buildGroupRows(workingGroups);
-  };
+  }
+  // Expose temporarily so inline onclick in the generated HTML can call it
+  window._modalDelGroup=_localDelGroup;
   showModal({
     title:'管理分组',subtitle:'Manage Groups',
     contentHtml:`<div id="xsj-groups-list">${buildGroupRows(workingGroups)}</div>
@@ -2475,8 +2579,9 @@ function chatShowContact(name){
 }
 
 function chatEditContact(name){
-  // Close any open modal first
+  // Close any open modal first, reset counter
   document.querySelectorAll('.xsj-modal-overlay').forEach(m=>m.remove());
+  _modalOpenCount=0;
   document.body.style.overflow='';
   // Slight delay then open edit modal
   setTimeout(()=>{
@@ -2716,7 +2821,7 @@ function chatBuildDiscover(){
     ?`<img src="${dAvatar}" style="width:100%;height:100%;object-fit:cover;">`
     :`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>`;
   const bgStyleStr=dBg
-    ?`background-image:url(${dBg});background-size:cover;background-position:center;`
+    ?`background-image:url("${dBg.replace(/"/g,'%22')}");background-size:cover;background-position:center;`
     :`background:#e8e8ea;`;
 
   // My posts grid (up to 3) — only user posts, no AI
@@ -2741,11 +2846,20 @@ function chatBuildDiscover(){
 
   // Friends dynamic feed (all discovers)
   let friendsHTML='';
+  // Ensure all posts have stable ids, then persist once if any were missing
+  let _needsSave = false;
+  discovers.forEach(post=>{
+    if(!post.id){
+      post.id='p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+      _needsSave=true;
+    }
+  });
+  if(_needsSave){ const _d=chatGetData(); _d.discovers=discovers; chatSaveData(_d); }
+
   if(discovers.length===0){
     friendsHTML=`<div style="text-align:center;padding:40px 0;color:#aeaeb2;font-size:14px;">暂无动态，发布第一条吧 ✨</div>`;
   } else {
     discovers.forEach(post=>{
-      if(!post.id)post.id='p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
       friendsHTML+=dscBuildMomentCard(post);
     });
   }
@@ -2805,7 +2919,7 @@ function dscHandleBg(input){
   compressImage(f,800,0.82,function(src){
     localStorage.setItem('discoverBg',src);
     const bg=document.getElementById('dsc-hero-bg');
-    if(bg){bg.style.backgroundImage='url('+src+')';bg.style.backgroundSize='cover';bg.style.backgroundPosition='center';}
+    if(bg){ _safeBgUrl(bg, src); }
   });
   input.value='';
 }
@@ -2814,7 +2928,7 @@ function dscHandleAvatar(input){
   compressImage(f,200,0.82,function(src){
     localStorage.setItem('discoverAvatar',src);
     const av=document.getElementById('dsc-avatar');
-    if(av){av.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;}
+    if(av){av.innerHTML=`<img src="${src.replace(/"/g,'&quot;')}" style="width:100%;height:100%;object-fit:cover;">`;}
   });
   input.value='';
 }
@@ -3008,7 +3122,7 @@ function dscPostNew(){
       }
       const data=chatGetData();
       if(!data.discovers)data.discovers=[];
-      const myAvatar=localStorage.getItem('xsj_avatar')||localStorage.getItem('meAvatar')||'';
+      const myAvatar=XSJ.get(XSJ.AVATAR,'');
       const newPost={
         id:'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
         authorId:'me',
@@ -3040,6 +3154,11 @@ async function dscAiDescribeImages(){
   btn.style.opacity='0.5';
   btn.style.pointerEvents='none';
   btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" dur="0.8s" values="0 12 12;360 12 12" repeatCount="indefinite"/></circle></svg> AI 描述中…`;
+
+  // ── AbortController：15 秒超时 ──
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+
   try {
     // Build content array with the first image (or all images)
     const imageContents=imgs.slice(0,3).map(src=>{
@@ -3048,16 +3167,42 @@ async function dscAiDescribeImages(){
       if(!match)return null;
       return {type:'image',source:{type:'base64',media_type:match[1],data:match[2]}};
     }).filter(Boolean);
+
+    if(!imageContents.length){showToast('图片格式解析失败，请重新上传');return;}
+
     imageContents.push({type:'text',text:'请用中文简洁描述这张（或这几张）图片的内容，适合作为朋友圈动态文字，50字以内，不要带引号。'});
+
+    // ⚠️  注意：Anthropic API 不支持浏览器直接跨域调用。
+    //     实际部署时请将此请求改为通过你自己的后端服务中转，
+    //     并在后端添加 "x-api-key" 请求头。
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      signal: controller.signal,
+      headers:{
+        'Content-Type':'application/json',
+        'anthropic-version':'2023-06-01'
+        // 'x-api-key': 'YOUR_KEY'  ← 必须通过后端代理传入，请勿在前端硬编码密钥
+      },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:200,
         messages:[{role:'user',content:imageContents}]
       })
     });
+
+    if(!resp.ok){
+      const errBody = await resp.json().catch(()=>({}));
+      const errType = errBody && errBody.error && errBody.error.type;
+      if(resp.status===401||errType==='authentication_error'){
+        showToast('AI 调用失败：需要通过后端代理并配置 API 密钥');
+      } else if(resp.status===429){
+        showToast('AI 请求过于频繁，请稍后重试');
+      } else {
+        showToast('AI 描述失败（' + resp.status + '），请重试');
+      }
+      return;
+    }
+
     const json=await resp.json();
     const text=(json.content||[]).map(c=>c.type==='text'?c.text:'').join('').trim();
     if(text){
@@ -3069,8 +3214,13 @@ async function dscAiDescribeImages(){
       showToast('AI描述失败，请重试');
     }
   } catch(e){
-    showToast('AI描述失败，请重试');
+    if(e && e.name === 'AbortError'){
+      showToast('AI 描述超时（15s），请检查网络后重试');
+    } else {
+      showToast('网络请求失败，请检查网络连接');
+    }
   } finally {
+    clearTimeout(timeoutId);
     if(btn){
       btn.style.opacity='1';btn.style.pointerEvents='auto';
       btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg> AI 描述图片`;
@@ -3208,11 +3358,11 @@ function discoverHandleAvatar(input){dscHandleAvatar(input);}
 
 /* ── Me Tab ── */
 function chatBuildMe(){
-  const name=localStorage.getItem('xsj_name')||localStorage.getItem('userName')||'用户名';
-  const status=localStorage.getItem('userStatus')||'·在线';
-  const userId=localStorage.getItem('userId')||'@username';
-  const bio=localStorage.getItem('userBio')||'I loved you from the start...';
-  const avatar=localStorage.getItem('meAvatar')||localStorage.getItem('xsj_avatar');
+  const name=XSJ.get(XSJ.NAME,'用户名');
+  const status=XSJ.get(XSJ.STATUS,'·在线');
+  const userId=XSJ.get(XSJ.USER_ID,'@username');
+  const bio=XSJ.get(XSJ.USER_BIO,'I loved you from the start...');
+  const avatar=XSJ.get(XSJ.AVATAR,'');
   const avHTML=avatar
     ?`<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
     :`<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>`;
@@ -3309,8 +3459,7 @@ function meTriggerAvatar(){document.getElementById('me-av-input').click();}
 function meHandleAvatar(input){
   const f=input.files[0];if(!f)return;
   compressImage(f,200,0.82,function(src){
-    localStorage.setItem('meAvatar',src);
-    localStorage.setItem('xsj_avatar',src);
+    XSJ.set(XSJ.AVATAR,src);
     // Update card avatar
     const circle=document.getElementById('me-av-circle');
     if(circle){
@@ -3330,14 +3479,14 @@ function meHandleAvatar(input){
   input.value='';
 }
 function meEditName(){
-  const cur=localStorage.getItem('xsj_name')||localStorage.getItem('userName')||'用户名';
+  const cur=XSJ.get(XSJ.NAME,'')||'用户名';
   showModal({
     title:'修改用户名',subtitle:'Edit Username',
     contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">用户名</div><input class="xsj-input" data-field="val" placeholder="请输入用户名..." value="${escHtml(cur)}" autocomplete="off"></div>`,
     onConfirm(d){
       if(!d.val||!d.val.trim())return;
       const name=d.val.trim();
-      localStorage.setItem('xsj_name',name);localStorage.setItem('userName',name);
+      XSJ.set(XSJ.NAME,name);
       const cn=document.getElementById('me-card-name');if(cn)cn.textContent=name;
       const hn=document.getElementById('chat-hdr-name');if(hn)hn.textContent=name;
       const mn=document.getElementById('me-page-name');if(mn)mn.textContent=name;
@@ -3346,20 +3495,20 @@ function meEditName(){
   });
 }
 function meEditStatus(){
-  const cur=localStorage.getItem('userStatus')||'·在线';
+  const cur=XSJ.get(XSJ.STATUS,'·在线');
   showModal({
     title:'修改状态',subtitle:'Edit Status',
     contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">状态</div><input class="xsj-input" data-field="val" placeholder="请输入状态..." value="${escHtml(cur)}" autocomplete="off"></div>`,
     onConfirm(d){
       const status=(d.val||'').trim()||'·在线';
-      localStorage.setItem('userStatus',status);
+      XSJ.set(XSJ.STATUS,status);
       const cs=document.getElementById('me-card-status');if(cs)cs.textContent=status;
       const hs=document.getElementById('chat-hdr-status');if(hs)hs.textContent=status;
     }
   });
 }
 function meEditUserId(){
-  const cur=localStorage.getItem('userId')||'@username';
+  const cur=XSJ.get(XSJ.USER_ID,'@username');
   showModal({
     title:'修改用户ID',subtitle:'Edit User ID',
     contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">用户ID（仅限字母、数字、下划线）</div><input class="xsj-input" data-field="val" placeholder="@username" value="${escHtml(cur)}" autocomplete="off"></div>`,
@@ -3370,19 +3519,19 @@ function meEditUserId(){
       const raw=uid.startsWith('@')?uid.slice(1):uid;
       if(!/^[a-zA-Z0-9_]+$/.test(raw)){showToast('ID只能含字母、数字、下划线');return;}
       const finalId='@'+raw;
-      localStorage.setItem('userId',finalId);
+      XSJ.set(XSJ.USER_ID,finalId);
       const el=document.getElementById('me-card-userid');if(el)el.textContent=finalId;
     }
   });
 }
 function meEditBio(){
-  const cur=localStorage.getItem('userBio')||'I loved you from the start...';
+  const cur=XSJ.get(XSJ.USER_BIO,'I loved you from the start...');
   showModal({
     title:'修改签名',subtitle:'Edit Bio',
     contentHtml:`<div class="xsj-field-wrap"><div class="xsj-field-label">个人签名</div><input class="xsj-input" data-field="val" placeholder="请输入签名..." value="${escHtml(cur)}" autocomplete="off"></div>`,
     onConfirm(d){
       const bio=(d.val||'').trim()||'I loved you from the start...';
-      localStorage.setItem('userBio',bio);
+      XSJ.set(XSJ.USER_BIO,bio);
       const el=document.getElementById('me-card-bio');if(el)el.textContent=bio;
       const hb=document.getElementById('chat-hdr-bio');if(hb)hb.textContent=bio;
     }
@@ -3398,8 +3547,7 @@ function meFeatureClick(label){
 function chatHandleAvatarFile(input){
   const f=input.files[0];if(!f)return;
   compressImage(f,200,0.75,function(src){
-    localStorage.setItem('xsj_avatar',src);
-    localStorage.setItem('meAvatar',src);
+    XSJ.set(XSJ.AVATAR,src);
     // Update chat header avatar
     const img=document.getElementById('chat-hdr-av-img'),svg=document.getElementById('chat-hdr-av-svg');
     if(img){img.src=src;img.style.display='block';}

@@ -4,11 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>OC Visual Novel AI</title>
+<meta name="theme-color" content="#0a0a0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OC VN">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./app.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1A1A1A}
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px)}
+html,body{width:100%;height:100%;min-height:100svh;overflow:hidden;background:#0a0a0f;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1A1A1A;overscroll-behavior:none}
+body{padding:0;}
+html.standalone body{background:#0a0a0f}
+
 button{border:none;background:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
 input,textarea,select{font-family:inherit;-webkit-appearance:none}
 img{display:block}
@@ -31,7 +44,7 @@ img{display:block}
 #sprite-layer{position:fixed;left:0;right:0;top:8vh;bottom:12vh;height:auto;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2}
 /* 立绘位置优化：使用 max-height/max-width 替代固定 height，令立绘在容器内自适应缩放 */
 #sprite-img{max-height:100%;max-width:100%;object-fit:contain;transition:opacity 0.25s ease;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.12))}
-#game-ui{position:fixed;bottom:0;left:0;right:0;z-index:10;display:none;flex-direction:column;padding:0 12px;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+#game-ui{position:fixed;bottom:0;left:0;right:0;z-index:10;display:none;flex-direction:column;padding:0 12px;padding-bottom:max(14px,var(--safe-bottom))}
 /* 电影字幕风 - 对话面板：透明底，无大面板 */
 #dialog-panel{display:flex;flex-direction:column;background:transparent;border:none;border-radius:0;padding:0 16px 12px;position:relative;min-height:80px;box-shadow:none}
 /* 电影字幕风(浅色) - 旁白 */
@@ -257,14 +270,14 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .cg-c.br{bottom:-7px;right:-7px;border-bottom-width:1px;border-right-width:1px}
 #cg-close-btn{position:absolute;top:-42px;right:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#8C8C8C;transition:color 0.2s}
 #cg-close-btn:active{color:white}
-#toast{position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-110%);z-index:500;background:rgba(255,255,255,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.06);border-radius:0 0 14px 14px;padding:10px 22px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;white-space:nowrap;transition:transform 0.42s cubic-bezier(0.32,0.72,0,1);overflow:hidden;min-width:180px;text-align:center}
+#toast{position:fixed;top:max(0px,var(--safe-top));left:50%;transform:translateX(-50%) translateY(-110%);z-index:500;background:rgba(255,255,255,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.06);border-radius:0 0 14px 14px;padding:10px 22px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;white-space:nowrap;transition:transform 0.42s cubic-bezier(0.32,0.72,0,1);overflow:hidden;min-width:180px;text-align:center}
 #toast.show{transform:translateX(-50%) translateY(0)}
 #toast-scan{position:absolute;top:0;left:-200%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.7),transparent);pointer-events:none}
 #toast-scan.animate{animation:toast-sw 0.65s ease-out 0.15s forwards}
 @keyframes toast-sw{from{left:-200%}to{left:100%}}
 #affection-hint{position:absolute;top:-28px;right:14px;font-size:10px;letter-spacing:0.08em;padding:3px 8px;background:rgba(255,255,255,0.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.06);border-radius:20px;color:#6B6B6B;pointer-events:none;opacity:0;transition:opacity 0.3s;z-index:20;white-space:nowrap}
 #affection-hint.show{opacity:1}
-#story-meta-panel{position:fixed;top:16px;right:74px;z-index:31;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}
+#story-meta-panel{position:fixed;top:max(16px,calc(var(--safe-top) + 8px));right:max(74px,calc(var(--safe-right) + 58px));z-index:31;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}
 #story-meta-toggle{pointer-events:all;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,0.84);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(0,0,0,0.07);box-shadow:0 4px 18px rgba(0,0,0,0.07);color:#1A1A1A;min-height:40px;transition:transform 0.22s ease,background 0.22s ease}
 #story-meta-toggle:active{transform:scale(0.98);background:rgba(255,255,255,0.96)}
 #story-meta-mini{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap}
@@ -330,7 +343,7 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .io-row{display:flex;gap:8px;margin-bottom:12px}
 .io-row .btn-secondary{flex:1}
 /* AVG UI 优化 - 功能二：右上角可折叠功能菜单 */
-#avgn-menu{position:fixed;top:16px;right:16px;z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#avgn-menu{position:fixed;top:max(16px,calc(var(--safe-top) + 8px));right:max(16px,calc(var(--safe-right) + 8px));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 #menu-toggle{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.78);backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);border:1px solid rgba(0,0,0,0.07);display:flex;align-items:center;justify-content:center;color:#6B6B6B;box-shadow:0 2px 12px rgba(0,0,0,0.07);transition:color 0.2s,background 0.2s,transform 0.25s cubic-bezier(0.32,0.72,0,1)}
 #menu-toggle:active{color:#1A1A1A;background:rgba(255,255,255,0.96)}
 #avgn-menu.open #menu-toggle{transform:rotate(45deg);color:#1A1A1A}
@@ -349,6 +362,86 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 #avgn-menu.open #menu-items .avgn-menu-item:nth-child(4){transition-delay:0.11s}
 #avgn-menu.open #menu-items .avgn-menu-item:nth-child(5){transition-delay:0.14s}
 #avgn-menu.open #menu-items .avgn-menu-item:nth-child(6){transition-delay:0.17s}
+
+/* ─── 手机 / 微信界面 ─── */
+#phone-overlay,#location-overlay{position:fixed;inset:0;z-index:360;pointer-events:none}
+#phone-overlay.open,#location-overlay.open{pointer-events:all}
+#phone-backdrop,#location-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.34);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.28s}
+#phone-overlay.open #phone-backdrop,#location-overlay.open #location-backdrop{opacity:1}
+#phone-shell,#location-sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,calc(-50% + 22px)) scale(0.96);width:min(92vw,420px);max-height:86vh;background:rgba(250,250,250,0.96);border:1px solid rgba(0,0,0,0.06);border-radius:28px;backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);box-shadow:0 18px 50px rgba(0,0,0,0.12);overflow:hidden;opacity:0;transition:transform 0.32s cubic-bezier(0.32,0.72,0,1),opacity 0.32s}
+#phone-overlay.open #phone-shell,#location-overlay.open #location-sheet{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#phone-shell{display:flex;flex-direction:column}
+#phone-header,#location-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid rgba(0,0,0,0.06);gap:12px}
+#phone-header .title-wrap,#location-header .title-wrap{min-width:0}
+.phone-title,.location-title{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#8C8C8C}
+.phone-sub,.location-sub{font-size:13px;color:#1A1A1A;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#phone-body{display:flex;min-height:0;max-height:calc(86vh - 64px)}
+#phone-thread-list{width:38%;min-width:126px;max-width:160px;border-right:1px solid rgba(0,0,0,0.06);overflow-y:auto;padding:10px;background:rgba(255,255,255,0.36)}
+#phone-chat-panel{flex:1;display:flex;flex-direction:column;min-height:0;background:linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.18))}
+.phone-thread-item{padding:10px 10px 9px;border-radius:14px;cursor:pointer;border:1px solid transparent;transition:background 0.2s,border-color 0.2s,transform 0.15s;margin-bottom:8px;background:rgba(255,255,255,0.62)}
+.phone-thread-item.active{border-color:rgba(0,0,0,0.08);background:rgba(255,255,255,0.88)}
+.phone-thread-item:active{transform:scale(0.98)}
+.phone-thread-name{font-size:12px;font-weight:600;color:#1A1A1A;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.phone-thread-preview{font-size:10px;color:#8C8C8C;line-height:1.5;margin-top:4px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.phone-thread-badge{min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#1A1A1A;color:white;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+#phone-chat-head{padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.05);font-size:12px;color:#6B6B6B;display:flex;align-items:center;justify-content:space-between;gap:10px}
+#phone-chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px}
+.phone-empty{padding:18px 14px;font-size:11px;color:#8C8C8C;line-height:1.7}
+.phone-msg{display:flex;flex-direction:column;max-width:88%}
+.phone-msg.them{align-self:flex-start}
+.phone-msg.me{align-self:flex-end;align-items:flex-end}
+.phone-bubble{padding:10px 12px;border-radius:16px;font-size:13px;line-height:1.65;word-break:break-word;border:1px solid rgba(0,0,0,0.05);background:rgba(255,255,255,0.9);box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+.phone-msg.me .phone-bubble{background:rgba(26,26,26,0.9);color:white;border-color:rgba(26,26,26,0.9)}
+.phone-msg-meta{font-size:9px;letter-spacing:0.08em;color:#B0B0B0;margin-top:4px;padding:0 4px}
+#location-sheet{display:flex;flex-direction:column}
+#location-body{padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;max-height:calc(86vh - 64px)}
+.location-card{background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.05);border-radius:18px;padding:14px}
+.location-card.current{border-color:rgba(26,26,26,0.14);box-shadow:0 2px 14px rgba(0,0,0,0.05)}
+.location-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.location-name{font-size:14px;font-weight:600;color:#1A1A1A}
+.location-sub{font-size:11px;color:#8C8C8C;margin-top:4px;line-height:1.6}
+.location-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tiny-btn{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,0.8);border:1px solid rgba(0,0,0,0.08);font-size:10px;color:#6B6B6B;letter-spacing:0.06em;transition:all 0.2s}
+.tiny-btn:active{background:rgba(255,255,255,0.96);color:#1A1A1A}
+.tiny-btn.primary{background:#1A1A1A;color:white;border-color:#1A1A1A}
+.npc-chip-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.npc-chip{padding:6px 10px;border-radius:999px;font-size:10px;color:#6B6B6B;background:rgba(255,255,255,0.82);border:1px solid rgba(0,0,0,0.07);letter-spacing:0.04em}
+.npc-chip:active{background:rgba(255,255,255,0.96);color:#1A1A1A}
+#location-manager-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.inline-note{font-size:10px;color:#B0B0B0;line-height:1.7;margin-top:6px}
+.route-monitor-wrap{display:flex;flex-direction:column;gap:10px}
+.route-monitor-summary{font-size:11px;line-height:1.7;color:#6B6B6B;background:rgba(255,255,255,0.62);border:1px solid rgba(0,0,0,0.05);border-radius:14px;padding:11px 12px}
+.route-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.route-stat-chip{background:rgba(255,255,255,0.62);border:1px solid rgba(0,0,0,0.05);border-radius:14px;padding:10px 12px}
+.route-stat-k{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#B0B0B0}
+.route-stat-v{font-size:13px;color:#1A1A1A;margin-top:4px;line-height:1.4}
+.route-condition-list,.cleanup-list{display:flex;flex-direction:column;gap:8px}
+.route-condition-item,.cleanup-item{background:rgba(255,255,255,0.6);border:1px solid rgba(0,0,0,0.05);border-radius:14px;padding:10px 12px}
+.route-condition-item.met{border-color:rgba(74,140,92,0.28);background:rgba(242,250,244,0.9)}
+.route-condition-head,.cleanup-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.route-condition-title,.cleanup-title{font-size:12px;font-weight:600;color:#1A1A1A}
+.route-condition-sub,.cleanup-sub{font-size:10px;color:#8C8C8C;line-height:1.6;margin-top:4px}
+.route-char-line{background:rgba(255,255,255,0.56);border:1px solid rgba(0,0,0,0.05);border-radius:14px;padding:10px 12px}
+.route-char-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.route-char-name{font-size:12px;font-weight:600;color:#1A1A1A}
+.route-char-sub{font-size:10px;color:#8C8C8C;line-height:1.6;margin-top:4px}
+.route-mini-track{margin-top:8px;height:7px;border-radius:999px;background:rgba(0,0,0,0.07);overflow:hidden}
+.route-mini-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(26,26,26,0.95),rgba(90,90,90,0.82))}
+.cleanup-center{display:flex;flex-direction:column;gap:12px}
+.cleanup-group{background:rgba(255,255,255,0.56);border:1px solid rgba(0,0,0,0.05);border-radius:16px;padding:12px}
+.cleanup-count{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#B0B0B0}
+.cleanup-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.cleanup-main{flex:1;min-width:0}
+.cleanup-actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.tiny-btn.danger{background:rgba(140,40,40,0.08);border-color:rgba(140,40,40,0.12);color:#8C4A4A}
+@media(max-width:520px){.route-mini-grid{grid-template-columns:1fr}}
+
+.phone-mini-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1A1A1A;margin-left:6px;vertical-align:middle}
+@media (max-width:640px){
+  #phone-body{flex-direction:column}
+  #phone-thread-list{width:100%;max-width:none;border-right:none;border-bottom:1px solid rgba(0,0,0,0.06);max-height:180px}
+}
+
 </style>
 </head>
 <body>
@@ -395,6 +488,20 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
   <div id="menu-items">
+    <!-- 手机 -->
+    <div class="avgn-menu-item">
+      <span class="avgn-menu-lbl">PHONE</span>
+      <button class="avgn-menu-btn" id="avgn-btn-phone" aria-label="Phone">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      </button>
+    </div>
+    <!-- 地点 -->
+    <div class="avgn-menu-item">
+      <span class="avgn-menu-lbl">PLACE</span>
+      <button class="avgn-menu-btn" id="avgn-btn-location" aria-label="Location Switch">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.33-6-11a6 6 0 1 1 12 0c0 5.67-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      </button>
+    </div>
     <!-- 历史 -->
     <div class="avgn-menu-item">
       <span class="avgn-menu-lbl">LOG</span>
@@ -463,6 +570,38 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
       <div class="aff-track"><div class="aff-fill" id="meta-affection-fill" style="width:0%"></div></div>
       <div class="aff-sub" id="meta-affection-sub">好感 0 / 100</div>
     </div>
+  </div>
+</div>
+<div id="phone-overlay">
+  <div id="phone-backdrop"></div>
+  <div id="phone-shell">
+    <div id="phone-header">
+      <div class="title-wrap">
+        <div class="phone-title">PHONE / WECHAT</div>
+        <div class="phone-sub" id="phone-header-sub">暂无消息</div>
+      </div>
+      <button class="icon-btn" id="btn-close-phone"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="phone-body">
+      <div id="phone-thread-list"></div>
+      <div id="phone-chat-panel">
+        <div id="phone-chat-head"><span id="phone-chat-title">微信</span><span id="phone-chat-sub">聊天记录会自动保存</span></div>
+        <div id="phone-chat-messages"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="location-overlay">
+  <div id="location-backdrop"></div>
+  <div id="location-sheet">
+    <div id="location-header">
+      <div class="title-wrap">
+        <div class="location-title">MAP / LOCATION</div>
+        <div class="location-sub">切换地点、拉 NPC 出来搭话</div>
+      </div>
+      <button class="icon-btn" id="btn-close-location"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="location-body"></div>
   </div>
 </div>
 <div id="menu-backdrop"></div>
@@ -678,6 +817,25 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
         <div class="form-group"><label class="form-label">当前地点标签</label><input class="form-input" id="story-location-in" placeholder="江边的小道"></div>
         <div style="font-size:10px;color:#B0B0B0;line-height:1.7;margin-bottom:12px">引擎会按剧情自动推进时间，并把好感、线索、世界线偏移和锁线路径一起喂给 AI。</div>
         <button class="btn-primary" id="btn-save-world"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>SAVE WORLD SETTINGS</button>
+        <div class="divider"></div>
+        <div class="sec-title">ROUTE MONITOR / 个人线</div>
+        <div class="inline-note">这里会显示关键选择倒计时、三条结局线的触发条件，以及每个角色离个人线还差多少好感。数值是给你看的，不会直接暴露在游戏画面里。</div>
+        <div id="route-monitor-card" class="card"></div>
+        <div class="divider"></div>
+        <div class="sec-title">地点地图 / NPC</div>
+        <div class="inline-note">你可以把地点和背景图绑在一起，也可以给每个地点写几个会出现的 NPC。剧情里提到手机消息时，微信界面会自动弹出来。</div>
+        <div id="location-manager-list"></div>
+        <div class="form-group"><label class="form-label">新增地点名称</label><input class="form-input" id="loc-name-in" maxlength="40" placeholder="例如：旧操场 / 菜市场门口"></div>
+        <div class="form-group"><label class="form-label">绑定背景图</label><select class="form-input" id="loc-bg-select"></select></div>
+        <div class="form-group"><label class="form-label">地点说明（可选）</label><textarea class="form-input" id="loc-summary-in" rows="2" maxlength="180" placeholder="这里大概是什么地方、适合发生什么互动"></textarea></div>
+        <div class="form-group"><label class="form-label">可出现的 NPC（每行一个）</label><textarea class="form-input" id="loc-npcs-in" rows="3" maxlength="220" placeholder="例如：
+卖烤肠的大叔
+戴雷锋帽的售票员"></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-secondary" id="btn-add-location" style="flex:2">新增地点</button>
+          <button class="btn-secondary" id="btn-open-location-switch" style="flex:1">快速切换</button>
+        </div>
+        <div class="divider"></div>
         <!-- v10: 长期记忆摘要面板 -->
         <div class="divider"></div>
         <div class="sec-title">STORY MEMORY (AI AUTO-SUMMARY)</div>
@@ -749,6 +907,10 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
         </div>
         <div class="memory-box" id="storage-note-box" style="margin-bottom:16px">优化存储：会把本地上传的立绘尽量转到浏览器图片库，并精简存档里的重复 Log，不会删剧情、记忆、人设和路线。
 清理本地上传图片：只会删除本地上传的 Base64 立绘缓存；URL 图片和内置立绘会保留，但本地上传图片会从角色身上移除。</div>
+        <div class="divider"></div>
+        <div class="sec-title">DELETE CENTER</div>
+        <div class="inline-note">集中管理可删除的数据。这里删的是资源和记录，不会直接重置你当前的人物关系和路线，除非你删的是对应角色或清空 Log / 记忆。</div>
+        <div id="cleanup-center"></div>
         <div class="divider"></div>
         <div class="sec-title">AUDIO</div>
         <div class="sound-toggle-row">
@@ -951,12 +1113,14 @@ const VNDB=(function(){
 // ══════════════════════════════════════════════════════════
 //  v10 Feature 2: Schema Version + Migration
 // ══════════════════════════════════════════════════════════
-const CURRENT_SCHEMA=10;
+const CURRENT_SCHEMA=11;
 const DEFAULT_MEMORY={storySummary:'',relationshipSummary:'',worldFactsSummary:'',unresolvedThreads:[],lastSummarizedIndex:0};
 const ROUTE_LABEL_MAP={HE:'Happy End',BE:'Bad End',TE:'True End'};
 const CHARACTER_ROUTE_AFFECTION_THRESHOLD=60;
 const DEFAULT_ROUTE_STATE_TEMPLATE={turnCount:0,turnsSinceKeyChoice:0,lockedRoute:'',lockedAtTurn:0,lockedByChoiceId:'',keyChoiceCount:0,cluePoints:0,worldlineDrift:0,pendingEnding:'',endingRoute:'',ended:false,endingSummary:'',unlockedCharacterRoutes:{}};
 const DEFAULT_TIME_STATE_TEMPLATE={date:'2026-04-14',time:'18:10',minutesPerTurn:18,locationName:'江边的小道',collapsed:true};
+const DEFAULT_LOCATION_LIBRARY_TEMPLATE=[{id:'loc_river',name:'江边的小道',bgId:'bg1',summary:'江堤边，风大，适合两个人说点不想让别人听见的话。',npcHints:'遛狗的大爷\n卖烤肠的大叔'},{id:'loc_courtyard',name:'学校的中庭',bgId:'bg2',summary:'下课时人多，传话和撞见都很容易。',npcHints:'值周老师\n隔壁班女生'},{id:'loc_stairs',name:'学校的楼梯口',bgId:'bg3',summary:'人少的时候适合拦人、堵人、单独说话。',npcHints:'抱作业本的同学\n巡楼老师'}];
+const DEFAULT_PHONE_STATE_TEMPLATE={threads:[],currentThreadId:'',autoPopup:true,lastPopupThreadId:''};
 
 function createDefaultRouteState(){
   return{
@@ -983,6 +1147,86 @@ function createDefaultTimeState(){
     locationName:'江边的小道',
     collapsed:true
   };
+}
+function createDefaultLocationLibrary(){
+  return DEFAULT_LOCATION_LIBRARY_TEMPLATE.map(item=>({id:item.id,name:item.name,bgId:item.bgId,summary:item.summary,npcHints:item.npcHints||''}));
+}
+function slugifyStoryId(raw,prefix='item'){
+  const base=String(raw||'').trim().toLowerCase().replace(/[^a-z0-9一-龥]+/g,'_').replace(/^_+|_+$/g,'').slice(0,24);
+  return `${prefix}_${base||Date.now()}`;
+}
+function normalizeLocationLibrary(raw,backgroundLibrary,fallbackLibrary){
+  const bgIds=new Set((backgroundLibrary||[]).map(bg=>bg.id));
+  const source=Array.isArray(raw)?raw:(Array.isArray(fallbackLibrary)?fallbackLibrary:createDefaultLocationLibrary());
+  const used=new Set();
+  const out=[];
+  for(const [idx,item] of source.entries()){
+    if(!item||typeof item!=='object')continue;
+    const name=safeTrimmedString(item.name,40,'').trim();
+    if(!name)continue;
+    let id=safeTrimmedString(item.id,40,'').trim()||slugifyStoryId(name,'loc');
+    if(used.has(id))id=`${id}_${idx+1}`;
+    used.add(id);
+    const bgId=(typeof item.bgId==='string'&&bgIds.has(item.bgId))?item.bgId:'';
+    out.push({id,name,bgId,summary:safeTrimmedString(item.summary,180,''),npcHints:safeTrimmedString(item.npcHints,240,'')});
+  }
+  if(!out.length){
+    return createDefaultLocationLibrary().map(item=>({id:item.id,name:item.name,bgId:bgIds.has(item.bgId)?item.bgId:'',summary:item.summary,npcHints:item.npcHints||''}));
+  }
+  return out;
+}
+function getLocationNpcList(raw){
+  if(!raw||typeof raw!=='string')return[];
+  return raw.split(/\n|、|，|,/).map(v=>v.trim()).filter(Boolean).slice(0,12);
+}
+function createDefaultPhoneState(){
+  return {threads:[],currentThreadId:'',autoPopup:true,lastPopupThreadId:''};
+}
+function normalizePhoneState(raw){
+  const source=(raw&&typeof raw==='object'&&!Array.isArray(raw))?raw:{};
+  const threads=Array.isArray(source.threads)?source.threads:[];
+  const outThreads=[];
+  const used=new Set();
+  for(const [idx,thread] of threads.entries()){
+    if(!thread||typeof thread!=='object')continue;
+    const name=safeTrimmedString(thread.name,40,'').trim()||`联系人${idx+1}`;
+    let id=safeTrimmedString(thread.id,40,'').trim()||slugifyStoryId(name,'chat');
+    if(used.has(id))id=`${id}_${idx+1}`;
+    used.add(id);
+    const messages=Array.isArray(thread.messages)?thread.messages:[];
+    const outMessages=[];
+    for(const [mIdx,msg] of messages.entries()){
+      if(!msg||typeof msg!=='object')continue;
+      const text=safeTrimmedString(msg.text,220,'').trim();
+      if(!text)continue;
+      outMessages.push({
+        id:safeTrimmedString(msg.id,48,'').trim()||`msg_${Date.now()}_${idx}_${mIdx}`,
+        from:['me','them','system'].includes(msg.from)?msg.from:'them',
+        text,
+        clock:safeTrimmedString(msg.clock,24,''),
+        timeLabel:safeTrimmedString(msg.timeLabel,24,''),
+        date:safeTrimmedString(msg.date,20,'')
+      });
+    }
+    outThreads.push({id,name,unread:clampNumber(parseInt(thread.unread,10)||0,0,999),messages:outMessages.slice(-60)});
+  }
+  const currentThreadId=typeof source.currentThreadId==='string'?source.currentThreadId:'';
+  return {threads:outThreads,currentThreadId:outThreads.some(t=>t.id===currentThreadId)?currentThreadId:(outThreads[0]?.id||''),autoPopup:source.autoPopup!==false,lastPopupThreadId:typeof source.lastPopupThreadId==='string'?source.lastPopupThreadId:''};
+}
+function findLocationByName(name){
+  const target=String(name||'').trim();
+  return (G.worldSetting&&Array.isArray(G.worldSetting.locationLibrary)?G.worldSetting.locationLibrary:[]).find(loc=>loc.name===target)||null;
+}
+function getCurrentLocationEntry(){
+  if(!G||!G.session)return null;
+  const locationLibrary=(G.worldSetting&&Array.isArray(G.worldSetting.locationLibrary))?G.worldSetting.locationLibrary:[];
+  const currentName=(G.session.timeState&&typeof G.session.timeState.locationName==='string')?G.session.timeState.locationName.trim():'';
+  if(currentName){
+    const byName=locationLibrary.find(loc=>loc&&loc.name===currentName)||null;
+    if(byName)return byName;
+  }
+  const bgId=G.session.sceneBackground;
+  return locationLibrary.find(loc=>loc&&loc.bgId===bgId)||null;
 }
 function normalizeRouteState(raw){
   const source=(raw&&typeof raw==='object'&&!Array.isArray(raw))?raw:{};
@@ -1019,8 +1263,13 @@ function ensureSessionStoryState(){
   G.session.routeState=normalizeRouteState(G.session.routeState);
   G.session.timeState=normalizeTimeState(G.session.timeState);
   if(typeof G.session.lastRequest!=='object'||Array.isArray(G.session.lastRequest))G.session.lastRequest=null;
+  if(!G.worldSetting||typeof G.worldSetting!=='object'||Array.isArray(G.worldSetting))G.worldSetting={description:'',rules:[],narrativeStyle:'默认',customStyle:''};
+  G.worldSetting.locationLibrary=normalizeLocationLibrary(G.worldSetting.locationLibrary,G.backgroundLibrary,createDefaultLocationLibrary());
+  G.session.phoneState=normalizePhoneState(G.session.phoneState);
   const bg=(G.backgroundLibrary||[]).find(item=>item.id===G.session.sceneBackground)||G.backgroundLibrary?.[0];
   if(bg&&(!G.session.timeState.locationName||G.session.timeState.locationName==='未知地点'))G.session.timeState.locationName=bg.name||G.session.timeState.locationName;
+  const currentLoc=getCurrentLocationEntry();
+  if(currentLoc&&currentLoc.name)G.session.timeState.locationName=currentLoc.name;
   if(!G.session.routeState.unlockedCharacterRoutes||typeof G.session.routeState.unlockedCharacterRoutes!=='object'||Array.isArray(G.session.routeState.unlockedCharacterRoutes))G.session.routeState.unlockedCharacterRoutes={};
   for(const charId of Object.keys(G.characters||{})){
     const aff=clampNumber(parseInt((G.session.flags||{})[`${charId}_affection`],10)||0,-100,100);
@@ -1188,7 +1437,7 @@ if(ver<9){
   // v9 → v10: 剧情线 / 关键选择 / 时间推进状态
   if(ver<10){
     if(!d.session||typeof d.session!=='object'||Array.isArray(d.session))d.session={};
-    if(!d.session.routeState||typeof d.session.routeState!=='object'||Array.isArray(d.session.routeState))d.session.routeState=createDefaultRouteState();
+    if(!d.session.routeState||typeof d.session.routeState!=='object'||Array.isArray(d.session))d.session.routeState=createDefaultRouteState();
     else d.session.routeState=normalizeRouteState(d.session.routeState);
     if(!d.session.timeState||typeof d.session.timeState!=='object'||Array.isArray(d.session.timeState))d.session.timeState=createDefaultTimeState();
     else d.session.timeState=normalizeTimeState(d.session.timeState);
@@ -1196,6 +1445,15 @@ if(ver<9){
     d.schemaVersion=10;
     ver=10;
 }
+  // v10 → v11: 手机消息与地点地图
+  if(ver<11){
+    if(!d.worldSetting||typeof d.worldSetting!=='object'||Array.isArray(d.worldSetting))d.worldSetting={};
+    d.worldSetting.locationLibrary=normalizeLocationLibrary(d.worldSetting.locationLibrary,d.backgroundLibrary||[],createDefaultLocationLibrary());
+    if(!d.session||typeof d.session!=='object'||Array.isArray(d.session))d.session={};
+    d.session.phoneState=normalizePhoneState(d.session.phoneState);
+    d.schemaVersion=11;
+    ver=11;
+  }
   return d;
 }
 
@@ -1539,12 +1797,13 @@ window.triggerFX=triggerFX;
 let G={
   characters:{alice:{...ALICE_DEFAULT_PROFILE,sprites:{...ALICE_DEFAULT_PROFILE.sprites}}},
   player:createDefaultPlayerProfile(),
-  worldSetting:{description:'南方小城的夏末，江堤、学校、便利店和旧居民楼挨得很近。人一抬头就能看见彼此，流言和心事也传得快。情绪不靠大事炸开，更多时候都卡在一句没接上的话、一个没说出口的念头里。',rules:['固定县城/小镇青春期写实语境','采用漫画分镜式短段落推进','对白明显多于旁白，能说就别解释','旁白固定第一人称限知，优先写“我”的心理活动','避免空动作、环境污染、华丽修辞和高污染套话','少用“……我没”“……但没”“没……就是……”这类模板句','允许少量符合人设的梗和脏话，保留青春活人感'],narrativeStyle:'县镇青春',customStyle:''},
+  worldSetting:{description:'南方小城的夏末，江堤、学校、便利店和旧居民楼挨得很近。人一抬头就能看见彼此，流言和心事也传得快。情绪不靠大事炸开，更多时候都卡在一句没接上的话、一个没说出口的念头里。',rules:['固定县城/小镇青春期写实语境','采用漫画分镜式短段落推进','对白明显多于旁白，能说就别解释','旁白固定第一人称限知，优先写“我”的心理活动','避免空动作、环境污染、华丽修辞和高污染套话','少用“……我没”“……但没”“没……就是……”这类模板句','允许少量符合人设的梗和脏话，保留青春活人感'],narrativeStyle:'县镇青春',customStyle:'',locationLibrary:createDefaultLocationLibrary()},
   session:{sceneBackground:'bg1',activeSpeakerId:'alice',dialogueHistory:[],flags:{},snapshot:null,currentEntry:null,
     // v10: memory layer
     memory:{...DEFAULT_MEMORY},
     routeState:createDefaultRouteState(),
     timeState:createDefaultTimeState(),
+    phoneState:createDefaultPhoneState(),
     lastRequest:null
   },
   cgLibrary:[],
@@ -1764,12 +2023,358 @@ function renderStoryMetaPanel(){
   document.getElementById('meta-affection-name').textContent=focusChar?`${focusChar.name} · ${getWorldlineLabel(routeState.worldlineDrift)}`:`世界线 · ${getWorldlineLabel(routeState.worldlineDrift)}`;
   document.getElementById('meta-affection-fill').style.width=`${Math.max(0,Math.min(100,affection))}%`;
   document.getElementById('meta-affection-sub').textContent=focusChar?`好感 ${affection} / 100 · 线索 ${routeState.cluePoints} · 偏移 ${routeState.worldlineDrift}`:`线索 ${routeState.cluePoints} · 偏移 ${routeState.worldlineDrift}`;
+  renderRouteMonitor();
+}
+function getRouteConditionState(routeKey){
+  ensureSessionStoryState();
+  const rs=G.session.routeState||createDefaultRouteState();
+  const focusId=getMetaFocusCharacterId();
+  const focusName=focusId&&G.characters[focusId]?G.characters[focusId].name:'当前角色';
+  const affection=getAffectionValue(focusId);
+  const sinceLock=Math.max(0,(parseInt(rs.turnCount,10)||0)-(parseInt(rs.lockedAtTurn,10)||0));
+  if(routeKey==='HE'){
+    return {
+      label:'Happy End',
+      detail:`需要先锁到 HE，并让 ${focusName} 的好感达到 45 以上。锁线后再推进至少 1 个回合就会收束。`,
+      met:rs.lockedRoute==='HE'&&affection>=45&&sinceLock>=1,
+      progress:`当前：锁线 ${rs.lockedRoute||'未锁'} · ${focusName}好感 ${affection} / 45`
+    };
+  }
+  if(routeKey==='TE'){
+    return {
+      label:'True End',
+      detail:`需要先锁到 TE，再把 ${focusName} 的好感推到 35 以上，同时线索数达到 2。`,
+      met:rs.lockedRoute==='TE'&&affection>=35&&(parseInt(rs.cluePoints,10)||0)>=2&&sinceLock>=1,
+      progress:`当前：锁线 ${rs.lockedRoute||'未锁'} · 好感 ${affection} / 35 · 线索 ${rs.cluePoints} / 2`
+    };
+  }
+  return {
+    label:'Bad End',
+    detail:'只要关键选择锁到 BE，并继续推进到结局节点，就会直接进入坏结局收束。',
+    met:rs.lockedRoute==='BE'&&sinceLock>=1&&(parseInt(rs.turnCount,10)||0)>=8,
+    progress:`当前：锁线 ${rs.lockedRoute||'未锁'} · 总回合 ${rs.turnCount} / 8`
+  };
+}
+function renderRouteMonitor(){
+  const mount=document.getElementById('route-monitor-card');
+  if(!mount)return;
+  ensureSessionStoryState();
+  const rs=G.session.routeState||createDefaultRouteState();
+  const focusId=getMetaFocusCharacterId();
+  const focusName=focusId&&G.characters[focusId]?G.characters[focusId].name:'当前角色';
+  const focusAff=getAffectionValue(focusId);
+  const toKeyChoice=Math.max(0,6-(parseInt(rs.turnsSinceKeyChoice,10)||0));
+  const forcedEnding=evaluateEndingTrigger();
+  mount.innerHTML='';
+  const wrap=el('div',{className:'route-monitor-wrap'});
+  const summary=rs.ended
+    ?`当前故事已经进入 ${ROUTE_LABEL_MAP[rs.endingRoute]||rs.endingRoute||'结局'}。${rs.endingSummary?`最后一段收束：${rs.endingSummary}`:''}`
+    :(rs.lockedRoute
+      ?`当前路线已锁定为 ${ROUTE_LABEL_MAP[rs.lockedRoute]||rs.lockedRoute}。继续推进会朝这条线收束。${forcedEnding?` 这一轮已经满足 ${ROUTE_LABEL_MAP[forcedEnding]||forcedEnding} 的结局触发条件。`:''}`
+      :(toKeyChoice===0
+        ?'下一轮会强制插入【关键选择】。选完就会锁定 HE / TE / BE 的其中一条。'
+        :`普通剧情进行中。再推进 ${toKeyChoice} 个回合左右，就会强制插入一次【关键选择】。`));
+  wrap.appendChild(el('div',{className:'route-monitor-summary',text:summary}));
+  const grid=el('div',{className:'route-mini-grid'});
+  [
+    ['当前回合',`${rs.turnCount}`],
+    ['关键选择倒计时',toKeyChoice===0?'下一轮':`${toKeyChoice} 回合`],
+    ['世界线状态',`${getWorldlineLabel(rs.worldlineDrift)} · 偏移 ${rs.worldlineDrift}`],
+    ['当前关注角色',`${focusName} · 好感 ${focusAff}`]
+  ].forEach(([k,v])=>{
+    const chip=el('div',{className:'route-stat-chip'});
+    chip.appendChild(el('div',{className:'route-stat-k',text:k}));
+    chip.appendChild(el('div',{className:'route-stat-v',text:v}));
+    grid.appendChild(chip);
+  });
+  wrap.appendChild(grid);
+  const endingList=el('div',{className:'route-condition-list'});
+  ['HE','TE','BE'].forEach(routeKey=>{
+    const state=getRouteConditionState(routeKey);
+    const card=el('div',{className:'route-condition-item'+(state.met?' met':'')});
+    const head=el('div',{className:'route-condition-head'});
+    head.appendChild(el('div',{className:'route-condition-title',text:state.label}));
+    head.appendChild(el('span',{className:'route-badge'+(state.met?' locked':''),text:state.met?'已满足':(rs.lockedRoute===routeKey?'已锁线':'未满足')}));
+    card.appendChild(head);
+    card.appendChild(el('div',{className:'route-condition-sub',text:state.detail}));
+    card.appendChild(el('div',{className:'route-condition-sub',style:{marginTop:'6px',color:'#6B6B6B'},text:state.progress}));
+    endingList.appendChild(card);
+  });
+  wrap.appendChild(endingList);
+  const charWrap=el('div',{className:'route-condition-list'});
+  const chars=Object.values(G.characters||{});
+  if(chars.length){
+    chars.forEach(ch=>{
+      const aff=getAffectionValue(ch.id);
+      const unlocked=!!(rs.unlockedCharacterRoutes&&rs.unlockedCharacterRoutes[ch.id]);
+      const line=el('div',{className:'route-char-line'});
+      const top=el('div',{className:'route-char-top'});
+      top.appendChild(el('div',{className:'route-char-name',text:`${ch.name} · ${unlocked?'个人线已开':'个人线未开'}`}));
+      top.appendChild(el('span',{className:'route-badge'+(unlocked?' locked':''),text:unlocked?'已开启':`${Math.max(0,CHARACTER_ROUTE_AFFECTION_THRESHOLD-aff)} 好感后开启`}));
+      line.appendChild(top);
+      line.appendChild(el('div',{className:'route-char-sub',text:`当前好感 ${aff} / ${CHARACTER_ROUTE_AFFECTION_THRESHOLD}${ch.relationshipToUser?` · ${ch.relationshipToUser}`:''}`}));
+      const track=el('div',{className:'route-mini-track'});
+      track.appendChild(el('div',{className:'route-mini-fill',style:{width:`${Math.max(0,Math.min(100,(aff/CHARACTER_ROUTE_AFFECTION_THRESHOLD)*100))}%`}}));
+      line.appendChild(track);
+      charWrap.appendChild(line);
+    });
+  }
+  wrap.appendChild(charWrap);
+  mount.appendChild(wrap);
 }
 function toggleStoryMetaPanel(){
   ensureSessionStoryState();
   G.session.timeState.collapsed=!G.session.timeState.collapsed;
   renderStoryMetaPanel();
   save();
+}
+let _pendingPhonePopupThreadId='';
+function parsePhoneSpeakerId(raw){
+  if(typeof raw!=='string')return null;
+  let m=raw.match(/^(?:phone|wx):(.+)$/i);
+  if(m)return{threadName:m[1].trim(),from:'them'};
+  m=raw.match(/^(?:phone-self|wx-self):(.+)$/i);
+  if(m)return{threadName:m[1].trim(),from:'me'};
+  return null;
+}
+function getPhoneThreadIdByName(name){
+  const target=String(name||'').trim();
+  const thread=(G.session.phoneState?.threads||[]).find(item=>item.name===target||item.id===target);
+  return thread?thread.id:'';
+}
+function ensurePhoneThread(name){
+  ensureSessionStoryState();
+  const label=safeTrimmedString(name,40,'').trim()||'未命名联系人';
+  let thread=(G.session.phoneState.threads||[]).find(item=>item.name===label||item.id===label);
+  if(!thread){
+    thread={id:slugifyStoryId(label,'chat'),name:label,unread:0,messages:[]};
+    G.session.phoneState.threads.unshift(thread);
+  }
+  if(!G.session.phoneState.currentThreadId)G.session.phoneState.currentThreadId=thread.id;
+  return thread;
+}
+function getPhoneThreadById(id){
+  ensureSessionStoryState();
+  return (G.session.phoneState.threads||[]).find(item=>item.id===id)||null;
+}
+function pushPhoneMessage(contactName,text,{from='them',autoShow=false}={}){
+  ensureSessionStoryState();
+  const cleanText=safeTrimmedString(text,220,'').trim();
+  if(!cleanText)return null;
+  const thread=ensurePhoneThread(contactName);
+  thread.messages.push({id:`msg_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,from:['me','them','system'].includes(from)?from:'them',text:cleanText,clock:formatStoryClockLabel(G.session.timeState),timeLabel:G.session.timeState.time,date:G.session.timeState.date});
+  thread.messages=thread.messages.slice(-60);
+  const phoneOpen=document.getElementById('phone-overlay')?.classList.contains('open');
+  if(from!=='me'){
+    if(!(phoneOpen&&G.session.phoneState.currentThreadId===thread.id))thread.unread=clampNumber((parseInt(thread.unread,10)||0)+1,0,999);
+    if(autoShow&&G.session.phoneState.autoPopup)_pendingPhonePopupThreadId=thread.id;
+  }
+  G.session.phoneState.currentThreadId=thread.id;
+  renderPhoneOverlay();
+  return thread;
+}
+function ingestPhoneSegmentsFromEntry(entry){
+  const normalized=normalizeEntry(entry);
+  if(!normalized||!Array.isArray(normalized.segments))return normalized;
+  const visible=[];
+  let hadPhone=false;
+  let firstThreadId='';
+  for(const seg of normalized.segments){
+    const info=parsePhoneSpeakerId(seg&&seg.speakerId);
+    if(info&&seg&&typeof seg.text==='string'){
+      const thread=pushPhoneMessage(info.threadName,seg.text,{from:info.from,autoShow:false});
+      if(thread&&!firstThreadId)firstThreadId=thread.id;
+      hadPhone=true;
+      continue;
+    }
+    visible.push(seg);
+  }
+  if(hadPhone){
+    _pendingPhonePopupThreadId=firstThreadId||_pendingPhonePopupThreadId;
+    if(!visible.length)visible.push({speakerId:'narrator',text:'手机震了一下。',mood:'thinking'});
+  }
+  return {...normalized,segments:visible};
+}
+function renderPhoneOverlay(){
+  ensureSessionStoryState();
+  const state=G.session.phoneState;
+  const list=document.getElementById('phone-thread-list');
+  const msgs=document.getElementById('phone-chat-messages');
+  const headerSub=document.getElementById('phone-header-sub');
+  const chatTitle=document.getElementById('phone-chat-title');
+  if(!list||!msgs||!headerSub||!chatTitle)return;
+  list.innerHTML='';
+  msgs.innerHTML='';
+  const threads=[...(state.threads||[])].sort((a,b)=>{
+    const at=a.messages?.length?a.messages[a.messages.length-1].id:'';
+    const bt=b.messages?.length?b.messages[b.messages.length-1].id:'';
+    return String(bt).localeCompare(String(at));
+  });
+  const activeId=threads.some(t=>t.id===state.currentThreadId)?state.currentThreadId:(threads[0]?.id||'');
+  state.currentThreadId=activeId;
+  const activeThread=threads.find(t=>t.id===activeId)||null;
+  headerSub.textContent=activeThread?`当前聊天：${activeThread.name}`:'还没有任何消息';
+  if(!threads.length){
+    list.appendChild(el('div',{className:'phone-empty',text:'这里会显示剧情里的微信消息。AI 生成 speakerId 为 “phone:联系人名” 的段落时，会自动弹出手机屏幕。'}));
+    msgs.appendChild(el('div',{className:'phone-empty',text:'目前没有聊天记录。'}));
+    chatTitle.textContent='微信';
+    return;
+  }
+  threads.forEach(thread=>{
+    const last=thread.messages&&thread.messages.length?thread.messages[thread.messages.length-1]:null;
+    const item=el('div',{className:'phone-thread-item'+(thread.id===activeId?' active':''),onclick:()=>openPhoneOverlay(thread.id)});
+    const name=el('div',{className:'phone-thread-name'});
+    name.appendChild(el('span',{text:thread.name}));
+    if((thread.unread||0)>0)name.appendChild(el('span',{className:'phone-thread-badge',text:String(thread.unread)}));
+    item.appendChild(name);
+    item.appendChild(el('div',{className:'phone-thread-preview',text:last?last.text:'还没有消息'}));
+    list.appendChild(item);
+  });
+  if(activeThread){
+    chatTitle.textContent=activeThread.name;
+    activeThread.unread=0;
+    activeThread.messages.forEach(msg=>{
+      const box=el('div',{className:'phone-msg '+(msg.from==='me'?'me':'them')});
+      box.appendChild(el('div',{className:'phone-bubble',text:msg.text}));
+      box.appendChild(el('div',{className:'phone-msg-meta',text:msg.clock||msg.timeLabel||''}));
+      msgs.appendChild(box);
+    });
+    msgs.scrollTop=msgs.scrollHeight;
+  }
+}
+function openPhoneOverlay(threadId='',fromPopup=false){
+  ensureSessionStoryState();
+  if(threadId)G.session.phoneState.currentThreadId=threadId;
+  const overlay=document.getElementById('phone-overlay');
+  if(overlay)overlay.classList.add('open');
+  renderPhoneOverlay();
+  if(fromPopup&&threadId){
+    const thread=getPhoneThreadById(threadId);
+    showToast(thread?`${thread.name} 发来新消息`:'收到新消息');
+  }
+  save();
+}
+function openPhoneOverlayWithThread(threadId){
+  openPhoneOverlay(threadId,false);
+}
+function closePhoneOverlay(){
+  const overlay=document.getElementById('phone-overlay');
+  if(overlay)overlay.classList.remove('open');
+  renderPhoneOverlay();
+  save();
+}
+function formatPhoneStateForPrompt(limitThreads=3,limitMessages=3){
+  ensureSessionStoryState();
+  const threads=(G.session.phoneState?.threads||[]).filter(t=>t.messages&&t.messages.length).slice(0,limitThreads);
+  if(!threads.length)return '（当前没有手机聊天记录）';
+  return threads.map(thread=>{
+    const tail=thread.messages.slice(-limitMessages).map(msg=>`${msg.from==='me'?'我':thread.name}：${msg.text}`).join(' / ');
+    return `${thread.name}[${tail}]`;
+  }).join('；');
+}
+function formatLocationLibraryForPrompt(limit=8){
+  ensureSessionStoryState();
+  const list=(G.worldSetting.locationLibrary||[]).slice(0,limit);
+  if(!list.length)return '（暂无地点库）';
+  return list.map(loc=>`${loc.name}${loc.summary?`(${loc.summary})`:''}${loc.npcHints?` NPC:${getLocationNpcList(loc.npcHints).join('、')}`:''}`).join('；');
+}
+function applyLocationById(id,{closeQuick=true,toast=true}={}){
+  ensureSessionStoryState();
+  const loc=(G.worldSetting.locationLibrary||[]).find(item=>item.id===id);
+  if(!loc)return;
+  G.session.timeState.locationName=loc.name;
+  if(loc.bgId&&G.backgroundLibrary.some(bg=>bg.id===loc.bgId))G.session.sceneBackground=loc.bgId;
+  renderBG();
+  renderStoryMetaPanel();
+  renderLocationManager();
+  save();
+  if(closeQuick)closeLocationOverlay();
+  if(toast)showToast(`已切换到 ${loc.name}`);
+}
+function getLocationCardElement(loc,{quick=false}={}){
+  const current=(G.session.timeState.locationName===loc.name)||((!G.session.timeState.locationName||G.session.timeState.locationName==='未知地点')&&loc.bgId===G.session.sceneBackground);
+  const card=el('div',{className:'location-card'+(current?' current':'')});
+  const top=el('div',{className:'location-top'});
+  const info=el('div',null,[el('div',{className:'location-name',text:loc.name}),el('div',{className:'location-sub',text:(loc.summary||'未填写地点说明')+(loc.bgId?` · 背景 ${G.backgroundLibrary.find(bg=>bg.id===loc.bgId)?.name||loc.bgId}`:'')})]);
+  top.appendChild(info);
+  if(current)top.appendChild(el('span',{className:'phone-thread-badge',text:'当前'}));
+  card.appendChild(top);
+  const actions=el('div',{className:'location-actions'});
+  actions.appendChild(el('button',{type:'button',className:'tiny-btn primary',text:'切换',onclick:()=>applyLocationById(loc.id,{closeQuick:quick})}));
+  actions.appendChild(el('button',{type:'button',className:'tiny-btn',text:'删除',onclick:()=>deleteLocation(loc.id)}));
+  if(loc.bgId)actions.appendChild(el('button',{type:'button',className:'tiny-btn',text:'套用背景',onclick:()=>{G.session.sceneBackground=loc.bgId;renderBG();renderStoryMetaPanel();save();showToast('背景已同步');}}));
+  card.appendChild(actions);
+  const npcs=getLocationNpcList(loc.npcHints);
+  if(npcs.length){
+    const wrap=el('div',{className:'npc-chip-wrap'});
+    npcs.forEach(npc=>wrap.appendChild(el('button',{type:'button',className:'npc-chip',text:npc,onclick:()=>{if(quick)closeLocationOverlay();requestStory(`我主动去和${npc}搭话。`,{onFailToast:'请求中断，已回到上一步'});}})));
+    card.appendChild(wrap);
+  }
+  return card;
+}
+function renderLocationManager(){
+  ensureSessionStoryState();
+  const list=document.getElementById('location-manager-list');
+  const quick=document.getElementById('location-body');
+  const select=document.getElementById('loc-bg-select');
+  if(select){
+    select.innerHTML='';
+    select.appendChild(el('option',{value:'',text:'不绑定背景'}));
+    (G.backgroundLibrary||[]).forEach(bg=>select.appendChild(el('option',{value:bg.id,text:bg.name})));
+  }
+  if(list){
+    list.innerHTML='';
+    (G.worldSetting.locationLibrary||[]).forEach(loc=>list.appendChild(getLocationCardElement(loc)));
+  }
+  if(quick){
+    quick.innerHTML='';
+    (G.worldSetting.locationLibrary||[]).forEach(loc=>quick.appendChild(getLocationCardElement(loc,{quick:true})));
+    if(!(G.worldSetting.locationLibrary||[]).length)quick.appendChild(el('div',{className:'phone-empty',text:'还没有地点。先在世界书里新增一个地点。'}));
+  }
+}
+function addLocation(){
+  ensureSessionStoryState();
+  const name=document.getElementById('loc-name-in')?.value.trim()||'';
+  const bgId=document.getElementById('loc-bg-select')?.value||'';
+  const summary=document.getElementById('loc-summary-in')?.value.trim()||'';
+  const npcs=document.getElementById('loc-npcs-in')?.value.trim()||'';
+  if(!name){showToast('先写地点名称');return;}
+  const exists=(G.worldSetting.locationLibrary||[]).some(loc=>loc.name===name);
+  if(exists){showToast('这个地点已经存在了');return;}
+  G.worldSetting.locationLibrary.push({id:slugifyStoryId(name,'loc'),name,bgId,summary,npcHints:npcs});
+  if(document.getElementById('loc-name-in'))document.getElementById('loc-name-in').value='';
+  if(document.getElementById('loc-summary-in'))document.getElementById('loc-summary-in').value='';
+  if(document.getElementById('loc-npcs-in'))document.getElementById('loc-npcs-in').value='';
+  if(document.getElementById('loc-bg-select'))document.getElementById('loc-bg-select').value='';
+  renderLocationManager();
+  save();
+  showToast('地点已加入地图');
+}
+function deleteLocation(id){
+  ensureSessionStoryState();
+  const list=G.worldSetting.locationLibrary||[];
+  const idx=list.findIndex(loc=>loc.id===id);
+  if(idx===-1)return;
+  if(list.length<=1){showToast('至少保留一个地点');return;}
+  const removed=list[idx];
+  list.splice(idx,1);
+  if(G.session.timeState.locationName===removed.name){
+    const next=list[0];
+    if(next)applyLocationById(next.id,{closeQuick:false,toast:false});
+  }
+  renderLocationManager();
+  renderCleanupCenter();
+  save();
+  showToast('地点已删除');
+}
+function openLocationOverlay(){
+  renderLocationManager();
+  const overlay=document.getElementById('location-overlay');
+  if(overlay)overlay.classList.add('open');
+}
+function closeLocationOverlay(){
+  const overlay=document.getElementById('location-overlay');
+  if(overlay)overlay.classList.remove('open');
 }
 
 const FX_ALLOWLIST=new Set(['shake','flash-red','flash-white','vignette','hurt','danger','bright']);
@@ -2067,6 +2672,7 @@ function createRequestRestorePoint(){
     memory:cloneJsonSafe(G.session.memory)||{...DEFAULT_MEMORY},
     routeState:cloneJsonSafe(G.session.routeState)||createDefaultRouteState(),
     timeState:cloneJsonSafe(G.session.timeState)||createDefaultTimeState(),
+    phoneState:cloneJsonSafe(G.session.phoneState)||createDefaultPhoneState(),
     lastRequest:cloneJsonSafe(G.session.lastRequest)||null
   };
 }
@@ -2080,6 +2686,7 @@ async function restoreRequestRestorePoint(point){
   G.session.memory=cloneJsonSafe(point.memory)||{...DEFAULT_MEMORY};
   G.session.routeState=normalizeRouteState(point.routeState);
   G.session.timeState=normalizeTimeState(point.timeState);
+  G.session.phoneState=normalizePhoneState(point.phoneState);
   G.session.lastRequest=cloneJsonSafe(point.lastRequest)||null;
   G.session.currentEntry=cloneJsonSafe(point.currentEntry)||G.session.currentEntry||INIT_ENTRY;
   ensureSessionStoryState();
@@ -2848,9 +3455,14 @@ function onDialogTap(e){
 }
 
 async function renderEntry(entry,animated=true){
-  G.session.currentEntry=entry;
-  const normalized=normalizeEntry(entry);
+  const normalized=ingestPhoneSegmentsFromEntry(entry);
+  G.session.currentEntry=normalized;
   await playSegments(normalized,animated);
+  if(_pendingPhonePopupThreadId){
+    const threadId=_pendingPhonePopupThreadId;
+    _pendingPhonePopupThreadId='';
+    setTimeout(()=>openPhoneOverlay(threadId,true),260);
+  }
 }
 
 // ── Interaction ───────────────────────────────────────────
@@ -2934,6 +3546,8 @@ async function handleReroll(){
 function getSpeakerDisplayNameById(speakerId){
   if(speakerId==='player')return G.player.name||'我';
   if(speakerId==='narrator')return '旁白';
+  const phoneInfo=parsePhoneSpeakerId(speakerId);
+  if(phoneInfo)return phoneInfo.from==='me'?'我(微信)':`${phoneInfo.threadName}(微信)`;
   const ch=G.characters[speakerId]||Object.values(G.characters).find(c=>c.name===speakerId);
   return ch?ch.name:(speakerId||'旁白');
 }
@@ -2999,6 +3613,7 @@ function handleRollback(){
     G.session.memory=snap.memory||{...DEFAULT_MEMORY};
     G.session.routeState=normalizeRouteState(snap.routeState);
     G.session.timeState=normalizeTimeState(snap.timeState);
+    G.session.phoneState=normalizePhoneState(snap.phoneState);
     G.session.lastRequest=snap.lastRequest||null;
     dlEl.style.transition='';dlEl.style.transform='';dlEl.style.opacity='';
     renderBG();
@@ -3018,6 +3633,7 @@ function handleNewGame(){
   G.session.currentEntry=cloneJsonSafe(INIT_ENTRY);
   G.session.memory={...DEFAULT_MEMORY};
   G.session.routeState=createDefaultRouteState();
+  G.session.phoneState=createDefaultPhoneState();
   const preservedTime=normalizeTimeState(G.session.timeState);
   G.session.timeState={...createDefaultTimeState(),date:preservedTime.date,time:preservedTime.time,minutesPerTurn:preservedTime.minutesPerTurn,collapsed:preservedTime.collapsed};
   const bg=G.backgroundLibrary.find(item=>item.id===G.session.sceneBackground)||G.backgroundLibrary[0];
@@ -3487,6 +4103,9 @@ function buildMessages(action,oocWarning='',forcedEndingRoute=''){
   const focusAffection=getAffectionValue(focusCharId);
   const mustKeyChoice=shouldForceKeyChoice();
   const routeSummary=`锁线路线=${routeState.lockedRoute?`${routeState.lockedRoute}(${ROUTE_LABEL_MAP[routeState.lockedRoute]||routeState.lockedRoute})`:'未锁线'}；回合=${routeState.turnCount}；距离上次关键选择=${routeState.turnsSinceKeyChoice}；线索=${routeState.cluePoints}；世界线偏移=${routeState.worldlineDrift}；当前高关注角色=${focusCharId||'无'}(${focusAffection})；已开启个人线=${Object.keys(routeState.unlockedCharacterRoutes||{}).join('、')||'无'}`;
+  const activeLocation=getCurrentLocationEntry();
+  const locationPrompt=formatLocationLibraryForPrompt();
+  const phonePrompt=formatPhoneStateForPrompt();
   const endingDirective=forcedEndingRoute?`【本轮必须进入结局叙事模式】当前满足 ${forcedEndingRoute} 结局触发条件。你必须输出一段完整、带终结感的结局叙事：3~6 个 segments，choices 必须为空，最后一段要有明确收束感。flagChanges 里可设置 ending_reached:true。`:'';
   const choiceDirective=mustKeyChoice&&!forcedEndingRoute?'【本轮必须插入关键选择】本轮一定要给出 3 个 choices，并把它们写成关键选择。每个 choice 必须带 hiddenEffects.keyChoice=true，并设置 hiddenEffects.routeLock 为 HE / BE / TE 之一。选下去以后路线不可逆。':'';
 
@@ -3542,6 +4161,11 @@ function buildMessages(action,oocWarning='',forcedEndingRoute=''){
 3. 少写解释，多写当下反应。少写动作，多写对白。
 4. 遇到人设里的强势、占有欲、执念等特质，不要直接往“控制、征服、霸道、动物化”的套路里拐，除非剧情已经合理铺垫到那个程度。
 
+【手机 / 微信】
+1. 如果剧情里出现微信、短信、通知、未读消息，优先使用特殊 segment：speakerId 写成 "phone:联系人名" 表示对方发来的微信，写成 "phone-self:联系人名" 表示‘我’发出去的微信。
+2. 这类 phone segment 会自动进入手机界面并弹出手机屏幕，不会占用主画面的对白气泡，所以 text 只写实际消息内容，不要再补旁白解释。
+3. 一轮最多 3 条 phone segment。不要把普通面对面对话误写成 phone。
+
 【剧情线 / 好感 / 关键选择】
 1. 你生成的每个 choice 都必须附带 hiddenEffects，用来记录这个选项会如何影响不可见的好感、线索、世界线偏移和时间推进。
 2. hiddenEffects.affection 使用角色ID到数值增量的对象；hiddenEffects.clue 表示线索推进；hiddenEffects.worldline 表示世界线偏移；hiddenEffects.timeMinutes 表示时间推进分钟数。
@@ -3586,12 +4210,15 @@ ${playerBlock}
 ${npcBlock}
 
 当前状态：场景=${bg?.name||'未知'}，时间=${formatStoryClockLabel(timeState)}，地点标签=${timeState.locationName||bg?.name||'未知'}，标记=${JSON.stringify(visibleFlags)}${memoryContext}
+当前地点补充：${activeLocation?`${activeLocation.name}${activeLocation.summary?`｜${activeLocation.summary}`:''}${activeLocation.npcHints?`｜可出现NPC:${getLocationNpcList(activeLocation.npcHints).join('、')}`:''}`:'（暂无）'}
+地点地图：${locationPrompt}
+手机消息摘要：${phonePrompt}
 剧情线状态：${routeSummary}
 允许修改的状态键：${flagGuide}
 flagChanges 规则：只能使用上面列出的键；数值类好感/关系键返回增量；布尔类键返回 true/false；临时演出只允许 fx（shake|flash-red|flash-white|vignette|hurt|danger|bright）和 is_hurt（0 或 1）；不要发明含空格、奇怪符号或未声明用途的状态键。
 
 必须严格返回如下格式JSON（不要输出任何其他文字、注释或代码块标记，直接输出JSON对象）：
-{"segments":[{"speakerId":"角色ID(如${castIds})、player、narrator，或无立绘NPC标签（如“戴雷锋帽的售票员”）","text":"对白或旁白，不超100字","mood":"${SPRITE_MOOD_ENUM_TEXT}"}],"choices":[{"id":"opt1","text":"选项","hiddenEffects":{"affection":{"alice":2},"clue":1,"worldline":0,"timeMinutes":12,"keyChoice":false,"routeLock":"","flags":{}}},{"id":"opt2","text":"选项","hiddenEffects":{"affection":{"alice":-1},"clue":0,"worldline":1,"timeMinutes":8,"keyChoice":false,"routeLock":"","flags":{}}},{"id":"opt3","text":"选项","hiddenEffects":{"affection":{"alice":0},"clue":1,"worldline":0,"timeMinutes":6,"keyChoice":false,"routeLock":"","flags":{}}}],"flagChanges":{}}
+{"segments":[{"speakerId":"角色ID(如${castIds})、player、narrator、phone:联系人名、phone-self:联系人名，或无立绘NPC标签（如“戴雷锋帽的售票员”）","text":"对白、旁白或微信消息内容，不超100字","mood":"${SPRITE_MOOD_ENUM_TEXT}"}],"choices":[{"id":"opt1","text":"选项","hiddenEffects":{"affection":{"alice":2},"clue":1,"worldline":0,"timeMinutes":12,"keyChoice":false,"routeLock":"","flags":{}}},{"id":"opt2","text":"选项","hiddenEffects":{"affection":{"alice":-1},"clue":0,"worldline":1,"timeMinutes":8,"keyChoice":false,"routeLock":"","flags":{}}},{"id":"opt3","text":"选项","hiddenEffects":{"affection":{"alice":0},"clue":1,"worldline":0,"timeMinutes":6,"keyChoice":false,"routeLock":"","flags":{}}}],"flagChanges":{}}
 
 注意：segments 至少包含一个元素。旁白使用 speakerId:"narrator"，且优先写成第一人称限知的心理短句。玩家对白使用 speakerId:"player"。整体以对白为主，旁白为辅；没有明确转场时，本轮至少给出 2 条非 narrator 段落。单段不超过100字。普通轮可以给 0~3 个 choices；关键选择轮必须给 3 个 choices，并且每个 choice 都要写 hiddenEffects。不要复读，不要跳回开场，不要用 narrator 代替角色把话说完，也不要为了“有味道”机械补旁白。表情 mood 优先从更细的表情集中选择，例如害羞/思考/认真/疲惫/俏皮/尴尬/烦躁/想哭/平静/面无表情。${choiceDirective}${endingDirective}`;
   const oocPart=oocWarning?`【重要提醒】${oocWarning}\n\n`:'';
@@ -3604,7 +4231,7 @@ flagChanges 规则：只能使用上面列出的键；数值类好感/关系键�
 上一轮最后一句：${lastVisibleLine}
 当前未解决话题：${openThread}
 最近禁止重复的污染项：摸头发、蹭地、看远处、江风/穿堂风/轮船、像……/好像……/仿佛……、不是……而是……、以为……没想到……、非但没有……反而……、不……就……、没……就是……、是真的……不是、……我没、……但没、心湖/涟漪/浮木/深渊、骨节泛白/喉结滚动、头发/耳朵/眼睛/侧脸等装饰性外貌描写
-写作时牢记：只继续当前这一幕，不回开场；以对白为主；旁白只写“我”的第一视角；少景、少比喻、少空动作；不要一句对白接一句解释性旁白；不要使用全局禁用词和禁用句式；不要把角色的台词误记成玩家的话；不要重复过去几轮已经出现过的动作、意象、句式和情绪表达；每个 choice 都要给 hiddenEffects。`;
+写作时牢记：只继续当前这一幕，不回开场；以对白为主；旁白只写“我”的第一视角；少景、少比喻、少空动作；不要一句对白接一句解释性旁白；不要使用全局禁用词和禁用句式；不要把角色的台词误记成玩家的话；不要重复过去几轮已经出现过的动作、意象、句式和情绪表达；需要微信时用 phone: 联系人名；需要无立绘 NPC 时直接用特征作 speaker；每个 choice 都要给 hiddenEffects。`;
   const usr=`${oocPart}近期对话：
 ${hist}
 
@@ -4009,6 +4636,7 @@ function saveSnapshot(){
     memory:JSON.parse(JSON.stringify(G.session.memory||DEFAULT_MEMORY)),
     routeState:JSON.parse(JSON.stringify(G.session.routeState||createDefaultRouteState())),
     timeState:JSON.parse(JSON.stringify(G.session.timeState||createDefaultTimeState())),
+    phoneState:JSON.parse(JSON.stringify(G.session.phoneState||createDefaultPhoneState())),
     lastRequest:JSON.parse(JSON.stringify(G.session.lastRequest||null))
   });
   if(G.session.snapshotStack.length>MAX_SNAPSHOTS)G.session.snapshotStack.shift();
@@ -4173,6 +4801,7 @@ async function delChar(id){
   });
   renderChars();
   renderStoryMetaPanel();
+  renderCleanupCenter();
   if(playState!==PLAY_STATE.GENERATING&&playState!==PLAY_STATE.SHOWING_CG){
     const resumeEntry=G.session.currentEntry||G.session.dialogueHistory[G.session.dialogueHistory.length-1]||null;
     if(resumeEntry)renderEntry(resumeEntry,false);
@@ -4372,16 +5001,21 @@ function selBG(id){
   if(bg)G.session.timeState.locationName=bg.name||G.session.timeState.locationName;
   renderBG();renderBGs();save();showToast('BACKGROUND APPLIED');
 }
-function addBG(){const url=document.getElementById('cbg-url').value.trim(),name=document.getElementById('cbg-name').value.trim()||'Custom';if(!url){showToast('URL REQUIRED');return;}if(!isSafeUrl(url)){showToast('URL 不合法，仅支持 http/https');return;}G.backgroundLibrary.push({id:'bg_c_'+Date.now(),name,url});document.getElementById('cbg-url').value='';document.getElementById('cbg-name').value='';updateInlineAssetPreview('cbg-live-preview','','','Background Preview');renderBGs();save();showToast('BACKGROUND ADDED');}
+function addBG(){const url=document.getElementById('cbg-url').value.trim(),name=document.getElementById('cbg-name').value.trim()||'Custom';if(!url){showToast('URL REQUIRED');return;}if(!isSafeUrl(url)){showToast('URL 不合法，仅支持 http/https');return;}G.backgroundLibrary.push({id:'bg_c_'+Date.now(),name,url});document.getElementById('cbg-url').value='';document.getElementById('cbg-name').value='';updateInlineAssetPreview('cbg-live-preview','','','Background Preview');renderBGs();renderLocationManager();save();showToast('BACKGROUND ADDED');}
 function delBG(id){
   const idx=G.backgroundLibrary.findIndex(bg=>bg.id===id);
   if(idx===-1){showToast('没找到这个背景');return;}
   const bg=G.backgroundLibrary[idx];
   if(!confirm(`确定删除背景「${bg.name||id}」吗？`))return;
   G.backgroundLibrary.splice(idx,1);
+  if(G.worldSetting&&Array.isArray(G.worldSetting.locationLibrary)){
+    G.worldSetting.locationLibrary=G.worldSetting.locationLibrary.map(loc=>loc&&loc.bgId===id?{...loc,bgId:''}:loc);
+  }
   if(G.session.sceneBackground===id)G.session.sceneBackground=(G.backgroundLibrary[0]&&G.backgroundLibrary[0].id)||'';
   renderBG();
   renderBGs();
+  renderLocationManager();
+  renderCleanupCenter();
   saveNow();
   showToast('背景已删除');
 }
@@ -4430,6 +5064,7 @@ function delCG(id){
   if(G.session&&G.session.flags){delete G.session.flags[`_cg_${id}`];}
   if(document.getElementById('cg-overlay').classList.contains('show'))onCGClose();
   renderCGs();
+  renderCleanupCenter();
   saveNow();
   showToast('CG 已删除');
 }
@@ -4463,6 +5098,7 @@ function deleteMemoryItem(sectionKey,index){
   if(G.session.memory)G.session.memory.lastSummarizedIndex=0;
   saveNow();
   renderWorld();
+  renderCleanupCenter();
   showToast('已删除记忆条目');
 }
 function renderMemoryBoxItems(boxId,sectionKey){
@@ -4481,6 +5117,91 @@ function renderMemoryBoxItems(boxId,sectionKey){
     box.appendChild(row);
   });
 }
+function deletePhoneThread(threadId){
+  ensureSessionStoryState();
+  const idx=(G.session.phoneState.threads||[]).findIndex(thread=>thread.id===threadId);
+  if(idx===-1){showToast('没找到这段聊天');return;}
+  const thread=G.session.phoneState.threads[idx];
+  if(!confirm(`确定删除和「${thread.name}」的聊天记录吗？`))return;
+  G.session.phoneState.threads.splice(idx,1);
+  if(G.session.phoneState.currentThreadId===threadId)G.session.phoneState.currentThreadId=G.session.phoneState.threads[0]?.id||'';
+  if(G.session.phoneState.lastPopupThreadId===threadId)G.session.phoneState.lastPopupThreadId='';
+  renderPhoneOverlay();
+  renderCleanupCenter();
+  saveNow();
+  showToast('聊天记录已删除');
+}
+function clearWorldBookText(){
+  if(!confirm('确定清空世界书文本吗？地点地图和时间设置会保留。'))return;
+  G.worldSetting.description='';
+  G.worldSetting.rules=[];
+  G.worldSetting.customStyle='';
+  saveNow();
+  renderWorld();
+  renderCleanupCenter();
+  showToast('世界书文本已清空');
+}
+function renderCleanupCenter(){
+  const mount=document.getElementById('cleanup-center');
+  if(!mount)return;
+  ensureSessionStoryState();
+  mount.innerHTML='';
+  const root=el('div',{className:'cleanup-center'});
+  const addGroup=(title,countText,items)=>{
+    const group=el('div',{className:'cleanup-group'});
+    const head=el('div',{className:'cleanup-head'});
+    head.appendChild(el('div',{className:'cleanup-title',text:title}));
+    head.appendChild(el('div',{className:'cleanup-count',text:countText}));
+    group.appendChild(head);
+    const list=el('div',{className:'cleanup-list'});
+    if(!items.length)list.appendChild(el('div',{className:'cleanup-item'},[el('div',{className:'cleanup-main'},[el('div',{className:'cleanup-sub',text:'当前没有可管理项目。'})])]));
+    items.forEach(item=>list.appendChild(item));
+    group.appendChild(list);
+    root.appendChild(group);
+  };
+  const makeItem=(title,sub,buttons=[])=>{
+    const row=el('div',{className:'cleanup-item'});
+    const main=el('div',{className:'cleanup-main'});
+    main.appendChild(el('div',{className:'cleanup-title',text:title}));
+    if(sub)main.appendChild(el('div',{className:'cleanup-sub',text:sub}));
+    row.appendChild(main);
+    if(buttons.length){
+      const actions=el('div',{className:'cleanup-actions'});
+      buttons.forEach(btn=>actions.appendChild(btn));
+      row.appendChild(actions);
+    }
+    return row;
+  };
+  const makeBtn=(text,onClick,danger=false)=>el('button',{type:'button',className:'tiny-btn'+(danger?' danger':''),text,onclick:onClick});
+  const memoryCount=getMemorySectionItems('storySummary').length+getMemorySectionItems('relationshipSummary').length+getMemorySectionItems('worldFactsSummary').length+getMemorySectionItems('unresolvedThreads').length;
+  addGroup('故事记录 / 文本',`${(G.session.dialogueHistory||[]).length} Log`,[
+    makeItem('对话 Log',`当前共有 ${(G.session.dialogueHistory||[]).length} 条记录。清空后不会删当前人设和路线，但 AI 的近场上下文会变短。`,[
+      makeBtn('打开历史',()=>openHistory()),
+      makeBtn('清空',()=>{clearDialogueLog();renderCleanupCenter();},true)
+    ]),
+    makeItem('AI 记忆摘要',`当前共有 ${memoryCount} 条摘要 / 未解决线索。`,[
+      makeBtn('跳去世界书',()=>{openSettings();switchTab('world');setTimeout(()=>document.getElementById('mem-story')?.scrollIntoView({behavior:'smooth',block:'start'}),180);}),
+      makeBtn('清空',()=>{clearStoryMemory();renderCleanupCenter();},true)
+    ]),
+    makeItem('世界书文本',`描述 ${(G.worldSetting.description||'').length} 字 · 规则 ${(G.worldSetting.rules||[]).length} 条 · 自定义风格 ${(G.worldSetting.customStyle||'').length} 字`,[
+      makeBtn('清空文本',()=>clearWorldBookText(),true)
+    ])
+  ]);
+  addGroup('角色 / 人设',`${Object.keys(G.characters||{}).length} 位角色`,Object.values(G.characters||{}).map(ch=>makeItem(ch.name||ch.id,`${ch.occupation||'未写身份'}${ch.relationshipToUser?` · ${ch.relationshipToUser}`:''}`,[
+    makeBtn('编辑',()=>{openSettings();switchTab('chars');setTimeout(()=>editChar(ch.id),120);} ),
+    makeBtn('删除',async()=>{await delChar(ch.id);renderCleanupCenter();renderRouteMonitor();},true)
+  ])));
+  addGroup('地点 / 背景 / CG',`${(G.worldSetting.locationLibrary||[]).length} 地点 · ${(G.backgroundLibrary||[]).length} 背景 · ${(G.cgLibrary||[]).length} CG`,[
+    ...((G.worldSetting.locationLibrary||[]).map(loc=>makeItem(`地点 · ${loc.name}`,`${loc.summary||'未填写说明'}${loc.bgId?` · 背景 ${G.backgroundLibrary.find(bg=>bg.id===loc.bgId)?.name||loc.bgId}`:''}`, [makeBtn('删除',()=>{deleteLocation(loc.id);renderCleanupCenter();},true)]))),
+    ...((G.backgroundLibrary||[]).map(bg=>makeItem(`背景 · ${bg.name}`,bg.url.slice(0,72), [makeBtn('删除',()=>{delBG(bg.id);renderCleanupCenter();},true)]))),
+    ...((G.cgLibrary||[]).map(cg=>makeItem(`CG · ${cg.name}`,cg.flag?`Flag ${cg.flag}`:'未绑定 Flag', [makeBtn('删除',()=>{delCG(cg.id);renderCleanupCenter();},true)])))
+  ]);
+  addGroup('手机 / 存档',`${(G.session.phoneState.threads||[]).length} 聊天 · ${G.saves.filter(Boolean).length} 存档`,[
+    ...((G.session.phoneState.threads||[]).map(thread=>makeItem(`微信 · ${thread.name}`,`${thread.messages.length} 条消息${thread.unread?` · ${thread.unread} 未读`:''}`, [makeBtn('查看',()=>{openPhoneOverlayWithThread(thread.id);}),makeBtn('删除',()=>deletePhoneThread(thread.id),true)]))),
+    ...((G.saves||[]).map((sv,idx)=>makeItem(`存档槽 ${idx+1}`,sv&&sv.meta?`${sv.meta.route||'未锁线'} · ${sv.meta.location||'未知地点'} · ${sv.meta.preview||'—'}`:'空槽位',sv?[makeBtn('读档',()=>ldSlot(idx)),makeBtn('删除',()=>{delSlot(idx);renderCleanupCenter();},true)]:[])))
+  ]);
+  mount.appendChild(root);
+}
 
 function renderWorld(){
   ensureSessionStoryState();
@@ -4492,6 +5213,8 @@ function renderWorld(){
   document.getElementById('story-time-in').value=G.session.timeState.time||'';
   document.getElementById('story-step-in').value=G.session.timeState.minutesPerTurn||0;
   document.getElementById('story-location-in').value=G.session.timeState.locationName||'';
+  renderLocationManager();
+  renderRouteMonitor();
   // v10: 更新记忆面板
   renderMemoryBoxItems('mem-story','storySummary');
   renderMemoryBoxItems('mem-rel','relationshipSummary');
@@ -4513,6 +5236,7 @@ function saveWorld(){
   if(Number.isFinite(stepIn))G.session.timeState.minutesPerTurn=clampNumber(stepIn,0,360);
   if(locationIn)G.session.timeState.locationName=locationIn;
   renderStoryMetaPanel();
+  renderLocationManager();
   save();
   showToast('WORLD SETTINGS SAVED');
 }
@@ -4533,6 +5257,7 @@ function renderAPI(){
   document.querySelectorAll('#key-storage-group .radio-pill').forEach(p=>p.classList.toggle('active',p.dataset.mode===appSettings.keyStorageMode));
   renderSaves();
   renderParseDiagnostics();
+  renderCleanupCenter();
 }
 
 // v10 Feature 6: Safe save slot rendering
@@ -4717,6 +5442,7 @@ function deleteHistoryEntry(index){
   if(G.session.memory)G.session.memory.lastSummarizedIndex=0;
   saveNow();
   renderStoryMetaPanel();
+  renderCleanupCenter();
   if(document.getElementById('history-panel').classList.contains('open'))openHistory();
   showToast('已删除 Log 条目');
 }
@@ -4726,6 +5452,7 @@ function clearDialogueLog(){
   if(G.session.memory)G.session.memory.lastSummarizedIndex=0;
   saveNow();
   renderStoryMetaPanel();
+  renderCleanupCenter();
   if(document.getElementById('history-panel').classList.contains('open'))openHistory();
   showToast('已清空 Log');
 }
@@ -4734,6 +5461,7 @@ function clearStoryMemory(){
   G.session.memory={...DEFAULT_MEMORY};
   saveNow();
   renderWorld();
+  renderCleanupCenter();
   showToast('已清空记忆摘要');
 }
 
@@ -4748,6 +5476,7 @@ function delSlot(i){
   G.saves[i]=null;
   saveNow();
   renderSaves();
+  renderCleanupCenter();
   showToast(`已删除槽位 ${i+1}`);
 }
 function ldSlot(i){
@@ -4979,7 +5708,8 @@ function sanitizeImportedWorldSettingField(raw,fallbackWorld,report){
     description:safeTrimmedString(raw.description,1200,(fallbackWorld&&fallbackWorld.description)||''),
     rules,
     narrativeStyle:styleChoices.includes(raw.narrativeStyle)?raw.narrativeStyle:((fallbackWorld&&fallbackWorld.narrativeStyle)||'默认'),
-    customStyle:safeTrimmedString(raw.customStyle,400,(fallbackWorld&&fallbackWorld.customStyle)||'')
+    customStyle:safeTrimmedString(raw.customStyle,400,(fallbackWorld&&fallbackWorld.customStyle)||''),
+    locationLibrary:normalizeLocationLibrary(raw.locationLibrary, G.backgroundLibrary||[], (fallbackWorld&&fallbackWorld.locationLibrary)||createDefaultLocationLibrary())
   };
 }
 function sanitizeImportedBackgroundLibraryField(raw,fallbackLibrary,report){
@@ -5208,6 +5938,7 @@ function sanitizeImportedSessionField(raw,fallbackSession,context,report,path){
     memory:sanitizeImportedMemoryField(memorySource,(fallbackSession&&fallbackSession.memory)||DEFAULT_MEMORY,report,`${path}.memory`,history.length),
     routeState:normalizeRouteState(routeStateSource),
     timeState:normalizeTimeState(timeStateSource),
+    phoneState:normalizePhoneState(hasOwn(source,'phoneState')?source.phoneState:((fallbackSession&&hasOwn(fallbackSession,'phoneState'))?fallbackSession.phoneState:createDefaultPhoneState())),
     lastRequest:null
   };
 }
@@ -5377,6 +6108,8 @@ document.getElementById('settings-backdrop').addEventListener('click',closeSetti
   toggle.addEventListener('click',e=>{e.stopPropagation();menu.classList.contains('open')?closeMenu():openMenu();});
   backdrop.addEventListener('click',closeMenu);
   function menuAction(fn){return function(){closeMenu();fn();}}
+  document.getElementById('avgn-btn-phone').addEventListener('click',menuAction(openPhoneOverlay));
+  document.getElementById('avgn-btn-location').addEventListener('click',menuAction(openLocationOverlay));
   document.getElementById('avgn-btn-history').addEventListener('click',menuAction(openHistory));
   document.getElementById('avgn-btn-rollback').addEventListener('click',menuAction(handleRollback));
   document.getElementById('avgn-btn-reroll').addEventListener('click',menuAction(handleReroll));
@@ -5385,6 +6118,10 @@ document.getElementById('settings-backdrop').addEventListener('click',closeSetti
   document.getElementById('avgn-btn-newgame').addEventListener('click',menuAction(handleNewGame));
 })();
 document.getElementById('story-meta-toggle').addEventListener('click',e=>{e.stopPropagation();toggleStoryMetaPanel();});
+document.getElementById('phone-backdrop').addEventListener('click',closePhoneOverlay);
+document.getElementById('btn-close-phone').addEventListener('click',closePhoneOverlay);
+document.getElementById('location-backdrop').addEventListener('click',closeLocationOverlay);
+document.getElementById('btn-close-location').addEventListener('click',closeLocationOverlay);
 document.getElementById('history-backdrop').addEventListener('click',closeHistory);
 document.getElementById('btn-close-history').addEventListener('click',closeHistory);
 function onCGClose(){document.getElementById('cg-overlay').classList.remove('show');window.adjustBGMVolume(1.0);setPlayState(PLAY_STATE.WAIT_CHOICE);const hasChoices=pendingChoices&&pendingChoices.length>0;if(!hasChoices&&!aiRunning&&!(G.session&&G.session.routeState&&G.session.routeState.ended))setTimeout(()=>handleContinue(),300);}
@@ -5441,6 +6178,8 @@ document.getElementById('btn-cancel-char').addEventListener('click',()=>{documen
 document.getElementById('btn-add-bg').addEventListener('click',addBG);
 document.getElementById('btn-add-cg').addEventListener('click',addCG);
 document.getElementById('btn-save-world').addEventListener('click',saveWorld);
+document.getElementById('btn-add-location').addEventListener('click',addLocation);
+document.getElementById('btn-open-location-switch').addEventListener('click',openLocationOverlay);
 document.getElementById('btn-save-api').addEventListener('click',saveAPI);
 document.getElementById('btn-test-api').addEventListener('click',testAPI);
 document.getElementById('btn-fetch-models').addEventListener('click',fetchModels);
@@ -5481,6 +6220,32 @@ let touchY0=0;
 document.getElementById('settings-panel').addEventListener('touchstart',e=>{touchY0=e.touches[0].clientY;},{passive:true});
 document.getElementById('settings-panel').addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-touchY0>80)closeSettings();},{passive:true});
 
+
+function applyStandaloneModeClass(){
+  let standalone=false;
+  try{standalone=!!(window.navigator&&window.navigator.standalone)||window.matchMedia('(display-mode: standalone)').matches;}catch(e){}
+  document.documentElement.classList.toggle('standalone',standalone);
+}
+applyStandaloneModeClass();
+try{
+  const media=window.matchMedia('(display-mode: standalone)');
+  if(media&&media.addEventListener)media.addEventListener('change',applyStandaloneModeClass);
+}catch(e){}
+window.addEventListener('pageshow',applyStandaloneModeClass);
+
+async function registerAppServiceWorker(){
+  if(!('serviceWorker' in navigator))return;
+  const isSecure=location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  if(!isSecure)return;
+  try{
+    const swUrl=new URL('./sw.js',window.location.href);
+    await navigator.serviceWorker.register(swUrl.href);
+    console.info('[pwa] service worker ready');
+  }catch(err){
+    console.warn('[pwa] service worker failed',err);
+  }
+}
+
 // ── Boot ──────────────────────────────────────────────────
 async function boot(){
   ensureSpriteEditors();
@@ -5493,6 +6258,8 @@ async function boot(){
   try{await persistRuntimeRasterSprites();}catch(e){console.warn('[boot] raster persist failed',e);}
   document.getElementById('sound-toggle').classList.toggle('on',soundEnabled);
   renderBG();
+  renderLocationManager();
+  renderPhoneOverlay();
   const fc=Object.values(G.characters)[0];
   if(fc)document.getElementById('sprite-img').src=getSafeRenderableUrl(fc.sprites.default||'','');
   const stopRain=startInitRain();
@@ -5517,6 +6284,7 @@ async function boot(){
     G.session.dialogueHistory=[];G.session.flags={};
     G.session.memory={...DEFAULT_MEMORY};
     G.session.routeState=createDefaultRouteState();
+    G.session.phoneState=createDefaultPhoneState();
     const preservedTime=normalizeTimeState(G.session.timeState);
     G.session.timeState={...createDefaultTimeState(),date:preservedTime.date,time:preservedTime.time,minutesPerTurn:preservedTime.minutesPerTurn,collapsed:preservedTime.collapsed};
     const bg0=G.backgroundLibrary.find(item=>item.id===G.session.sceneBackground)||G.backgroundLibrary[0];
@@ -5528,9 +6296,8 @@ async function boot(){
   }
   if(window.ResizeObserver)new ResizeObserver(updateUI).observe(document.getElementById('game-ui'));
 }
+registerAppServiceWorker();
 boot().then(()=>{bootCompleted=true;}).catch(err=>{showFatalUiError(err);});
 </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>

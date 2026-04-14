@@ -17,15 +17,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px)}
-html,body{width:100%;height:100%;min-height:100svh;overflow:hidden;background:#0a0a0f;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1A1A1A;overscroll-behavior:none}
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--app-height:100svh;--app-width:100vw;--app-max-width:460px;--sheet-max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 28px);--drawer-max-height:calc(var(--app-height) - var(--safe-top) - 8px);--floating-top:max(16px,calc(var(--safe-top) + 10px))}
+html,body{width:100%;height:var(--app-height);min-height:var(--app-height);overflow:hidden;background:#0a0a0f;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1A1A1A;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{padding:0;}
 html.standalone body{background:#0a0a0f}
 
 button{border:none;background:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
 input,textarea,select{font-family:inherit;-webkit-appearance:none}
 img{display:block}
-#init-screen{position:fixed;inset:0;background:#0a0a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:900;transition:opacity 0.9s ease}
+#init-screen{position:fixed;inset:0;min-height:var(--app-height);background:#0a0a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:900;transition:opacity 0.9s ease;padding:calc(var(--safe-top) + 14px) max(18px,var(--safe-right)) calc(var(--safe-bottom) + 18px) max(18px,var(--safe-left))}
 #init-screen.fade-out{opacity:0;pointer-events:none}
 .init-line{font-size:10px;letter-spacing:0.28em;color:#3A3A3A;text-transform:uppercase;margin:2px 0;height:14px;overflow:hidden}
 .init-line span{display:inline-block;opacity:0;transform:translateY(10px);transition:opacity 0.4s,transform 0.4s}
@@ -41,12 +41,12 @@ img{display:block}
 #bg-vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0.02) 0%,rgba(0,0,0,0.05) 40%,rgba(0,0,0,0.08) 55%,rgba(245,245,245,0.6) 75%,rgba(245,245,245,0.88) 100%)}
 /* AVG UI 优化 - 功能一：立绘固定底部，不再跟随对话框高度变化弹跳 */
 /* 立绘位置优化：改用 top+bottom 定位使立绘区域整体上移并垂直居中，height:auto 自适应 */
-#sprite-layer{position:fixed;left:0;right:0;top:8vh;bottom:12vh;height:auto;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2}
+#sprite-layer{position:fixed;left:max(10px,var(--safe-left));right:max(10px,var(--safe-right));top:max(calc(var(--safe-top) + 64px),8vh);bottom:max(calc(var(--safe-bottom) + 108px),12vh);height:auto;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2}
 /* 立绘位置优化：使用 max-height/max-width 替代固定 height，令立绘在容器内自适应缩放 */
 #sprite-img{max-height:100%;max-width:100%;object-fit:contain;transition:opacity 0.25s ease;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.12))}
-#game-ui{position:fixed;bottom:0;left:0;right:0;z-index:10;display:none;flex-direction:column;padding:0 12px;padding-bottom:max(14px,var(--safe-bottom))}
+#game-ui{position:fixed;bottom:0;left:0;right:0;z-index:10;display:none;flex-direction:column;padding:0 max(12px,var(--safe-right)) max(16px,var(--safe-bottom)) max(12px,var(--safe-left));width:100%;max-width:var(--app-max-width);margin:0 auto}
 /* 电影字幕风 - 对话面板：透明底，无大面板 */
-#dialog-panel{display:flex;flex-direction:column;background:transparent;border:none;border-radius:0;padding:0 16px 12px;position:relative;min-height:80px;box-shadow:none}
+#dialog-panel{display:flex;flex-direction:column;background:transparent;border:none;border-radius:0;padding:0 14px 12px;position:relative;min-height:80px;box-shadow:none;max-width:100%;margin:0 auto}
 /* 电影字幕风(浅色) - 旁白 */
 #narrator-text{font-size:12px;line-height:1.7;color:rgba(0,0,0,0.36);font-style:italic;letter-spacing:0.02em;display:none;border-left:none;padding:0 2px;margin-bottom:4px}
 #narrator-text.show{display:block}
@@ -74,7 +74,7 @@ img{display:block}
 /* 电影字幕风(浅色) - 对话文字 */
 #dialog-text{font-size:14.5px;line-height:1.85;color:#1A1A1A;min-height:20px;letter-spacing:0.01em}
 /* 电影字幕风(浅色) - 文字气泡容器：白色毛玻璃 */
-#dialog-bubble{position:relative;background:rgba(255,255,255,0.78);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border-radius:14px;padding:14px 18px;border:1px solid rgba(255,255,255,0.5);box-shadow:0 2px 16px rgba(0,0,0,0.04),inset 0 1px 2px rgba(255,255,255,0.8);overflow:hidden}
+#dialog-bubble{position:relative;background:rgba(255,255,255,0.78);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border-radius:16px;padding:15px 18px;border:1px solid rgba(255,255,255,0.5);box-shadow:0 2px 16px rgba(0,0,0,0.04),inset 0 1px 2px rgba(255,255,255,0.8);overflow:hidden}
 /* 打字光标优化：竖线 + 平滑呼吸动画 */
 @keyframes cursor-breathe{0%,100%{opacity:1}40%{opacity:1}50%{opacity:0}90%{opacity:0}}
 #typing-cursor{display:inline-block;width:1.5px;height:16px;background:#1A1A1A;margin-left:1px;vertical-align:text-bottom;border-radius:1px;color:transparent;overflow:hidden;animation:cursor-breathe 1s ease-in-out infinite}
@@ -145,7 +145,7 @@ img{display:block}
 #choice-buttons{display:flex;flex-direction:column;gap:7px}
 #settings-drawer{position:fixed;inset:0;z-index:200;pointer-events:none}
 #settings-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.28);opacity:0;transition:opacity 0.35s;pointer-events:none}
-#settings-panel{position:absolute;bottom:0;left:0;right:0;height:93vh;background:rgba(250,250,250,0.96);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border:1px solid rgba(0,0,0,0.06);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform 0.42s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column;overflow:hidden}
+#settings-panel{position:absolute;bottom:0;left:0;right:0;height:min(var(--drawer-max-height),920px);background:rgba(250,250,250,0.96);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border:1px solid rgba(0,0,0,0.06);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform 0.42s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column;overflow:hidden;padding-bottom:var(--safe-bottom)}
 #settings-drawer.open{pointer-events:all}
 #settings-drawer.open #settings-backdrop{opacity:1;pointer-events:all}
 #settings-drawer.open #settings-panel{transform:translateY(0)}
@@ -247,7 +247,7 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .range-row input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#1A1A1A;cursor:pointer;border:none}
 #history-panel{position:fixed;inset:0;z-index:150;pointer-events:none}
 #history-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.28);opacity:0;transition:opacity 0.3s;pointer-events:none}
-#history-inner{position:absolute;top:0;right:0;bottom:0;width:88%;max-width:370px;background:rgba(250,250,250,0.96);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border-left:1px solid rgba(0,0,0,0.06);transform:translateX(110%);transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column;overflow:hidden}
+#history-inner{position:absolute;top:0;right:0;bottom:0;width:min(88vw,390px);max-width:calc(var(--app-width) - var(--safe-left) - 6px);background:rgba(250,250,250,0.96);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border-left:1px solid rgba(0,0,0,0.06);transform:translateX(110%);transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column;overflow:hidden;padding-right:var(--safe-right)}
 #history-panel.open{pointer-events:all}
 #history-panel.open #history-backdrop{opacity:1;pointer-events:all}
 #history-panel.open #history-inner{transform:translateX(0)}
@@ -261,7 +261,7 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .h-choice{font-size:11px;color:#8C8C8C;margin-top:6px;padding-left:9px;border-left:2px solid rgba(0,0,0,0.1);font-style:italic}
 #cg-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease}
 #cg-overlay.show{opacity:1;pointer-events:all}
-#cg-frame{position:relative;max-width:92%;max-height:82vh}
+#cg-frame{position:relative;max-width:min(92vw,540px);max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 108px)}
 #cg-img{max-width:100%;max-height:78vh;object-fit:contain;border:1px solid rgba(255,255,255,0.08)}
 .cg-c{position:absolute;width:16px;height:16px;border-color:#7A7A7A;border-style:solid;border-width:0}
 .cg-c.tl{top:-7px;left:-7px;border-top-width:1px;border-left-width:1px}
@@ -270,15 +270,15 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .cg-c.br{bottom:-7px;right:-7px;border-bottom-width:1px;border-right-width:1px}
 #cg-close-btn{position:absolute;top:-42px;right:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#8C8C8C;transition:color 0.2s}
 #cg-close-btn:active{color:white}
-#toast{position:fixed;top:max(0px,var(--safe-top));left:50%;transform:translateX(-50%) translateY(-110%);z-index:500;background:rgba(255,255,255,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.06);border-radius:0 0 14px 14px;padding:10px 22px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;white-space:nowrap;transition:transform 0.42s cubic-bezier(0.32,0.72,0,1);overflow:hidden;min-width:180px;text-align:center}
+#toast{position:fixed;top:max(4px,var(--safe-top));left:50%;transform:translateX(-50%) translateY(-110%);z-index:500;background:rgba(255,255,255,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.06);border-radius:0 0 14px 14px;padding:10px 22px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;white-space:nowrap;transition:transform 0.42s cubic-bezier(0.32,0.72,0,1);overflow:hidden;min-width:180px;text-align:center;max-width:min(86vw,360px)}
 #toast.show{transform:translateX(-50%) translateY(0)}
 #toast-scan{position:absolute;top:0;left:-200%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.7),transparent);pointer-events:none}
 #toast-scan.animate{animation:toast-sw 0.65s ease-out 0.15s forwards}
 @keyframes toast-sw{from{left:-200%}to{left:100%}}
 #affection-hint{position:absolute;top:-28px;right:14px;font-size:10px;letter-spacing:0.08em;padding:3px 8px;background:rgba(255,255,255,0.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.06);border-radius:20px;color:#6B6B6B;pointer-events:none;opacity:0;transition:opacity 0.3s;z-index:20;white-space:nowrap}
 #affection-hint.show{opacity:1}
-#story-meta-panel{position:fixed;top:max(16px,calc(var(--safe-top) + 8px));right:max(74px,calc(var(--safe-right) + 58px));z-index:31;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}
-#story-meta-toggle{pointer-events:all;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,0.84);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(0,0,0,0.07);box-shadow:0 4px 18px rgba(0,0,0,0.07);color:#1A1A1A;min-height:40px;transition:transform 0.22s ease,background 0.22s ease}
+#story-meta-panel{position:fixed;top:var(--floating-top);right:max(78px,calc(var(--safe-right) + 62px));z-index:31;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;max-width:min(220px,calc(var(--app-width) - var(--safe-left) - var(--safe-right) - 104px))}
+#story-meta-toggle{pointer-events:all;display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:999px;background:rgba(255,255,255,0.84);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(0,0,0,0.07);box-shadow:0 4px 18px rgba(0,0,0,0.07);color:#1A1A1A;min-height:44px;max-width:100%;transition:transform 0.22s ease,background 0.22s ease}
 #story-meta-toggle:active{transform:scale(0.98);background:rgba(255,255,255,0.96)}
 #story-meta-mini{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap}
 #story-meta-route-pill{padding:4px 7px;border-radius:999px;background:rgba(0,0,0,0.05);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#6B6B6B}
@@ -343,7 +343,7 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .io-row{display:flex;gap:8px;margin-bottom:12px}
 .io-row .btn-secondary{flex:1}
 /* AVG UI 优化 - 功能二：右上角可折叠功能菜单 */
-#avgn-menu{position:fixed;top:max(16px,calc(var(--safe-top) + 8px));right:max(16px,calc(var(--safe-right) + 8px));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#avgn-menu{position:fixed;top:var(--floating-top);right:max(14px,calc(var(--safe-right) + 8px));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 #menu-toggle{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.78);backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);border:1px solid rgba(0,0,0,0.07);display:flex;align-items:center;justify-content:center;color:#6B6B6B;box-shadow:0 2px 12px rgba(0,0,0,0.07);transition:color 0.2s,background 0.2s,transform 0.25s cubic-bezier(0.32,0.72,0,1)}
 #menu-toggle:active{color:#1A1A1A;background:rgba(255,255,255,0.96)}
 #avgn-menu.open #menu-toggle{transform:rotate(45deg);color:#1A1A1A}
@@ -368,14 +368,14 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 #phone-overlay.open,#location-overlay.open{pointer-events:all}
 #phone-backdrop,#location-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.34);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.28s}
 #phone-overlay.open #phone-backdrop,#location-overlay.open #location-backdrop{opacity:1}
-#phone-shell,#location-sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,calc(-50% + 22px)) scale(0.96);width:min(92vw,420px);max-height:86vh;background:rgba(250,250,250,0.96);border:1px solid rgba(0,0,0,0.06);border-radius:28px;backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);box-shadow:0 18px 50px rgba(0,0,0,0.12);overflow:hidden;opacity:0;transition:transform 0.32s cubic-bezier(0.32,0.72,0,1),opacity 0.32s}
+#phone-shell,#location-sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,calc(-50% + 22px)) scale(0.96);width:min(calc(var(--app-width) - var(--safe-left) - var(--safe-right) - 20px),430px);max-height:min(var(--sheet-max-height),860px);background:rgba(250,250,250,0.96);border:1px solid rgba(0,0,0,0.06);border-radius:28px;backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);box-shadow:0 18px 50px rgba(0,0,0,0.12);overflow:hidden;opacity:0;transition:transform 0.32s cubic-bezier(0.32,0.72,0,1),opacity 0.32s}
 #phone-overlay.open #phone-shell,#location-overlay.open #location-sheet{opacity:1;transform:translate(-50%,-50%) scale(1)}
 #phone-shell{display:flex;flex-direction:column}
 #phone-header,#location-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid rgba(0,0,0,0.06);gap:12px}
 #phone-header .title-wrap,#location-header .title-wrap{min-width:0}
 .phone-title,.location-title{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#8C8C8C}
 .phone-sub,.location-sub{font-size:13px;color:#1A1A1A;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#phone-body{display:flex;min-height:0;max-height:calc(86vh - 64px)}
+#phone-body{display:flex;min-height:0;max-height:calc(min(var(--sheet-max-height),860px) - 72px)}
 #phone-thread-list{width:38%;min-width:126px;max-width:160px;border-right:1px solid rgba(0,0,0,0.06);overflow-y:auto;padding:10px;background:rgba(255,255,255,0.36)}
 #phone-chat-panel{flex:1;display:flex;flex-direction:column;min-height:0;background:linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.18))}
 .phone-thread-item{padding:10px 10px 9px;border-radius:14px;cursor:pointer;border:1px solid transparent;transition:background 0.2s,border-color 0.2s,transform 0.15s;margin-bottom:8px;background:rgba(255,255,255,0.62)}
@@ -394,7 +394,7 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .phone-msg.me .phone-bubble{background:rgba(26,26,26,0.9);color:white;border-color:rgba(26,26,26,0.9)}
 .phone-msg-meta{font-size:9px;letter-spacing:0.08em;color:#B0B0B0;margin-top:4px;padding:0 4px}
 #location-sheet{display:flex;flex-direction:column}
-#location-body{padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;max-height:calc(86vh - 64px)}
+#location-body{padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;max-height:calc(min(var(--sheet-max-height),860px) - 72px)}
 .location-card{background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.05);border-radius:18px;padding:14px}
 .location-card.current{border-color:rgba(26,26,26,0.14);box-shadow:0 2px 14px rgba(0,0,0,0.05)}
 .location-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -441,6 +441,26 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
   #phone-body{flex-direction:column}
   #phone-thread-list{width:100%;max-width:none;border-right:none;border-bottom:1px solid rgba(0,0,0,0.06);max-height:180px}
 }
+
+
+@supports (-webkit-touch-callout:none){
+  .form-input,.sprite-inp,#choice-custom-textarea,select.form-input{font-size:16px}
+}
+@media (min-width:414px) and (min-height:880px){
+  :root{--app-max-width:480px}
+  #dialog-text{font-size:15px;line-height:1.9}
+  #narrator-text{font-size:12.5px;line-height:1.75}
+  #dialog-bubble{padding:16px 20px}
+  #player-avatar{width:78px;height:78px}
+  #story-meta-body{min-width:200px}
+}
+@media (orientation:landscape){
+  #story-meta-panel{right:max(86px,calc(var(--safe-right) + 70px))}
+  #game-ui{max-width:min(620px,calc(var(--app-width) - var(--safe-left) - var(--safe-right)))}
+  #phone-shell,#location-sheet{width:min(calc(var(--app-width) - var(--safe-left) - var(--safe-right) - 32px),640px)}
+}
+html.ios-standalone #avgn-menu,html.ios-standalone #story-meta-panel{top:max(18px,calc(var(--safe-top) + 12px))}
+html.ios-standalone #game-ui{padding-bottom:max(18px,var(--safe-bottom))}
 
 </style>
 </head>
@@ -1783,6 +1803,17 @@ let runtimeDiagnostics={
   lastMemoryParse:null
 };
 
+
+function syncViewportMetrics(){
+  const vv=window.visualViewport;
+  const height=Math.round((vv&&vv.height)||window.innerHeight||document.documentElement.clientHeight||0);
+  const width=Math.round((vv&&vv.width)||window.innerWidth||document.documentElement.clientWidth||0);
+  if(height)document.documentElement.style.setProperty('--app-height',height+'px');
+  if(width)document.documentElement.style.setProperty('--app-width',width+'px');
+  const standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+  document.documentElement.classList.toggle('ios-standalone',!!standalone);
+}
+
 function triggerFX(effectName){
   const overlay=document.getElementById('fx-overlay');
   if(!overlay)return;
@@ -2698,51 +2729,202 @@ async function restoreRequestRestorePoint(point){
   saveNow();
 }
 
-// ── Storage (save/load) ──────────────────────────────────
+
+// ── Storage payload helpers ────────────────────────────────
+const PERSISTED_MAIN_STATE_KEY='state:main';
 let _saveTimer=null;
+let _storageEnvelopeInfo=null;
+const _pendingStateWrites=new Set();
+function trackPendingStateWrite(promise){
+  let tracked=null;
+  tracked=Promise.resolve(promise).catch(e=>{console.warn('[stateWrite]',e);}).finally(()=>_pendingStateWrites.delete(tracked));
+  _pendingStateWrites.add(tracked);
+  return tracked;
+}
+async function flushPendingStateWrites(){
+  if(!_pendingStateWrites.size)return;
+  await Promise.allSettled([..._pendingStateWrites]);
+}
+function sanitizeLastRequestForPersist(lastRequest){
+  if(!lastRequest||typeof lastRequest!=='object'||Array.isArray(lastRequest))return null;
+  const out={
+    action:safeTrimmedString(lastRequest.action,40,''),
+    playerChoiceText:safeTrimmedString(lastRequest.playerChoiceText,220,''),
+    ts:Number.isFinite(lastRequest.ts)?lastRequest.ts:Date.now(),
+    oocWarning:safeTrimmedString(lastRequest.oocWarning,280,''),
+    applyChoice:cloneJsonSafe(lastRequest.applyChoice)||null
+  };
+  return out.action?out:null;
+}
+function compactPhoneStateForPersist(phoneState,{maxThreads=6,maxMessagesPerThread=12}={}){
+  const state=normalizePhoneState(phoneState);
+  const threads=(state.threads||[]).slice(0,maxThreads).map(thread=>({
+    ...thread,
+    messages:(thread.messages||[]).slice(-maxMessagesPerThread).map(msg=>({
+      ...msg,
+      text:safeTrimmedString(msg.text,320,msg.text||''),
+      sender:safeTrimmedString(msg.sender,60,msg.sender||'')
+    })),
+    unread:clampNumber(parseInt(thread.unread,10)||0,0,999)
+  }));
+  const currentThreadId=threads.some(thread=>thread.id===state.currentThreadId)?state.currentThreadId:(threads[0]?.id||'');
+  const lastPopupThreadId=threads.some(thread=>thread.id===state.lastPopupThreadId)?state.lastPopupThreadId:'';
+  return {...state,threads,currentThreadId,lastPopupThreadId};
+}
+function cloneSessionForPersist(session,{compactForFallback=false,historyLimit=120,threadLimit=6,messageLimit=12}={}){
+  const safe=cloneJsonSafe(session||{})||{};
+  safe.snapshot=null;
+  safe.snapshotStack=[];
+  safe.lastRequest=sanitizeLastRequestForPersist(safe.lastRequest);
+  if(compactForFallback){
+    safe.dialogueHistory=Array.isArray(safe.dialogueHistory)?safe.dialogueHistory.slice(-historyLimit):[];
+    safe.phoneState=compactPhoneStateForPersist(safe.phoneState,{maxThreads:threadLimit,maxMessagesPerThread:messageLimit});
+  }else{
+    safe.phoneState=normalizePhoneState(safe.phoneState);
+  }
+  return safe;
+}
+function buildPersistableData({compactForFallback=false}={}){
+  ensureDefaultFlagRules();
+  ensureSessionStoryState();
+  const MAX=500*1024;
+  const externalizeRaster=rasterExternalizationReady&&VNDB.isAvailable();
+  const chars=Object.fromEntries(Object.entries(G.characters).map(([k,v])=>{
+    const sp={};
+    for(const[m,u]of Object.entries(v.sprites||{})){
+      sp[m]=(externalizeRaster&&isRasterDataUrl(u))?'':((u&&u.startsWith('data:')&&u.length>MAX*1.37)?'':u);
+    }
+    return[k,{...v,sprites:sp}];
+  }));
+  const playerSprites={};
+  for(const[m,u]of Object.entries(G.player.sprites||{}))playerSprites[m]=(externalizeRaster&&isRasterDataUrl(u))?'':((u&&u.startsWith('data:')&&u.length>MAX*1.37)?'':u);
+  const apiCfg={...G.apiConfig};
+  if(appSettings.keyStorageMode!=='localStorage')apiCfg.key='';
+  const sessionForPersist=cloneSessionForPersist(G.session,{compactForFallback,historyLimit:compactForFallback?36:180,threadLimit:compactForFallback?4:24,messageLimit:compactForFallback?8:60});
+  const savesForPersist=(G.saves||[]).map(slot=>{
+    if(!slot||!slot.session)return null;
+    return {
+      ...slot,
+      session:cloneSessionForPersist(compactSessionForSlot(slot.session),{compactForFallback,historyLimit:compactForFallback?16:80,threadLimit:compactForFallback?3:10,messageLimit:compactForFallback?4:18})
+    };
+  });
+  return {
+    schemaVersion:CURRENT_SCHEMA,
+    characters:chars,
+    player:{...G.player,sprites:playerSprites},
+    worldSetting:G.worldSetting,
+    session:sessionForPersist,
+    cgLibrary:G.cgLibrary,
+    flagRegistry:G.flagRegistry,
+    backgroundLibrary:G.backgroundLibrary,
+    apiConfig:apiCfg,
+    saves:savesForPersist,
+    soundEnabled,
+    settings:appSettings
+  };
+}
+function buildStorageEnvelope(fullData,storageMode){
+  return {
+    ...cloneJsonSafe(fullData),
+    storageMode,
+    payloadKey:storageMode==='idb_full'?PERSISTED_MAIN_STATE_KEY:'',
+    updatedAt:Date.now()
+  };
+}
+function applyLoadedData(d){
+  if(d.characters){
+    G.characters={};
+    for(const[id,c]of Object.entries(d.characters)){
+      const builtinDefaults=id==='alice'?ALICE_SPRITES:null;
+      const sp=copyKnownSpriteMap(c.sprites||{},builtinDefaults&&builtinDefaults.default?builtinDefaults.default:'');
+      if(builtinDefaults){for(const mood of KNOWN_SPRITE_MOODS){if(!sp[mood])sp[mood]=builtinDefaults[mood]||builtinDefaults.default||'';}}
+      G.characters[id]={age:'',appearance:'',catchphrase:'',currentMood:'default',...normalizeDeepProfileFields(c,id==='alice'?ALICE_DEFAULT_PROFILE:DEEP_PROFILE_DEFAULTS),...c,sprites:sp,currentMood:KNOWN_SPRITE_MOODS.includes(c.currentMood)?c.currentMood:'default'};
+    }
+  }
+  if(d.player){G.player=normalizePlayerProfile({...createDefaultPlayerProfile(),...d.player});}
+  if(typeof d.soundEnabled==='boolean')soundEnabled=d.soundEnabled;
+  if(d.worldSetting)G.worldSetting=d.worldSetting;
+  if(d.session){
+    G.session={...G.session,...d.session,snapshot:null};
+    if(!G.session.memory)G.session.memory={...DEFAULT_MEMORY};
+  }
+  ensureSessionStoryState();
+  if(d.cgLibrary)G.cgLibrary=d.cgLibrary;
+  if(d.flagRegistry&&typeof d.flagRegistry==='object'&&!Array.isArray(d.flagRegistry))G.flagRegistry=d.flagRegistry;
+  if(d.backgroundLibrary)G.backgroundLibrary=d.backgroundLibrary;
+  if(d.apiConfig)G.apiConfig={temperature:1.0,...d.apiConfig};
+  if(d.saves)G.saves=d.saves;
+  if(d.settings){appSettings={...appSettings,...d.settings};}
+  if(appSettings.keyStorageMode==='sessionStorage'){
+    try{const sk=sessionStorage.getItem('vn_api_key');if(sk)_runtimeApiKey=sk;}catch(e){}
+  }
+  ensureDefaultFlagRules();
+}
+async function hydrateFullStateFromIndexedDB(){
+  if(!_storageEnvelopeInfo||_storageEnvelopeInfo.storageMode!=='idb_full')return false;
+  try{
+    const full=await VNDB.get(_storageEnvelopeInfo.payloadKey||PERSISTED_MAIN_STATE_KEY);
+    if(full&&typeof full==='object'&&!Array.isArray(full)){
+      const migrated=migrateData(full);
+      applyLoadedData(migrated);
+      return true;
+    }
+  }catch(e){
+    console.warn('[hydrateFullStateFromIndexedDB]',e);
+  }
+  return false;
+}
+function formatBytes(bytes){
+  const n=Number(bytes)||0;
+  if(n<1024)return `${n} B`;
+  if(n<1024*1024)return `${(n/1024).toFixed(1)} KB`;
+  return `${(n/(1024*1024)).toFixed(2)} MB`;
+}
+async function refreshStorageDiagnostics(){
+  const box=document.getElementById('storage-note-box');
+  if(!box)return;
+  const lines=['优化存储：完整剧情、手机消息和较完整的存档会优先保存到浏览器图片库（IndexedDB）；本地轻量存档只保留恢复游戏必需的信息。'];
+  try{
+    const raw=localStorage.getItem('vn5')||'';
+    lines.push(`当前轻量存档：${formatBytes(raw.length*2)}`);
+  }catch(e){
+    lines.push('当前轻量存档：读取失败');
+  }
+  lines.push(`图片库状态：${VNDB.isAvailable()?'可用':'不可用（会自动退回压缩模式）'}`);
+  if(_pendingStateWrites.size)lines.push(`后台保存中：${_pendingStateWrites.size} 项`);
+  try{
+    if(navigator.storage&&navigator.storage.estimate){
+      const est=await navigator.storage.estimate();
+      if(est&&Number.isFinite(est.usage)&&Number.isFinite(est.quota)&&est.quota>0){
+        lines.push(`浏览器总占用：${formatBytes(est.usage)} / ${formatBytes(est.quota)}（约 ${Math.round(est.usage/est.quota*100)}%）`);
+      }
+    }
+  }catch(e){}
+  box.textContent=lines.join('\n');
+}
+
+// ── Storage (save/load) ──────────────────────────────────
+
+
 function _saveCore(){
   try{
-    ensureDefaultFlagRules();
-    ensureSessionStoryState();
-    const MAX=500*1024;
-    const externalizeRaster=rasterExternalizationReady&&VNDB.isAvailable();
-    const chars=Object.fromEntries(Object.entries(G.characters).map(([k,v])=>{
-      const sp={};
-      for(const[m,u]of Object.entries(v.sprites||{})){
-        sp[m]=(externalizeRaster&&isRasterDataUrl(u))?'':((u&&u.startsWith('data:')&&u.length>MAX*1.37)?'':u);
-      }
-      return[k,{...v,sprites:sp}];
-    }));
-    const playerSprites={};
-    for(const[m,u]of Object.entries(G.player.sprites||{}))playerSprites[m]=(externalizeRaster&&isRasterDataUrl(u))?'':((u&&u.startsWith('data:')&&u.length>MAX*1.37)?'':u);
-    // v10: 保存时根据 key storage mode 决定是否包含 key
-    const apiCfg={...G.apiConfig};
-    if(appSettings.keyStorageMode!=='localStorage')apiCfg.key='';
-    const data={
-      schemaVersion:CURRENT_SCHEMA,
-      characters:chars,
-      player:{...G.player,sprites:playerSprites},
-      worldSetting:G.worldSetting,
-      session:{...G.session,snapshot:null},
-      cgLibrary:G.cgLibrary,
-      flagRegistry:G.flagRegistry,
-      backgroundLibrary:G.backgroundLibrary,
-      apiConfig:apiCfg,
-      saves:G.saves,
-      soundEnabled,
-      settings:appSettings
-    };
-    localStorage.setItem('vn5',JSON.stringify(data));
+    const fullData=buildPersistableData({compactForFallback:false});
+    const canUseIdb=VNDB.isAvailable();
+    const compactData=buildStorageEnvelope(buildPersistableData({compactForFallback:true}),canUseIdb?'idb_full':'local_compact');
+    localStorage.setItem('vn5',JSON.stringify(compactData));
+    _storageEnvelopeInfo={storageMode:compactData.storageMode,payloadKey:compactData.payloadKey||PERSISTED_MAIN_STATE_KEY};
+    if(canUseIdb)trackPendingStateWrite(VNDB.set(PERSISTED_MAIN_STATE_KEY,fullData));
   }catch(e){
     console.warn('[save]',e);
     if(e.name==='QuotaExceededError'||e.code===22){
-      showToast('⚠️ 存档失败：存储空间不足，请清理图片缓存');
+      showToast('⚠️ 存档失败：本地轻量存档已满，可先点“优化存储（不删剧情）”');
     }else{
-      showToast('⚠️ 存档失败：'+String(e.message||e).slice(0,30));
+      showToast('⚠️ 存档失败：'+String(e.message||e).slice(0,40));
     }
   }
 }
 // 防抖存档：高频调用场景下延迟800ms合并写入
+
 function save(){
   if(_saveTimer)clearTimeout(_saveTimer);
   _saveTimer=setTimeout(()=>{_saveTimer=null;_saveCore();},800);
@@ -2755,42 +2937,15 @@ function saveNow(){
 // 页面关闭前确保写入
 window.addEventListener('beforeunload',()=>{if(_saveTimer){clearTimeout(_saveTimer);_saveCore();}});
 
+
 function load(){
   try{
     const r=localStorage.getItem('vn5');if(!r)return false;
     let d;
     try{d=JSON.parse(r);}catch(pe){showToast('存档 JSON 损坏，已重置');localStorage.removeItem('vn5');return false;}
-    // v10: 迁移
     d=migrateData(d);
-    if(d.characters){
-      G.characters={};
-      for(const[id,c]of Object.entries(d.characters)){
-        const builtinDefaults=id==='alice'?ALICE_SPRITES:null;
-        const sp=copyKnownSpriteMap(c.sprites||{},builtinDefaults&&builtinDefaults.default?builtinDefaults.default:'');
-        if(builtinDefaults){for(const mood of KNOWN_SPRITE_MOODS){if(!sp[mood])sp[mood]=builtinDefaults[mood]||builtinDefaults.default||'';}}
-        G.characters[id]={age:'',appearance:'',catchphrase:'',currentMood:'default',...normalizeDeepProfileFields(c,id==='alice'?ALICE_DEFAULT_PROFILE:DEEP_PROFILE_DEFAULTS),...c,sprites:sp,currentMood:KNOWN_SPRITE_MOODS.includes(c.currentMood)?c.currentMood:'default'};
-      }
-    }
-    if(d.player){G.player=normalizePlayerProfile({...createDefaultPlayerProfile(),...d.player});}
-    if(typeof d.soundEnabled==='boolean')soundEnabled=d.soundEnabled;
-    if(d.worldSetting)G.worldSetting=d.worldSetting;
-    if(d.session){
-      G.session={...G.session,...d.session,snapshot:null};
-      if(!G.session.memory)G.session.memory={...DEFAULT_MEMORY};
-    }
-    ensureSessionStoryState();
-    if(d.cgLibrary)G.cgLibrary=d.cgLibrary;
-    if(d.flagRegistry&&typeof d.flagRegistry==='object'&&!Array.isArray(d.flagRegistry))G.flagRegistry=d.flagRegistry;
-    if(d.backgroundLibrary)G.backgroundLibrary=d.backgroundLibrary;
-    if(d.apiConfig)G.apiConfig={temperature:1.0,...d.apiConfig};
-    if(d.saves)G.saves=d.saves;
-    // v10: 加载 settings
-    if(d.settings){appSettings={...appSettings,...d.settings};}
-    // v10: 加载非 localStorage 模式的 key
-    if(appSettings.keyStorageMode==='sessionStorage'){
-      try{const sk=sessionStorage.getItem('vn_api_key');if(sk)_runtimeApiKey=sk;}catch(e){}
-    }
-    ensureDefaultFlagRules();
+    _storageEnvelopeInfo=(d&&typeof d.storageMode==='string')?{storageMode:d.storageMode,payloadKey:d.payloadKey||PERSISTED_MAIN_STATE_KEY}:null;
+    applyLoadedData(d);
     return true;
   }catch(e){console.warn('[load]',e);return false;}
 }
@@ -3134,8 +3289,7 @@ function compactDialogueHistory(history,limit=SLOT_HISTORY_LIMIT){
   return Array.isArray(history)&&history.length>limit?history.slice(-limit):(Array.isArray(history)?history:[]);
 }
 function compactSessionForSlot(session){
-  const safe=cloneJsonSafe(session||{})||{};
-  safe.snapshot=null;
+  const safe=cloneSessionForPersist(session,{compactForFallback:true,historyLimit:SLOT_HISTORY_LIMIT,threadLimit:8,messageLimit:18});
   safe.dialogueHistory=compactDialogueHistory(safe.dialogueHistory,SLOT_HISTORY_LIMIT);
   return safe;
 }
@@ -5258,6 +5412,7 @@ function renderAPI(){
   renderSaves();
   renderParseDiagnostics();
   renderCleanupCenter();
+  refreshStorageDiagnostics();
 }
 
 // v10 Feature 6: Safe save slot rendering
@@ -5391,9 +5546,11 @@ async function fetchModels(){
   finally{btn.disabled=false;btn.textContent='获取模型';}
 }
 
+
 async function optimizeStorageSafe(){
-  if(!confirm('这会把本地上传的立绘尽量转到浏览器图片库，并精简存档里的重复 Log 副本；不会删除当前剧情、记忆、人设、路线和正在使用的立绘。确定继续？'))return;
+  if(!confirm('这会把本地上传的立绘尽量转到浏览器图片库，并把完整剧情状态改存到浏览器图片库；不会删除当前剧情、记忆、人设、路线和正在使用的立绘。确定继续？'))return;
   await flushPendingAssetWrites();
+  await flushPendingStateWrites();
   const persistedCount=await persistRuntimeRasterSprites();
   let compactedSlots=0,removedLogCopies=0;
   G.saves=(G.saves||[]).map(slot=>{
@@ -5405,8 +5562,10 @@ async function optimizeStorageSafe(){
     return {...slot,session:compacted};
   });
   saveNow();
+  await flushPendingStateWrites();
   renderSaves();
   renderTab();
+  await refreshStorageDiagnostics();
   showToast(`已优化存储：转存 ${persistedCount} 组本地立绘，精简 ${compactedSlots} 个存档槽，移除 ${removedLogCopies} 条重复 Log 副本`);
 }
 
@@ -5429,9 +5588,11 @@ async function clearImageCache(){
   try{persistedRemoved=await clearPersistedLargeSpriteCache();}
   catch(e){console.warn('[clearImageCache persisted]',e);}
 
-  save();
+  saveNow();
+  await flushPendingStateWrites();
   refreshDisplayedAssetsAfterCacheClear();
   renderTab();
+  await refreshStorageDiagnostics();
   const summary=`已清理 ${runtimeCleared} 组运行态立绘，删除 ${persistedRemoved} 条持久缓存`;
   showToast(summary);
 }
@@ -5467,7 +5628,7 @@ function clearStoryMemory(){
 
 function svSlot(i){
   ensureSessionStoryState();
-  G.saves[i]={session:compactSessionForSlot({...G.session,snapshot:null}),meta:buildSaveMeta(),ts:new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})};
+  G.saves[i]={session:compactSessionForSlot(cloneSessionForPersist({...G.session,snapshot:null},{compactForFallback:false})),meta:buildSaveMeta(),ts:new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})};
   saveNow();renderSaves();showToast(`已存入槽位 ${i+1}`);
 }
 function delSlot(i){
@@ -6252,6 +6413,7 @@ async function boot(){
   ensureInlineAssetPreviews();
   bindInlineAssetPreviewInputs();
   const hadState=load();
+  if(hadState){try{await hydrateFullStateFromIndexedDB();}catch(e){console.warn('[boot] state hydration failed',e);}}
   ensureSessionStoryState();
   // v10: 加载 IndexedDB 大资源
   try{await loadLargeAssets();}catch(e){console.warn('[boot] IDB load failed',e);}
@@ -6295,7 +6457,13 @@ async function boot(){
     saveNow();
   }
   if(window.ResizeObserver)new ResizeObserver(updateUI).observe(document.getElementById('game-ui'));
+  refreshStorageDiagnostics();
 }
+syncViewportMetrics();
+window.addEventListener('resize',syncViewportMetrics,{passive:true});
+window.addEventListener('orientationchange',()=>setTimeout(syncViewportMetrics,120),{passive:true});
+window.addEventListener('pageshow',()=>setTimeout(syncViewportMetrics,0),{passive:true});
+if(window.visualViewport){window.visualViewport.addEventListener('resize',syncViewportMetrics,{passive:true});window.visualViewport.addEventListener('scroll',syncViewportMetrics,{passive:true});}
 registerAppServiceWorker();
 boot().then(()=>{bootCompleted=true;}).catch(err=>{showFatalUiError(err);});
 </script>

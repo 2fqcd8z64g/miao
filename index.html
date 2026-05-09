@@ -58,13 +58,11 @@
     }
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{background:var(--bg);overscroll-behavior:none;}
   body{
     font-family:'Quicksand',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     background:var(--bg);color:var(--text);
     overflow:hidden;width:100vw;height:100vh;height:100dvh;
     user-select:none;-webkit-user-select:none;
-    overscroll-behavior:none;
   }
   .glass{background:rgba(255,255,255,0.48);backdrop-filter:blur(11px) saturate(1.8);-webkit-backdrop-filter:blur(11px) saturate(1.8);border-radius:16px;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 2px rgba(0,0,0,0.04),inset 0 0 0 0.5px rgba(255,255,255,0.6);}
   .glass-card{background:rgba(255,255,255,0.42);backdrop-filter:blur(11px) saturate(1.8);-webkit-backdrop-filter:blur(11px) saturate(1.8);border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 2px rgba(0,0,0,0.04),inset 0 0 0 0.5px rgba(255,255,255,0.55);}
@@ -76,7 +74,7 @@
   .active-scale:active{opacity:0.7;}
 
   /* Loading */
-  #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--bg);transition:opacity .3s ease;}
+  #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;background:#ffffff;transition:opacity .3s ease;}
   #loading-screen.fade-out{opacity:0;}
 
   /* Scan line */
@@ -17087,37 +17085,5 @@ html body .xsj-wb11-modal-mask.show input[type="range"]::-moz-range-thumb{
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>
-/* ── 键盘收起后视口恢复 ── */
-(function(){
-  /* iOS Safari / PWA: 输入框失焦时页面可能不回弹 */
-  document.addEventListener('focusout', function(e){
-    if(!e.target) return;
-    var tag = e.target.tagName;
-    if(tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable){
-      setTimeout(function(){ window.scrollTo(0,0); }, 80);
-    }
-  }, true);
-
-  /* 利用 visualViewport 监测键盘收起 */
-  if(window.visualViewport){
-    var vv = window.visualViewport;
-    var baseH = vv.height;
-    var kbUp = false;
-    vv.addEventListener('resize', function(){
-      if(vv.height < baseH * 0.75){
-        kbUp = true;
-      } else if(kbUp && vv.height >= baseH * 0.85){
-        kbUp = false;
-        setTimeout(function(){ window.scrollTo(0,0); }, 50);
-      }
-    });
-    /* 防止视口偏移导致底部露白 */
-    vv.addEventListener('scroll', function(){
-      if(vv.offsetTop > 0) window.scrollTo(0,0);
-    });
-  }
-})();
-</script>
 </body>
 </html>

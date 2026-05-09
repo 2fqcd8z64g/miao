@@ -58,11 +58,22 @@
     }
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{
+    background:var(--bg);
+    overflow:hidden;
+    height:100%;
+    /* 防止iOS Safari弹性滚动露白 */
+    overscroll-behavior:none;
+  }
   body{
     font-family:'Quicksand',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     background:var(--bg);color:var(--text);
     overflow:hidden;width:100vw;height:100vh;height:100dvh;
     user-select:none;-webkit-user-select:none;
+    /* 防止iOS弹性过度滚动 */
+    overscroll-behavior:none;
+    position:fixed;
+    inset:0;
   }
   .glass{background:rgba(255,255,255,0.48);backdrop-filter:blur(11px) saturate(1.8);-webkit-backdrop-filter:blur(11px) saturate(1.8);border-radius:16px;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 2px rgba(0,0,0,0.04),inset 0 0 0 0.5px rgba(255,255,255,0.6);}
   .glass-card{background:rgba(255,255,255,0.42);backdrop-filter:blur(11px) saturate(1.8);-webkit-backdrop-filter:blur(11px) saturate(1.8);border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 2px rgba(0,0,0,0.04),inset 0 0 0 0.5px rgba(255,255,255,0.55);}
@@ -74,7 +85,7 @@
   .active-scale:active{opacity:0.7;}
 
   /* Loading */
-  #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;background:#ffffff;transition:opacity .3s ease;}
+  #loading-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--bg);transition:opacity .3s ease;}
   #loading-screen.fade-out{opacity:0;}
 
   /* Scan line */
@@ -219,7 +230,7 @@
   .unlock-thumb{position:relative;z-index:2;width:42px;height:42px;min-width:42px;border-radius:21px;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;background:rgba(100,100,100,0.8);}
   @media (prefers-color-scheme:dark){.unlock-thumb{background:rgba(80,80,80,0.9);}}
 
-  #main-screen{display:none;width:100vw;height:100vh;height:100dvh;position:relative;overflow:hidden;background-color:var(--bg);background-size:cover;background-position:center;transition:opacity .4s ease,transform .4s ease;}
+  #main-screen{display:none;position:fixed;inset:0;overflow:hidden;background-color:var(--bg);background-size:cover;background-position:center;transition:opacity .4s ease,transform .4s ease;}
   #main-screen.entering{opacity:0;transform:translateY(20px);}
 
   /* Pages */
@@ -17085,5 +17096,87 @@ html body .xsj-wb11-modal-mask.show input[type="range"]::-moz-range-thumb{
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>
+/* ── 全屏适配：键盘弹出/收起 + 视口恢复 ── */
+(function(){
+  // 1. 利用 visualViewport API（iOS Safari 13+ / Android Chrome 均支持）
+  if(window.visualViewport){
+    var vv = window.visualViewport;
+    var initialH = vv.height;
+    var isKeyboardUp = false;
+
+    vv.addEventListener('resize', function(){
+      // 键盘弹出：visualViewport 高度明显变小
+      if(vv.height < initialH * 0.75){
+        isKeyboardUp = true;
+      }
+      // 键盘收起
+      if(isKeyboardUp && vv.height >= initialH * 0.85){
+        isKeyboardUp = false;
+        // 强制恢复布局
+        requestAnimationFrame(function(){
+          window.scrollTo(0,0);
+          document.body.style.height = '';
+          document.body.style.height = window.innerHeight + 'px';
+          setTimeout(function(){
+            document.body.style.height = '';
+            document.body.style.height = '100dvh';
+            window.scrollTo(0,0);
+          },50);
+        });
+      }
+    });
+
+    vv.addEventListener('scroll', function(){
+      // 阻止视口偏移导致的白边
+      if(vv.offsetTop > 0){
+        window.scrollTo(0,0);
+      }
+    });
+  }
+
+  // 2. 输入框失焦时恢复
+  document.addEventListener('focusout', function(e){
+    if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)){
+      setTimeout(function(){
+        window.scrollTo(0,0);
+        // 重置高度以触发浏览器重新计算
+        document.body.style.height = window.innerHeight + 'px';
+        requestAnimationFrame(function(){
+          document.body.style.height = '';
+          document.body.style.height = '100dvh';
+        });
+      },120);
+    }
+  },true);
+
+  // 3. 阻止 document 级别的弹性滚动（防止露出底部白色）
+  document.addEventListener('touchmove',function(e){
+    // 只阻止非滚动容器上的 touchmove
+    var t=e.target;
+    while(t && t!==document.body){
+      var ov=getComputedStyle(t).overflowY;
+      if(ov==='auto'||ov==='scroll'){
+        // 在可滚动容器内，允许滚动
+        if(t.scrollHeight>t.clientHeight) return;
+      }
+      t=t.parentElement;
+    }
+    // 到达 body 还没找到可滚动容器，阻止弹性拖动
+    e.preventDefault();
+  },{passive:false});
+
+  // 4. 方向变化时修复
+  window.addEventListener('orientationchange',function(){
+    setTimeout(function(){
+      window.scrollTo(0,0);
+      document.body.style.height = window.innerHeight + 'px';
+      requestAnimationFrame(function(){
+        document.body.style.height = '100dvh';
+      });
+    },300);
+  });
+})();
+</script>
 </body>
 </html>

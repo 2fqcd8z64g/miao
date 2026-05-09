@@ -130,13 +130,13 @@
   /* Lock Screen */
   #lock-screen{
     position:fixed;inset:0;z-index:8000;display:none;
-    flex-direction:column;align-items:center;justify-content:space-between;
-    background:var(--bg);
+    flex-direction:column;align-items:center;justify-content:center;
+    width:100vw;height:100vh;height:100dvh;
+    overflow:hidden;
+    background-color:var(--bg);
     background-size:cover;background-position:center;
     padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);
     opacity:0;transition:opacity .3s ease;
-    height:100vh;height:100dvh;
-    overflow:hidden;
   }
   #lock-screen.visible{opacity:1;}
 
@@ -144,11 +144,10 @@
   #main-screen{transition:opacity .4s ease,transform .4s ease;}
   #main-screen.entering{opacity:0;transform:translateY(20px);}
 
-  /* Lock body = fills available space, centers content */
+  /* Lock body = 85% height, flex column */
   #lock-body{
     width:100%;flex:1;display:flex;align-items:center;justify-content:center;
     padding:0 10%;
-    min-height:0;
   }
   /* Left + divider + right row */
   #lock-main-row{
@@ -212,13 +211,12 @@
   /* Bottom location area */
   #lock-location{
     display:flex;align-items:center;justify-content:center;gap:8px;
-    padding-bottom:16px;
+    padding-bottom:calc(env(safe-area-inset-bottom,0) + 100px);
     font-family:'Quicksand','Helvetica Neue',Arial,'PingFang SC',sans-serif;
     font-size:clamp(12px,2.2vw,32px);font-weight:400;color:var(--text-tertiary);
-    flex-shrink:0;
   }
   #lock-location svg{flex-shrink:0;color:var(--text-tertiary);}
-  .unlock-track{width:260px;height:48px;border-radius:24px;display:flex;align-items:center;padding:3px;overflow:hidden;flex-shrink:0;margin-bottom:20px;}
+  .unlock-track{position:absolute;bottom:calc(40px + env(safe-area-inset-bottom,0));width:260px;height:48px;border-radius:24px;display:flex;align-items:center;padding:3px;overflow:hidden;}
   .unlock-text{position:absolute;width:100%;text-align:center;font-size:13px;opacity:.4;pointer-events:none;letter-spacing:1px;}
   .unlock-thumb{position:relative;z-index:2;width:42px;height:42px;min-width:42px;border-radius:21px;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;background:rgba(100,100,100,0.8);}
   @media (prefers-color-scheme:dark){.unlock-thumb{background:rgba(80,80,80,0.9);}}
@@ -5206,8 +5204,8 @@ background:#242833 !important;}
 <!-- LOCK SCREEN -->
 <div id="lock-screen">
   <!-- Body: left time + divider + right info -->
-  <div id="lock-body">
-    <div style="width:100%;max-width:800px;display:flex;flex-direction:column;align-items:center;">
+  <div id="lock-body" style="align-items:flex-start;padding-top:calc(env(safe-area-inset-top,0) + 36px);">
+    <div style="width:100%;max-width:800px;display:flex;flex-direction:column;align-items:center;transform:translateY(5px);">
       <!-- Date row above time module -->
       <div id="lock-date-full" style="font-size:16px;color:var(--text-tertiary);text-align:center;margin-bottom:8px;font-family:'Helvetica Neue',Arial,'PingFang SC',sans-serif;letter-spacing:.5px;"></div>
       <div id="lock-main-row">

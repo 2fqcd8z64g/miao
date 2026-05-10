@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -118,11 +118,27 @@
     }
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  /* 【PWA关键】html锁定，防止iOS弹性滚动导致白边 */
+  html{
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    position:fixed;
+  }
   body{
     font-family:'Quicksand',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     background:var(--bg);color:var(--text);
-    overflow:hidden;width:100vw;height:100vh;height:100dvh;
+    overflow:hidden;width:100vw;
+    height:100vh; /* PWA模式默认用vh（无地址栏，vh稳定） */
     user-select:none;-webkit-user-select:none;
+    touch-action:manipulation; /* 禁用双击缩放 */
+    -webkit-touch-callout:none;
+  }
+  /* 【关键】只在浏览器模式下使用dvh（有地址栏，需要动态高度） */
+  @supports (height: 100dvh) {
+    @media not all and (display-mode: standalone) {
+      body{ height:100dvh; }
+    }
   }
   .glass{background:rgba(255,255,255,0.48);backdrop-filter:blur(11px) saturate(1.8);-webkit-backdrop-filter:blur(11px) saturate(1.8);border-radius:16px;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 2px rgba(0,0,0,0.04),inset 0 0 0 0.5px rgba(255,255,255,0.6);}
   .glass-card{background:rgba(255,255,255,0.42);backdrop-filter:blur(11px) saturate(1.8);-webkit-backdrop-filter:blur(11px) saturate(1.8);border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 2px rgba(0,0,0,0.04),inset 0 0 0 0.5px rgba(255,255,255,0.55);}
@@ -214,7 +230,12 @@
   /* Main screen fade+slide */
   #main-screen.entering{opacity:0;transform:translateY(20px);}
 
-  #main-screen{display:none;width:100vw;height:100vh;height:100dvh;position:relative;overflow:hidden;background-color:var(--bg);background-size:cover;background-position:center;transition:opacity .4s ease,transform .4s ease;}
+  #main-screen{display:none;width:100vw;height:100vh;position:relative;overflow:hidden;background-color:var(--bg);background-size:cover;background-position:center;transition:opacity .4s ease,transform .4s ease;}
+  @supports (height: 100dvh) {
+    @media not all and (display-mode: standalone) {
+      #main-screen{ height:100dvh; }
+    }
+  }
 
   /* Pages */
   .pages-container{width:100vw;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;display:flex;scrollbar-width:none;touch-action:pan-x;}
@@ -4360,7 +4381,6 @@ background:var(--layer-2) !important;}
     width:38px !important;height:38px !important;border-radius:19px !important;
     background:#eef0f4 !important;box-shadow:none !important;
     color:#15161a !important;top:0 !important;position:relative !important;margin-bottom:14px !important;
-    min-width:44px !important;min-height:44px !important;
   }
   .settings-app-root,.settings-detail-root{display:flex;flex-direction:column;gap:14px !important;padding-bottom:34px !important;}
   .settings-hero,.settings-detail-hero{background:transparent !important;padding:0 2px !important;}
@@ -6479,6 +6499,61 @@ background:#242833 !important;}
 <input type="file" id="wp-main-input" accept="image/*" style="display:none;">
 
 <script>
+/* ══════════════════════════════════════════════════════════
+   【PWA 全屏适配】多指缩放禁止 + 键盘弹出/收回视口修复
+   ══════════════════════════════════════════════════════════ */
+
+// 1. 禁止双指缩放（防止iOS视口变形导致白边）
+document.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
+// 2. visualViewport 键盘适配（键盘弹出时缩小容器，收回时恢复）
+(function() {
+  if (!window.visualViewport) return;
+
+  let lastKeyboardH = 0;
+
+  function handleViewportResize() {
+    var vh = window.visualViewport.height;
+    var wh = window.innerHeight;
+    var kbH = Math.max(0, wh - vh);
+
+    // 仅在键盘高度变化时才更新，避免不必要的重排
+    if (Math.abs(kbH - lastKeyboardH) < 10) return;
+    lastKeyboardH = kbH;
+
+    var mainScreen = document.getElementById('main-screen');
+    if (!mainScreen) return;
+
+    if (kbH > 100) {
+      // 键盘弹出：收缩主容器高度
+      mainScreen.style.height = (wh - kbH) + 'px';
+    } else {
+      // 键盘收回：恢复全屏
+      mainScreen.style.height = '';
+    }
+  }
+
+  window.visualViewport.addEventListener('resize', handleViewportResize);
+
+  // 输入框失焦时确保视口归位
+  document.addEventListener('focusout', function(e) {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) {
+      setTimeout(function() {
+        // 确保容器高度复位
+        var mainScreen = document.getElementById('main-screen');
+        if (mainScreen) mainScreen.style.height = '';
+        lastKeyboardH = 0;
+        // 防止iOS键盘收回后页面偏移
+        window.scrollTo(0, 0);
+      }, 100);
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════ */
+
 const ANNI_DATE='2025-01-01';
 const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DAYS_CN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -6666,17 +6741,6 @@ window.addEventListener('DOMContentLoaded',()=>{
     },300);
   },3800);
 });
-
-/* ── Keyboard scroll-reset: prevent iOS/Android from pushing the viewport up ── */
-(function(){
-  function resetScroll(){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}
-  document.addEventListener('focusin',function(){setTimeout(resetScroll,80);setTimeout(resetScroll,300);});
-  document.addEventListener('focusout',function(){setTimeout(resetScroll,80);setTimeout(resetScroll,300);});
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('scroll',resetScroll);
-    window.visualViewport.addEventListener('resize',function(){setTimeout(resetScroll,80);});
-  }
-})();
 
 // Scroll → fixed dots
 const pc=document.getElementById('pages-container');
@@ -7775,7 +7839,6 @@ function openApp(name){
   if(name==='chat'){openChatApp();return;}
   const app=APPS[name];if(!app)return;
   const ov=document.getElementById('app-overlay'),ct=document.getElementById('app-content');
-  ct.style.cssText='';ct.classList.remove('chat-overlay-bg');
   ov.classList.toggle('settings-mode',name==='settings');
   ov.classList.toggle('beautify-mode',name==='beautify');
   ct.innerHTML='<div class="app-back" onclick="closeApp()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><div class="app-title">'+app.t+'</div>'+app.b;
@@ -9304,7 +9367,7 @@ function buildChatAppHTML(){
 function closeChatApp(){
   const ct=document.getElementById('app-content');
   ct.classList.remove('chat-overlay-bg');
-  ct.style.padding='';ct.style.paddingTop='';ct.style.overflow='';ct.style.display='';ct.style.flexDirection='';ct.style.height='';
+  ct.style.padding='';ct.style.overflow='';ct.style.display='';ct.style.flexDirection='';ct.style.height='';
   closeApp();
 }
 

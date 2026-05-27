@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff" id="meta-theme-color">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Jua&family=Quicksand:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <title>小手机</title>
 <style>
@@ -169,7 +170,6 @@
       #main-screen{ height:100dvh; }
     }
   }
-  #main-screen{background-position:center calc(50% + env(safe-area-inset-top,0px) / 2)!important;}
 
   .pages-container{width:100vw;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;display:flex;scrollbar-width:none;touch-action:pan-x;}
   .pages-container::-webkit-scrollbar{display:none;}
@@ -6397,6 +6397,36 @@ function swpGetSettings(){
 function swpSaveSettings(s){
   try{localStorage.setItem('xsj_wp_settings',JSON.stringify(s||{}));}catch(e){}
 }
+/* ── 状态栏颜色自动匹配壁纸顶部 ── */
+function swpUpdateThemeColor(src){
+  var meta=document.getElementById('meta-theme-color');
+  if(!meta)return;
+  if(!src){
+    meta.setAttribute('content',getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()||'#ffffff');
+    return;
+  }
+  try{
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var c=document.createElement('canvas');
+        var scale=Math.min(1,100/img.width);
+        var w=Math.round(img.width*scale),h=Math.round(img.height*scale);
+        c.width=w;c.height=h;
+        var ctx=c.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        var sh=Math.max(1,Math.round(h*0.04));
+        var d=ctx.getImageData(0,0,w,sh).data;
+        var r=0,g=0,b=0,n=d.length/4;
+        for(var i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}
+        r=Math.round(r/n);g=Math.round(g/n);b=Math.round(b/n);
+        meta.setAttribute('content','rgb('+r+','+g+','+b+')');
+      }catch(e){meta.setAttribute('content','#ffffff');}
+    };
+    img.onerror=function(){meta.setAttribute('content','#ffffff');};
+    img.src=src;
+  }catch(e){}
+}
 function swpApplyToMainScreen(){
   var ms=document.getElementById('main-screen');
   var ov=document.getElementById('wp-overlay');
@@ -6421,6 +6451,7 @@ function swpApplyToMainScreen(){
     ov.style.webkitBackdropFilter=blurPx>0?'blur('+blurPx+'px)':'none';
     ov.style.background=dimPct>0?'rgba(0,0,0,'+(dimPct/100).toFixed(2)+')':'transparent';
   }
+  swpUpdateThemeColor(src);
 }
 function loadWallpapers(){
   swpApplyToMainScreen();

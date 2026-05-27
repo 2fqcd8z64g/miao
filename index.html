@@ -5949,6 +5949,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   updateTimes(); setInterval(updateTimes,10000);
   updateAnni(); loadUserData(); loadPhotos(); loadChatData(); buildCalendar();
   loadWallpapers();
+  setTimeout(function(){_xsjSAT=0;_xsjMeasureSAT();swpApplyToMainScreen();},500);
   if(typeof fontApplyFromStorage==='function')fontApplyFromStorage();
   setTimeout(()=>{
     const ls=document.getElementById('loading-screen');
@@ -6396,11 +6397,12 @@ function swpGetSettings(){
 function swpSaveSettings(s){
   try{localStorage.setItem('xsj_wp_settings',JSON.stringify(s||{}));}catch(e){}
 }
-var _swpSATcache=-1;
-function _swpGetSAT(){
-  if(_swpSATcache>=0)return _swpSATcache;
-  try{var t=document.createElement('div');t.style.cssText='position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;';document.body.appendChild(t);_swpSATcache=t.offsetHeight||0;document.body.removeChild(t);}catch(e){_swpSATcache=0;}
-  return _swpSATcache;
+var _xsjSAT=0;
+function _xsjMeasureSAT(){
+  if(_xsjSAT>0)return _xsjSAT;
+  try{var t=document.createElement('div');t.style.cssText='position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;';document.body.appendChild(t);var h=t.offsetHeight;document.body.removeChild(t);if(h>0){_xsjSAT=h;return h;}}catch(e){}
+  if(window.navigator.standalone){var sh=window.screen.height;if(sh>=852)return(_xsjSAT=59);if(sh>=812)return(_xsjSAT=47);return(_xsjSAT=44);}
+  return 0;
 }
 function swpApplyToMainScreen(){
   var ms=document.getElementById('main-screen');
@@ -6414,7 +6416,7 @@ function swpApplyToMainScreen(){
     ms.style.backgroundImage='url("'+src.replace(/"/g,'%22')+'")';
     ms.style.backgroundSize='cover';
     ms.style.backgroundRepeat='no-repeat';
-    var sat=_swpGetSAT();
+    var sat=_xsjMeasureSAT();
     ms.style.backgroundPosition=sat>0?'center calc(50% + '+Math.round(sat/2)+'px)':'center';
   }else{
     ms.style.backgroundImage='';

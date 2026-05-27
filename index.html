@@ -163,7 +163,7 @@
 
   #main-screen.entering{opacity:0;transform:translateY(20px);}
 
-  #main-screen{display:none;width:100vw;height:100vh;position:relative;overflow:hidden;background-color:var(--bg);background-size:cover;background-position:center;transition:opacity .4s ease,transform .4s ease;}
+  #main-screen{display:none;width:100vw;height:100vh;position:fixed;top:0;left:0;overflow:hidden;background-color:var(--bg);background-size:cover;background-position:center;background-repeat:no-repeat;transition:opacity .4s ease,transform .4s ease;}
   @supports (height: 100dvh) {
     @media not all and (display-mode: standalone) {
       #main-screen{ height:100dvh; }

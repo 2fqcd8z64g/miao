@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#eceef2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="灰调">
+<title>灰调 · Liquid Foodie</title>
+<style>
+:root{
+  --bg-1:#f5f6f7;
+  --ink:#1a1b20; --ink-2:#63666e; --ink-3:#9a9da5; --ink-4:#c7cad1; --ink-5:#e5e7eb; --ink-6:#f0f1f4;
+  --line:rgba(20,21,26,.07); --line-2:rgba(20,21,26,.045);
+  --accent:#1c1d22; --on-accent:#fcfcfd; --accent-soft:#f2f3f5;
+  --card:#ffffff; --card-2:#f7f8fa; --field:#f3f4f6;
+  --hair:rgba(20,21,26,.055);
+  --card-shadow:0 1px 2px rgba(24,26,32,.035),0 14px 30px -16px rgba(24,26,32,.13);
+  --card-shadow-lg:0 2px 8px rgba(24,26,32,.05),0 28px 56px -22px rgba(24,26,32,.2);
+  --glass:rgba(255,255,255,.64);
+  --glass-strong:rgba(255,255,255,.56);
+  --r-xl:32px; --r-lg:26px; --r-md:20px; --r-sm:15px; --r-pill:999px;
+  --bar-h:54px; --tab-h:66px; --dock-h:80px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --spring-soft:cubic-bezier(.4,1.32,.5,1);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --shadow-sm:0 1px 2px rgba(20,22,30,.04),0 4px 12px -6px rgba(20,22,30,.08);
+  --shadow-xs:0 1px 2px rgba(20,22,30,.04);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--ink); background:var(--bg-1);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  font-variant-numeric:tabular-nums; letter-spacing:-.012em;
+  overscroll-behavior:none;
+}
+button{font:inherit;color:inherit;}
+svg{display:block;}
+::-webkit-scrollbar{width:0;height:0;}
+
+#app{
+  position:relative; width:100%; max-width:460px; height:100dvh; margin:0 auto; overflow:hidden;
+  background:
+    radial-gradient(130% 70% at 84% -12%, #ffffff 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(180deg,#fbfbfc 0%, #f3f4f6 100%);
+  isolation:isolate;
+}
+@media(min-width:481px){
+  body{display:flex;align-items:center;justify-content:center;padding:18px;
+    background:radial-gradient(140% 120% at 50% 0%,#f4f5f7,#e7e9ed);}
+  #app{height:min(924px,calc(100dvh - 36px)); border-radius:48px;
+    box-shadow:0 50px 100px -36px rgba(28,31,43,.4),0 12px 38px -14px rgba(28,31,43,.18), inset 0 0 0 1px rgba(255,255,255,.6);}
+}
+.blob{position:absolute;border-radius:50%;filter:blur(50px);z-index:0;pointer-events:none;}
+.b1{width:340px;height:340px;top:-110px;right:-90px;background:radial-gradient(circle at 34% 30%,#ffffff,#e6e8ee 76%);opacity:.5;animation:drift1 24s var(--ease) infinite alternate;}
+.b2{width:300px;height:300px;bottom:30px;left:-120px;background:radial-gradient(circle at 50% 50%,#fbfbfd,#e7e9ef 78%);opacity:.45;animation:drift2 28s var(--ease) infinite alternate;}
+.b3{width:260px;height:260px;top:40%;right:-110px;background:radial-gradient(circle at 50% 50%,#ffffff,#e9ebf1 76%);opacity:.4;animation:drift1 32s var(--ease) infinite alternate-reverse;}
+.b4{width:220px;height:220px;top:20%;left:-80px;background:radial-gradient(circle at 50% 50%,#eceef3,#f4f5f8 80%);opacity:.4;animation:drift2 36s var(--ease) infinite alternate;}
+@keyframes drift1{to{transform:translate(-24px,32px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(28px,-24px) scale(1.06)}}
+#grain{position:absolute;inset:0;z-index:46;pointer-events:none;opacity:.13;mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px;}
+
+/* ===== CLEAN GLASS (floating chrome only) ===== */
+.glass{position:relative; background:var(--glass);
+  -webkit-backdrop-filter:blur(20px) saturate(180%); backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:0 1px 1px rgba(24,26,32,.04), 0 12px 32px -16px rgba(24,26,32,.16), inset 0 0 0 1px rgba(255,255,255,.6);}
+.glass-soft{position:relative; background:var(--glass-strong);
+  -webkit-backdrop-filter:blur(16px) saturate(170%); backdrop-filter:blur(16px) saturate(170%);
+  box-shadow:0 1px 1px rgba(24,26,32,.04), inset 0 0 0 1px rgba(255,255,255,.55);}
+.glass::before,.glass-soft::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
+  background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 42%); opacity:.7;}
+.glass>*,.glass-soft>*{position:relative;z-index:2;}
+
+/* ===== SOLID SURFACES (most content) ===== */
+.surf{background:var(--card);box-shadow:var(--card-shadow);border:1px solid var(--hair);}
+.field{background:var(--field);box-shadow:none;border:1px solid var(--line-2);}
+.soft{background:var(--ink-6);box-shadow:none;border:1px solid var(--line-2);}
+.soft-in{background:var(--field);box-shadow:none;border:1px solid var(--line-2);}
+
+#appbar{position:absolute;top:0;left:0;right:0;z-index:30;
+  height:calc(var(--bar-h) + var(--safe-top)); padding-top:var(--safe-top);
+  display:flex;align-items:center;gap:10px;padding-left:14px;padding-right:14px;
+  border-radius:0 0 24px 24px;}
+.bar-title{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.bar-title .t{font-size:16px;font-weight:680;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-loc{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+.bar-loc .lab{font-size:10.5px;color:var(--ink-3);font-weight:600;letter-spacing:.02em;}
+.bar-loc .val{display:flex;align-items:center;gap:4px;font-size:15px;font-weight:680;letter-spacing:-.02em;}
+.iconbtn{flex:none;width:40px;height:40px;display:grid;place-items:center;border:none;cursor:pointer;
+  border-radius:var(--r-pill);background:var(--ink-6);color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--line-2);position:relative;transition:transform .3s var(--spring),background .2s;}
+.iconbtn:active{transform:scale(.9);background:var(--ink-5);}
+.cart-badge{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;
+  border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:10.5px;font-weight:700;
+  display:grid;place-items:center;box-shadow:0 2px 6px -1px rgba(20,22,30,.5),inset 0 0 0 1.5px rgba(255,255,255,.18);
+  transform:scale(0);transition:transform .42s var(--spring);}
+.cart-badge.show{transform:scale(1);}
+.cart-badge.bump{animation:bump .5s var(--spring);}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+
+#tabbar{position:absolute;left:12px;right:12px;bottom:calc(10px + var(--safe-bot));z-index:30;
+  height:var(--tab-h);border-radius:26px;display:flex;align-items:center;justify-content:space-around;
+  padding:0 6px;transition:transform .45s var(--spring),opacity .3s;}
+#tabbar.hide{transform:translateY(140%);opacity:0;pointer-events:none;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0;border:none;
+  background:none;cursor:pointer;color:var(--ink-3);font-size:10.5px;font-weight:640;letter-spacing:.01em;
+  border-radius:18px;position:relative;transition:color .3s;}
+.tab .ic{transition:transform .45s var(--spring);position:relative;z-index:1;}
+.tab.on{color:var(--ink);}
+.tab.on .ic{transform:translateY(-1px) scale(1.05);}
+.tab .pip{position:absolute;top:5px;width:42px;height:30px;border-radius:15px;
+  background:linear-gradient(145deg,#ffffff,#e6e9ef);
+  box-shadow:inset 1px 1px 3px rgba(255,255,255,.9),inset -1px -1px 3px rgba(176,180,190,.4),0 2px 6px -3px rgba(20,22,30,.25);
+  opacity:0;transform:scale(.6);transition:opacity .35s,transform .45s var(--spring);}
+.tab.on .pip{opacity:1;transform:scale(1);}
+
+#dock{position:absolute;left:12px;right:12px;bottom:calc(10px + var(--safe-bot));z-index:29;
+  border-radius:24px;padding:11px 12px 11px 16px;display:flex;align-items:center;gap:12px;
+  transition:transform .5s var(--spring),opacity .35s;}
+#dock.hide{transform:translateY(150%);opacity:0;pointer-events:none;}
+#dock .d-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+#dock .d-info .a{font-size:18px;font-weight:740;letter-spacing:-.02em;}
+#dock .d-info .b{font-size:11px;color:var(--ink-3);font-weight:560;}
+
+#screen{position:absolute;inset:0;z-index:10;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:calc(var(--bar-h) + var(--safe-top) + 14px) 19px calc(var(--tab-h) + var(--safe-bot) + 26px);}
+#screen.dock-pad{padding-bottom:calc(var(--dock-h) + var(--safe-bot) + 22px);}
+#screen.flat-pad{padding-bottom:calc(var(--safe-bot) + 28px);}
+.stagger>*{animation:cardIn .58s var(--spring-soft) both;}
+.stagger>*:nth-child(1){animation-delay:.02s}
+.stagger>*:nth-child(2){animation-delay:.06s}
+.stagger>*:nth-child(3){animation-delay:.10s}
+.stagger>*:nth-child(4){animation-delay:.14s}
+.stagger>*:nth-child(5){animation-delay:.18s}
+.stagger>*:nth-child(6){animation-delay:.22s}
+.stagger>*:nth-child(7){animation-delay:.26s}
+.stagger>*:nth-child(8){animation-delay:.30s}
+.stagger>*:nth-child(9){animation-delay:.34s}
+.stagger>*:nth-child(n+10){animation-delay:.38s}
+.fade-swap{animation:cardIn .42s var(--spring-soft)}
+@keyframes cardIn{0%{opacity:0;transform:translateY(16px) scale(.965)}58%{opacity:1}100%{opacity:1;transform:none}}
+
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);}
+.h1{font-size:27px;font-weight:740;letter-spacing:-.035em;line-height:1.08;}
+.h2{font-size:18px;font-weight:700;letter-spacing:-.028em;}
+.muted{color:var(--ink-3);}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:26px 4px 13px;}
+.section-head .lk{font-size:12.5px;font-weight:600;color:var(--ink-3);display:flex;align-items:center;gap:2px;cursor:pointer;}
+.greet{padding:6px 4px 2px;}
+.greet .g1{font-size:12.5px;font-weight:600;color:var(--ink-3);letter-spacing:.01em;}
+.greet .g2{font-size:27px;font-weight:740;letter-spacing:-.04em;margin-top:3px;line-height:1.1;}
+.search{display:flex;align-items:center;gap:11px;padding:15px 17px;border-radius:var(--r-md);
+  margin-top:16px;color:var(--ink-3);font-size:14.5px;font-weight:540;cursor:text;}
+.search .s-ic{color:var(--ink-2);}
+.search input{border:none;background:none;outline:none;flex:1;font:inherit;color:var(--ink);font-weight:560;letter-spacing:-.01em;}
+.search input::placeholder{color:var(--ink-3);}
+.chips{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 4px;margin:0 -2px;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex:none;display:flex;align-items:center;gap:7px;padding:9px 15px;border-radius:var(--r-pill);
+  border:none;cursor:pointer;font-size:13px;font-weight:620;letter-spacing:-.01em;color:var(--ink-2);
+  background:var(--card);box-shadow:var(--shadow-xs),inset 0 0 0 1px var(--line-2);position:relative;
+  transition:transform .3s var(--spring),color .25s,background .25s,box-shadow .25s;}
+.chip .ic{color:var(--ink-3);transition:color .25s;}
+.chip:active{transform:scale(.94);}
+.chip.on{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 14px -7px rgba(20,22,30,.5);}
+.chip.on .ic{color:var(--on-accent);}
+
+.rcard{border-radius:var(--r-lg);overflow:hidden;margin-bottom:14px;cursor:pointer;transition:transform .4s var(--spring);}
+.rcard:active{transform:scale(.978);}
+.rcover{position:relative;height:128px;overflow:hidden;}
+.rcover .grad{position:absolute;inset:0;}
+.badge-row{position:absolute;left:12px;top:12px;display:flex;gap:7px;z-index:2;}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:680;letter-spacing:-.01em;color:var(--ink);}
+.tag .ic{color:var(--ink-2);}
+.fav-btn{position:absolute;right:12px;top:12px;z-index:2;width:38px;height:38px;border-radius:var(--r-pill);
+  display:grid;place-items:center;border:none;cursor:pointer;color:var(--ink-2);
+  background:var(--glass-strong);box-shadow:var(--shadow-xs);transition:transform .3s var(--spring),color .3s;}
+.fav-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),inset 0 0 8px rgba(255,255,255,.5);}
+.fav-btn:active{transform:scale(.85);}
+.fav-btn.on{color:var(--ink);}
+.fav-btn.on svg{fill:var(--ink);}
+.rbody{padding:13px 16px 15px;background:transparent;position:relative;}
+.rname{font-size:17px;font-weight:730;letter-spacing:-.025em;}
+.rmeta{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:12.5px;color:var(--ink-3);font-weight:560;flex-wrap:wrap;}
+.rmeta .dot{width:3px;height:3px;border-radius:50%;background:var(--ink-4);}
+.rmeta .rate{display:inline-flex;align-items:center;gap:3px;color:var(--ink);font-weight:680;}
+.rmeta .rate svg{fill:var(--ink);}
+.art{position:absolute;inset:0;display:grid;place-items:center;}
+
+.hero{border-radius:var(--r-lg);overflow:hidden;margin-bottom:14px;box-shadow:var(--card-shadow);}
+.hero-cover{position:relative;height:170px;}
+.hero-info{padding:16px 18px 18px;background:var(--card);position:relative;
+  margin-top:-22px;border-radius:22px 22px var(--r-lg) var(--r-lg);}
+.hero-info h1{font-size:23px;font-weight:760;letter-spacing:-.03em;}
+.hero-stats{display:flex;gap:18px;margin-top:14px;}
+.hstat{display:flex;flex-direction:column;gap:2px;}
+.hstat .v{font-size:16px;font-weight:720;letter-spacing:-.02em;display:flex;align-items:center;gap:4px;}
+.hstat .v svg{fill:var(--ink);}
+.hstat .l{font-size:10.5px;color:var(--ink-3);font-weight:600;letter-spacing:.02em;}
+.hstat .sep{width:1px;background:var(--line);}
+.menu-wrap{display:flex;align-items:flex-start;margin-top:4px;}
+.cat-rail{flex:none;width:90px;display:flex;flex-direction:column;gap:2px;padding:4px 0 4px;}
+.crail-btn{position:relative;text-align:left;border:none;cursor:pointer;background:transparent;
+  padding:13px 9px 13px 15px;border-radius:12px;font-size:13px;font-weight:600;color:var(--ink-3);
+  letter-spacing:-.012em;line-height:1.3;transition:background .25s,color .25s,transform .25s var(--spring);}
+.crail-btn:active{transform:scale(.96);}
+.crail-btn.on{background:var(--card);color:var(--ink);font-weight:740;box-shadow:var(--shadow-xs);}
+.crail-btn.on::before{content:"";position:absolute;left:4px;top:50%;transform:translateY(-50%);width:3px;height:15px;border-radius:2px;background:var(--accent);}
+.menu-col{flex:1;min-width:0;padding-left:12px;}
+.cat-label{font-size:12.5px;font-weight:740;letter-spacing:-.01em;color:var(--ink);margin:4px 2px 11px;}
+.menu-col .item{padding:11px;margin-bottom:10px;}
+.menu-col .thumb{width:64px;height:64px;border-radius:14px;}
+.menu-col .item-name{font-size:14px;}
+.menu-col .item-price{font-size:15px;}
+.item{display:flex;gap:13px;padding:13px;border-radius:var(--r-md);margin-bottom:11px;align-items:center;}
+.thumb{flex:none;width:74px;height:74px;border-radius:16px;display:grid;place-items:center;overflow:hidden;position:relative;}
+.thumb .gl{position:absolute;inset:0;}
+.item-main{flex:1;min-width:0;}
+.item-name{font-size:15px;font-weight:680;letter-spacing:-.02em;display:flex;align-items:center;gap:6px;}
+.pop-tag{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--ink-2);
+  padding:2px 7px;border-radius:var(--r-pill);background:var(--ink-5);letter-spacing:.02em;}
+.item-desc{font-size:12px;color:var(--ink-3);font-weight:540;margin-top:4px;line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.item-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:9px;}
+.item-price,.cline-price .p,.price{font-weight:720;letter-spacing:-.02em;}
+.item-price{font-size:15.5px;}
+.cur{font-size:11px;font-weight:640;margin-right:1px;}
+.add-btn{width:32px;height:32px;border-radius:var(--r-pill);border:none;cursor:pointer;display:grid;place-items:center;
+  background:var(--accent);color:var(--on-accent);box-shadow:0 4px 12px -5px rgba(20,22,30,.6),inset 0 0 0 1px rgba(255,255,255,.14);
+  transition:transform .35s var(--spring);}
+.add-btn:active{transform:scale(.85);}
+.stepper{display:flex;align-items:center;gap:11px;}
+.step-btn{width:30px;height:30px;border-radius:var(--r-pill);border:none;cursor:pointer;display:grid;place-items:center;
+  color:var(--ink);transition:transform .3s var(--spring);}
+.step-btn:active{transform:scale(.82);}
+.step-btn.minus{color:var(--ink-2);}
+.step-btn.plus{background:var(--accent);color:var(--on-accent);box-shadow:0 3px 9px -4px rgba(20,22,30,.55),inset 0 0 0 1px rgba(255,255,255,.14);}
+.step-qty{min-width:18px;text-align:center;font-size:15px;font-weight:720;animation:qtyPop .4s var(--spring);}
+@keyframes qtyPop{0%{transform:scale(.6)}55%{transform:scale(1.22)}100%{transform:scale(1)}}
+.cline{display:flex;gap:13px;padding:13px;border-radius:var(--r-md);margin-bottom:11px;align-items:center;}
+.cline .thumb{width:62px;height:62px;border-radius:14px;}
+.cline-main{flex:1;min-width:0;}
+.cline-name{font-size:14.5px;font-weight:680;letter-spacing:-.02em;}
+.cline-price{font-size:13px;color:var(--ink-3);font-weight:600;margin-top:3px;}
+.sum{border-radius:var(--r-lg);padding:16px 18px;margin-top:14px;}
+.sum-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;font-weight:560;color:var(--ink-2);padding:7px 0;}
+.sum-row .v{font-weight:660;color:var(--ink);}
+.sum-row.disc .v::before{content:"− ";}
+.sum-div{height:1px;background:var(--line);margin:8px 0;}
+.sum-total{display:flex;justify-content:space-between;align-items:baseline;padding-top:6px;}
+.sum-total .l{font-size:15px;font-weight:680;}
+.sum-total .v{font-size:23px;font-weight:780;letter-spacing:-.03em;}
+.sum-total .v .cur{font-size:14px;font-weight:680;margin-right:1px;}
+.row-card{border-radius:var(--r-lg);overflow:hidden;margin-top:14px;}
+.lrow{display:flex;align-items:center;gap:13px;padding:15px 16px;cursor:pointer;position:relative;transition:background .2s;}
+.lrow+.lrow::before{content:"";position:absolute;top:0;left:56px;right:0;height:1px;background:var(--line-2);}
+.lrow:active{background:var(--card-2);}
+.lrow .l-ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);}
+.lrow .l-main{flex:1;min-width:0;}
+.lrow .l-t{font-size:14.5px;font-weight:640;letter-spacing:-.015em;}
+.lrow .l-s{font-size:12px;color:var(--ink-3);font-weight:540;margin-top:2px;}
+.lrow .l-val{font-size:13.5px;color:var(--ink-3);font-weight:600;}
+.lrow .chev{color:var(--ink-4);}
+.pay-opt{display:flex;align-items:center;gap:13px;padding:14px 16px;cursor:pointer;position:relative;}
+.pay-opt+.pay-opt::before{content:"";position:absolute;top:0;left:56px;right:16px;height:1px;background:var(--line-2);}
+.pay-opt .p-ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);}
+.pay-opt .p-t{flex:1;font-size:14.5px;font-weight:620;letter-spacing:-.015em;}
+.radio{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  box-shadow:inset 0 0 0 2px var(--ink-4);transition:box-shadow .25s;}
+.radio .fill{width:12px;height:12px;border-radius:50%;background:var(--accent);transform:scale(0);transition:transform .35s var(--spring);}
+.pay-opt.on .radio{box-shadow:inset 0 0 0 2px var(--accent);}
+.pay-opt.on .radio .fill{transform:scale(1);}
+
+.track-status{border-radius:var(--r-lg);padding:20px 20px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.st-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;gap:7px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--ink);position:relative;}
+.live-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--ink);opacity:.4;animation:ripple 1.8s var(--ease) infinite;}
+@keyframes ripple{0%{transform:scale(.6);opacity:.5}100%{transform:scale(1.9);opacity:0}}
+.track-status h1{font-size:25px;font-weight:770;letter-spacing:-.035em;margin-top:9px;line-height:1.1;transition:opacity .3s;}
+.track-status .eta{font-size:13px;color:var(--ink-2);font-weight:560;margin-top:7px;}
+.track-status .eta b{color:var(--ink);font-weight:740;}
+.map{border-radius:var(--r-lg);overflow:hidden;margin-bottom:14px;position:relative;height:220px;}
+.map svg{width:100%;height:100%;display:block;}
+.mglass{position:absolute;left:12px;bottom:12px;right:12px;padding:12px 14px;border-radius:18px;display:flex;align-items:center;gap:12px;}
+.rider-av{flex:none;width:40px;height:40px;border-radius:14px;display:grid;place-items:center;color:var(--on-accent);
+  background:var(--accent);box-shadow:0 4px 12px -5px rgba(20,22,30,.6);}
+.r-name{font-size:13.5px;font-weight:700;letter-spacing:-.02em;}
+.r-sub{font-size:11px;color:var(--ink-3);font-weight:560;margin-top:1px;}
+.call{flex:none;width:38px;height:38px;border-radius:var(--r-pill);display:grid;place-items:center;border:none;cursor:pointer;
+  color:var(--ink);background:var(--card);box-shadow:0 3px 8px -4px rgba(20,22,30,.4),inset 0 0 0 1px var(--line-2);transition:transform .3s var(--spring);}
+.call:active{transform:scale(.85);}
+.r-pulse{transform-origin:center;transform-box:fill-box;animation:rpulse 1.6s var(--ease) infinite;}
+@keyframes rpulse{0%{transform:scale(.7);opacity:.25}100%{transform:scale(1.5);opacity:0}}
+.timeline{border-radius:var(--r-lg);padding:8px 18px;margin-bottom:14px;}
+.tstep{display:flex;gap:14px;padding:13px 0;position:relative;}
+.tstep .node{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;position:relative;z-index:1;
+  background:var(--ink-5);color:var(--ink-3);transition:background .45s var(--spring),color .35s,transform .45s var(--spring),box-shadow .4s;}
+.tstep .node svg{opacity:0;transform:scale(.4);transition:opacity .3s,transform .4s var(--spring);}
+.tstep:not(:last-child)::after{content:"";position:absolute;top:39px;left:13px;transform:translateX(-50%);
+  width:2px;height:26px;background:var(--ink-5);transition:background .5s;z-index:0;}
+.tstep .tinfo{flex:1;padding-top:2px;}
+.tstep .tt{font-size:14.5px;font-weight:640;letter-spacing:-.02em;color:var(--ink-3);transition:color .35s;}
+.tstep .ts{font-size:11.5px;color:var(--ink-4);font-weight:540;margin-top:2px;transition:color .35s;}
+.tstep.done .node{background:var(--accent);color:var(--on-accent);}
+.tstep.done .node svg{opacity:1;transform:scale(1);}
+.tstep.done::after{background:var(--accent);}
+.tstep.done .tt{color:var(--ink);}
+.tstep.done .ts{color:var(--ink-3);}
+.tstep.active .node{background:var(--accent);color:var(--on-accent);transform:scale(1.12);box-shadow:0 0 0 4px rgba(25,26,31,.1);}
+.tstep.active .node svg{opacity:1;transform:scale(1);}
+.tstep.active .tt{color:var(--ink);font-weight:720;}
+.tstep.active .ts{color:var(--ink-2);}
+
+.rev-card{border-radius:var(--r-lg);padding:22px 20px;text-align:center;margin-bottom:14px;}
+.rev-thumb{width:66px;height:66px;border-radius:20px;margin:0 auto 12px;display:grid;place-items:center;position:relative;overflow:hidden;}
+.rev-card .rt{font-size:17px;font-weight:730;letter-spacing:-.02em;}
+.rev-card .rs{font-size:12.5px;color:var(--ink-3);font-weight:560;margin-top:4px;}
+.stars{display:flex;justify-content:center;gap:10px;margin:18px 0 6px;}
+.star{width:42px;height:42px;border:none;background:none;cursor:pointer;display:grid;place-items:center;color:var(--ink-4);
+  transition:transform .35s var(--spring),color .25s;}
+.star svg{width:34px;height:34px;}
+.star.on{color:var(--ink);}
+.star.on svg{fill:var(--ink);}
+.star.pop{animation:starPop .5s var(--spring);}
+@keyframes starPop{0%{transform:scale(1)}45%{transform:scale(1.4)}100%{transform:scale(1)}}
+.rate-label{font-size:13px;font-weight:640;color:var(--ink-2);height:18px;transition:opacity .25s;}
+.rev-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:6px;}
+.rtag{padding:9px 14px;border-radius:var(--r-pill);border:none;cursor:pointer;font-size:12.5px;font-weight:600;
+  color:var(--ink-2);background:var(--card-2);box-shadow:inset 0 0 0 1px var(--line-2);position:relative;
+  transition:transform .3s var(--spring),background .25s,color .25s;}
+.rtag:active{transform:scale(.93);}
+.rtag.on{background:var(--accent);color:var(--on-accent);box-shadow:none;}
+.rev-input{border-radius:var(--r-lg);padding:16px;margin-top:14px;}
+.rev-input textarea{width:100%;border:none;background:none;outline:none;resize:none;font:inherit;color:var(--ink);
+  font-size:14px;font-weight:540;line-height:1.55;min-height:74px;letter-spacing:-.01em;}
+.rev-input textarea::placeholder{color:var(--ink-3);}
+
+.ocard{border-radius:var(--r-lg);overflow:hidden;margin-bottom:13px;cursor:pointer;transition:transform .4s var(--spring);}
+.ocard:active{transform:scale(.982);}
+.ocard-top{display:flex;align-items:center;gap:12px;padding:14px 16px 12px;}
+.ocard-top .thumb{width:48px;height:48px;border-radius:13px;}
+.o-main{flex:1;min-width:0;}
+.o-name{font-size:15px;font-weight:700;letter-spacing:-.02em;}
+.o-time{font-size:11.5px;color:var(--ink-3);font-weight:540;margin-top:2px;}
+.obadge{flex:none;display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:680;letter-spacing:-.01em;}
+.obadge.live{background:var(--accent);color:var(--on-accent);}
+.obadge.live .live-dot{background:var(--on-accent);}
+.obadge.live .live-dot::after{border-color:var(--on-accent);}
+.obadge.done{background:var(--ink-5);color:var(--ink-2);}
+.ocard-bot{padding:12px 16px 14px;background:transparent;position:relative;display:flex;align-items:center;justify-content:space-between;}
+.ocard-bot::before{content:"";position:absolute;top:0;left:16px;right:16px;height:1px;background:var(--line);}
+.o-items{font-size:12.5px;color:var(--ink-2);font-weight:540;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding-right:12px;}
+.o-total{font-size:15px;font-weight:740;letter-spacing:-.02em;}
+.o-total .cur{font-size:11px;font-weight:640;margin-right:1px;}
+
+.prof-head{border-radius:var(--r-lg);padding:22px 20px;display:flex;align-items:center;gap:16px;margin-bottom:6px;}
+.avatar{flex:none;width:66px;height:66px;border-radius:22px;display:grid;place-items:center;color:var(--on-accent);
+  background:linear-gradient(145deg,#2c2e35,#15161b);box-shadow:0 8px 20px -10px rgba(20,22,30,.6),inset 0 0 0 1px rgba(255,255,255,.12);
+  font-size:24px;font-weight:760;letter-spacing:-.02em;}
+.p-name{font-size:20px;font-weight:760;letter-spacing:-.03em;}
+.p-sub{font-size:12.5px;color:var(--ink-3);font-weight:560;margin-top:3px;display:flex;align-items:center;gap:5px;}
+.prof-stats{display:flex;border-radius:var(--r-lg);overflow:hidden;margin-top:14px;}
+.pstat{flex:1;padding:16px 8px;text-align:center;position:relative;}
+.pstat+.pstat::before{content:"";position:absolute;top:18px;bottom:18px;left:0;width:1px;background:var(--line);}
+.pstat .v{font-size:21px;font-weight:780;letter-spacing:-.03em;}
+.pstat .l{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:3px;letter-spacing:.02em;}
+
+.btn{border:none;cursor:pointer;font-weight:680;letter-spacing:-.015em;border-radius:var(--r-pill);
+  transition:transform .3s var(--spring),box-shadow .3s var(--ease);display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.btn:active{transform:scale(.96);}
+.btn[disabled]{pointer-events:none;}
+.btn-primary{background:linear-gradient(180deg,#2b2d34,#15161b);color:var(--on-accent);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.18),0 8px 20px -8px rgba(20,22,30,.55),0 1px 2px rgba(20,22,30,.2);}
+.btn-primary:active{box-shadow:inset 0 1px 1px rgba(255,255,255,.18),0 4px 11px -6px rgba(20,22,30,.55);}
+.btn-block{width:100%;padding:16px;font-size:16px;}
+.dock-btn{flex:none;padding:15px 26px;font-size:15.5px;border-radius:var(--r-pill);}
+.btn-soft{background:var(--ink-6);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-2);}
+
+#fx{position:absolute;inset:0;z-index:60;pointer-events:none;}
+.toast{position:absolute;left:50%;top:calc(var(--bar-h) + var(--safe-top) + 16px);transform:translate(-50%,-20px) scale(.9);
+  display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:var(--r-pill);
+  font-size:13.5px;font-weight:640;letter-spacing:-.01em;opacity:0;transition:transform .5s var(--spring),opacity .35s;max-width:86%;}
+.toast .ic{color:var(--ink);}
+.toast.show{opacity:1;transform:translate(-50%,0) scale(1);}
+.fly-dot{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--accent);z-index:62;
+  box-shadow:0 4px 10px -3px rgba(20,22,30,.5),inset 0 0 0 1.5px rgba(255,255,255,.2);
+  display:grid;place-items:center;color:var(--on-accent);will-change:transform,opacity;}
+.modal-wrap{position:absolute;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;}
+.modal-bg{position:absolute;inset:0;background:rgba(28,30,38,.32);opacity:0;transition:opacity .4s var(--ease);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);}
+.modal{position:relative;width:100%;max-width:430px;margin:0 12px calc(12px + var(--safe-bot));
+  border-radius:var(--r-xl);padding:24px 22px 22px;transform:translateY(120%);transition:transform .55s var(--spring);text-align:center;}
+.modal-wrap.show{pointer-events:auto;}
+.modal-wrap.show .modal-bg{opacity:1;}
+.modal-wrap.show .modal{transform:translateY(0);}
+.modal .m-ic{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;
+  background:var(--accent);color:var(--on-accent);box-shadow:0 10px 24px -10px rgba(20,22,30,.6),inset 0 0 0 1px rgba(255,255,255,.12);}
+.modal h3{font-size:19px;font-weight:740;letter-spacing:-.025em;}
+.modal p{font-size:13.5px;color:var(--ink-3);font-weight:540;margin-top:7px;line-height:1.5;}
+.modal .m-actions{display:flex;gap:11px;margin-top:20px;}
+.modal .m-actions .btn{flex:1;padding:14px;font-size:15px;}
+.check-draw{stroke-dasharray:30;stroke-dashoffset:30;animation:draw .6s .15s var(--ease) forwards;}
+@keyframes draw{to{stroke-dashoffset:0}}
+.empty{text-align:center;padding:60px 24px;}
+.empty .e-ic{width:72px;height:72px;border-radius:24px;margin:0 auto 16px;display:grid;place-items:center;color:var(--ink-3);}
+.empty .e-t{font-size:16px;font-weight:700;letter-spacing:-.02em;}
+.empty .e-s{font-size:13px;color:var(--ink-3);font-weight:540;margin-top:6px;line-height:1.5;}
+/* ---- floating chrome: clean translucent ---- */
+#appbar,#tabbar,#dock,.modal{
+  -webkit-backdrop-filter:blur(22px) saturate(180%);
+  backdrop-filter:blur(22px) saturate(180%);
+  background:rgba(255,255,255,.72);}
+
+/* ---- fav button: soft floating chip over photo ---- */
+.fav-btn{
+  background:rgba(255,255,255,.78)!important;
+  box-shadow:0 4px 12px -6px rgba(24,26,32,.32),inset 0 0 0 1px rgba(255,255,255,.7)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(180%);backdrop-filter:blur(10px) saturate(180%);}
+.btn-primary{position:relative;overflow:hidden;}
+.btn-primary>*{position:relative;z-index:2;}
+
+/* ---- functional UI additions ---- */
+.no-result{text-align:center;padding:48px 24px 8px;}
+.no-result .nr-ic{width:60px;height:60px;border-radius:20px;margin:0 auto 14px;display:grid;place-items:center;color:var(--ink-3);}
+.no-result .nr-t{font-size:15px;font-weight:680;letter-spacing:-.02em;}
+.no-result .nr-s{font-size:12.5px;color:var(--ink-3);font-weight:540;margin-top:5px;}
+.dish-hit{display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-size:11.5px;font-weight:600;color:var(--ink-2);
+  padding:4px 9px;border-radius:var(--r-pill);background:var(--ink-6);}
+.rdeliver{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;color:var(--ink-3);font-weight:560;}
+.rdeliver svg{color:var(--ink-3);}
+.promo-row{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 2px;margin:0 -2px;scrollbar-width:none;}
+.promo-row::-webkit-scrollbar{display:none;}
+.promo{flex:none;min-width:166px;display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:var(--r-md);
+  background:var(--card);box-shadow:var(--card-shadow);}
+.promo-ic{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);}
+.promo-t{font-size:13px;font-weight:720;letter-spacing:-.02em;}
+.promo-s{font-size:11px;color:var(--ink-3);font-weight:560;margin-top:2px;}
+.reorder-btn{flex:none;display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:var(--r-pill);border:none;cursor:pointer;
+  font-size:12px;font-weight:680;letter-spacing:-.01em;color:var(--ink);background:var(--ink-6);
+  box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:transform .3s var(--spring),background .2s;position:relative;z-index:2;}
+.reorder-btn:active{transform:scale(.92);background:var(--ink-5);}
+.opt-row{display:flex;align-items:center;gap:13px;padding:14px 16px;cursor:pointer;border-radius:var(--r-md);text-align:left;
+  background:transparent;border:none;width:100%;color:inherit;position:relative;transition:background .2s;}
+.opt-row+.opt-row{margin-top:2px;}
+.opt-row:active{background:var(--card-2);}
+.opt-row .o-ic{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:var(--ink-2);}
+.opt-row .o-tx{flex:1;min-width:0;}
+.opt-row .o-tt{font-size:14.5px;font-weight:660;letter-spacing:-.015em;}
+.opt-row .o-ss{font-size:12px;color:var(--ink-3);font-weight:540;margin-top:2px;}
+.opt-row .o-ck{flex:none;color:var(--ink);opacity:0;transform:scale(.5);transition:opacity .25s,transform .35s var(--spring);}
+.opt-row.on .o-ck{opacity:1;transform:scale(1);}
+.opt-row.on .o-tt{font-weight:740;}
+.modal.sheet{text-align:left;padding:20px 16px 16px;}
+.modal.sheet h3{padding:0 6px 6px;}
+.coupon-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:var(--r-pill);
+  background:var(--accent);color:var(--on-accent);font-size:11.5px;font-weight:680;}
+
+/* ---- hot search ---- */
+#searchExtra{margin-top:14px;}
+.hot-label{font-size:11.5px;color:var(--ink-3);font-weight:600;margin-bottom:9px;letter-spacing:.02em;}
+.hot-row{display:flex;flex-wrap:wrap;gap:8px;}
+.hot-tag{padding:8px 14px;border-radius:var(--r-pill);border:none;cursor:pointer;font-size:12.5px;font-weight:560;
+  color:var(--ink-2);background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2);transition:transform .25s var(--spring),color .2s;}
+.hot-tag:active{transform:scale(.93);color:var(--ink);}
+
+/* ---- cart line options ---- */
+.cline-opt{font-size:11.5px;color:var(--ink-3);font-weight:540;margin-top:3px;}
+
+/* ---- dish detail sheet ---- */
+.dish-sheet{padding:0!important;overflow:hidden;max-height:86vh;display:flex;flex-direction:column;text-align:left;
+  background:var(--card)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}
+.ds-hero{position:relative;height:166px;flex:none;}
+.ds-hero .art{position:absolute;inset:0;display:grid;place-items:center;}
+.ds-x{position:absolute!important;right:14px;top:14px;background:rgba(255,255,255,.82)!important;
+  box-shadow:0 3px 9px -4px rgba(24,26,32,.3),inset 0 0 0 1px rgba(255,255,255,.7)!important;}
+.ds-body{padding:18px 20px 8px;overflow-y:auto;}
+.ds-name{font-size:20px;font-weight:740;letter-spacing:-.03em;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.ds-desc{font-size:13px;color:var(--ink-3);font-weight:540;margin-top:8px;line-height:1.55;}
+.ds-group{margin-top:22px;}
+.ds-gname{font-size:13.5px;font-weight:720;letter-spacing:-.015em;margin-bottom:11px;}
+.ds-opts{display:flex;flex-wrap:wrap;gap:9px;}
+.ds-opt{padding:9px 16px;border-radius:var(--r-pill);border:none;cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--ink-2);background:var(--card-2);box-shadow:inset 0 0 0 1px var(--line-2);transition:transform .25s var(--spring),background .2s,color .2s;}
+.ds-opt:active{transform:scale(.93);}
+.ds-opt.on{background:var(--accent);color:var(--on-accent);box-shadow:none;}
+.ds-note{display:flex;align-items:center;gap:6px;margin-top:20px;font-size:11.5px;color:var(--ink-3);font-weight:540;}
+.ds-foot{flex:none;display:flex;align-items:center;gap:14px;padding:14px 20px calc(16px + var(--safe-bot));
+  border-top:1px solid var(--line-2);background:var(--card);}
+.ds-q{display:flex;align-items:center;gap:13px;}
+.ds-qty{min-width:18px;text-align:center;font-size:16px;font-weight:720;animation:qtyPop .4s var(--spring);}
+.ds-add{flex:1;padding:15px;font-size:15px;border-radius:var(--r-pill);}
+.ds-priceline{display:flex;align-items:baseline;gap:9px;margin-top:9px;}
+.ds-now{font-size:21px;font-weight:780;letter-spacing:-.03em;}
+.ds-now .cur{font-size:13px;font-weight:680;margin-right:1px;}
+.ds-was{font-size:13px;color:var(--ink-4);font-weight:560;text-decoration:line-through;}
+.ds-saletag{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:4px;
+  padding:6px 11px;border-radius:var(--r-pill);background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;}
+
+/* ---- greeting display ---- */
+.greet .g2{font-size:30px;font-weight:760;letter-spacing:-.045em;margin-top:5px;line-height:1.12;}
+.greet .g-dot{color:var(--ink-4);}
+
+/* ---- category grid ---- */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;margin-top:18px;}
+.cat-tile{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 4px 12px;border:none;cursor:pointer;
+  background:var(--card);border-radius:var(--r-md);box-shadow:var(--card-shadow);
+  transition:transform .3s var(--spring),box-shadow .25s;}
+.cat-tile:active{transform:scale(.94);}
+.cat-ic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;color:var(--ink);
+  background:var(--card-2);transition:background .25s,color .25s;}
+.cat-lb{font-size:11.5px;font-weight:600;color:var(--ink-2);letter-spacing:-.01em;}
+.cat-tile.on{box-shadow:0 10px 22px -12px rgba(24,26,32,.3);}
+.cat-tile.on .cat-ic{background:var(--accent);color:var(--on-accent);}
+.cat-tile.on .cat-lb{color:var(--ink);font-weight:740;}
+
+/* ---- flash sale ---- */
+.flash-card{margin-top:22px;border-radius:var(--r-lg);padding:16px 16px 18px;}
+.flash-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.flash-tt{font-size:16px;font-weight:760;letter-spacing:-.025em;display:flex;align-items:center;gap:6px;}
+.flash-clock{display:flex;align-items:center;gap:7px;}
+.fc-lb{font-size:11px;color:var(--ink-3);font-weight:560;}
+.fc-time{font-variant-numeric:tabular-nums;font-size:13px;font-weight:740;color:var(--on-accent);background:var(--accent);
+  padding:4px 9px;border-radius:8px;letter-spacing:.04em;}
+.flash-row{display:flex;gap:12px;overflow-x:auto;margin:0 -2px;padding:2px;scrollbar-width:none;}
+.flash-row::-webkit-scrollbar{display:none;}
+.flash-item{flex:none;width:96px;border:none;cursor:pointer;background:none;text-align:left;transition:transform .25s var(--spring);}
+.flash-item:active{transform:scale(.95);}
+.flash-thumb{position:relative;width:96px;height:96px;border-radius:16px;overflow:hidden;}
+.flash-badge{position:absolute;left:0;top:0;background:var(--accent);color:var(--on-accent);font-size:10px;font-weight:740;
+  padding:3px 8px;border-radius:0 0 11px 0;}
+.flash-name{font-size:12.5px;font-weight:620;letter-spacing:-.01em;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.flash-price{display:flex;align-items:baseline;gap:5px;margin-top:4px;}
+.fp-now{font-size:15px;font-weight:780;letter-spacing:-.02em;}
+.fp-now .cur{font-size:10px;font-weight:680;margin-right:1px;}
+.fp-was{font-size:11px;color:var(--ink-4);font-weight:540;text-decoration:line-through;}
+
+/* ---- ranking carousel ---- */
+.rank-row{display:flex;gap:12px;overflow-x:auto;margin:0 -2px;padding:2px;scrollbar-width:none;}
+.rank-row::-webkit-scrollbar{display:none;}
+.rank-card{flex:none;width:124px;border:1px solid var(--hair);cursor:pointer;background:var(--card);text-align:left;
+  border-radius:var(--r-md);box-shadow:var(--card-shadow);padding:10px;transition:transform .25s var(--spring);}
+.rank-card:active{transform:scale(.95);}
+.rank-thumb{position:relative;width:100%;height:84px;border-radius:13px;overflow:hidden;}
+.rank-no{position:absolute;left:8px;top:8px;width:22px;height:22px;border-radius:8px;display:grid;place-items:center;
+  font-size:12px;font-weight:780;background:rgba(255,255,255,.85);color:var(--ink);box-shadow:0 2px 6px -2px rgba(24,26,32,.35);}
+.rank-no.top{background:var(--accent);color:var(--on-accent);}
+.rank-name{font-size:13px;font-weight:680;letter-spacing:-.015em;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rank-sub{font-size:11px;color:var(--ink-3);font-weight:540;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rank-price{font-size:14.5px;font-weight:760;letter-spacing:-.02em;margin-top:6px;}
+.rank-price .cur{font-size:10px;font-weight:680;margin-right:1px;}
+
+/* ---- dock bag + mini cart ---- */
+.dock-bag{position:relative;flex:none;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;border:none;cursor:pointer;
+  background:var(--accent);color:var(--on-accent);box-shadow:0 6px 16px -7px rgba(20,22,30,.6);transition:transform .3s var(--spring);}
+.dock-bag:active{transform:scale(.9);}
+.dock-badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:var(--r-pill);
+  background:var(--card);color:var(--ink);font-size:11px;font-weight:740;display:grid;place-items:center;box-shadow:0 2px 6px -2px rgba(24,26,32,.4);}
+.cart-sheet{padding:18px 16px calc(8px + var(--safe-bot))!important;text-align:left;
+  background:var(--card)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;max-height:78vh;overflow-y:auto;}
+.ms-head{display:flex;align-items:center;justify-content:space-between;padding:0 4px 12px;}
+.ms-store{font-size:16px;font-weight:740;letter-spacing:-.02em;}
+.ms-sub{font-size:11.5px;color:var(--ink-3);font-weight:540;margin-top:3px;}
+.ms-clear{display:inline-flex;align-items:center;gap:4px;border:none;background:none;cursor:pointer;color:var(--ink-3);font-size:12px;font-weight:600;}
+.ms-list{display:flex;flex-direction:column;gap:12px;padding:6px 2px 4px;}
+.ms-item{display:flex;align-items:center;gap:12px;}
+.ms-main{flex:1;min-width:0;}
+.ms-name{font-size:14px;font-weight:660;letter-spacing:-.015em;}
+.ms-opt{font-size:11px;color:var(--ink-3);font-weight:540;margin-top:2px;}
+.ms-price{font-size:13.5px;font-weight:720;margin-top:3px;}
+.ms-price .cur{font-size:10px;font-weight:680;margin-right:1px;}
+.ms-was{font-size:11px;color:var(--ink-4);font-weight:540;text-decoration:line-through;}
+.ms-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2);}
+.ms-total{display:flex;flex-direction:column;}
+.mt-a{font-size:21px;font-weight:780;letter-spacing:-.03em;}
+.mt-a .cur{font-size:13px;font-weight:680;margin-right:1px;}
+.mt-b{font-size:11px;color:var(--ink-3);font-weight:540;margin-top:1px;}
+.mt-save{font-size:11px;color:var(--ink-2);font-weight:600;margin-top:1px;}
+.ms-go{flex:none;padding:14px 30px;font-size:15px;border-radius:var(--r-pill);}
+
+/* ---- sale chips in cart ---- */
+.sale-chip{display:inline-flex;align-items:center;font-size:9.5px;font-weight:740;color:var(--on-accent);background:var(--accent);
+  padding:2px 6px;border-radius:6px;vertical-align:middle;letter-spacing:.02em;}
+.cline-was{font-size:11px;color:var(--ink-4);font-weight:540;text-decoration:line-through;margin-left:4px;}
+
+/* ---- check-in ---- */
+.checkin-card{display:flex;align-items:center;gap:13px;padding:15px 16px;border-radius:var(--r-lg);margin-bottom:14px;cursor:pointer;
+  transition:transform .3s var(--spring);}
+.checkin-card:active{transform:scale(.985);}
+.ck-ic{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);}
+.ck-main{flex:1;min-width:0;}
+.ck-t{font-size:14.5px;font-weight:700;letter-spacing:-.015em;}
+.ck-s{font-size:12px;color:var(--ink-3);font-weight:540;margin-top:3px;}
+.ck-go{flex:none;display:inline-flex;align-items:center;gap:2px;font-size:13px;font-weight:680;color:var(--ink);}
+.checkin-sheet .ci-top{display:flex;flex-direction:column;align-items:center;text-align:center;margin:6px 0 18px;}
+.ci-streak{font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:1;}
+.ci-lb{font-size:12px;color:var(--ink-3);font-weight:540;margin-top:7px;}
+.ci-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:18px;}
+.ci-day{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 2px;border-radius:13px;background:var(--card-2);
+  box-shadow:inset 0 0 0 1px var(--line-2);}
+.ci-p{font-size:10px;font-weight:700;color:var(--ink-2);}
+.ci-circ{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--ink-3);background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2);}
+.ci-d{font-size:9.5px;color:var(--ink-3);font-weight:560;}
+.ci-day.got{background:var(--accent);box-shadow:none;}
+.ci-day.got .ci-p,.ci-day.got .ci-d{color:rgba(255,255,255,.7);}
+.ci-day.got .ci-circ{background:rgba(255,255,255,.16);color:var(--on-accent);box-shadow:none;}
+.ci-day.today{box-shadow:inset 0 0 0 2px var(--accent);}
+.ci-day.today .ci-circ{color:var(--ink);}
+.ci-btn{width:100%;padding:15px;font-size:15px;border-radius:var(--r-pill);}
+
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+  <header id="appbar" class="glass"></header>
+  <main id="screen" class="stagger"></main>
+  <div id="dock" class="glass hide"></div>
+  <nav id="tabbar" class="glass"></nav>
+  <div id="grain"></div>
+  <div id="fx"></div>
+</div>
+<script>
+"use strict";
+/* ---------- ICONS (stroke line-art, currentColor) ---------- */
+function I(name,o){
+  o=o||{}; var s=o.size||22, w=(o.w!=null?o.w:1.7), fill=o.fill||'none';
+  var P={
+    back:'<path d="M14.5 5l-7 7 7 7"/>',
+    chevR:'<path d="M9 5l7 7-7 7"/>',
+    home:'<path d="M3.5 10.6 12 3.6l8.5 7"/><path d="M5.4 9.4V20h4.2v-5.6h4.8V20h4.2V9.4"/>',
+    bag:'<path d="M6.2 7.5h11.6l-.9 12.3a1 1 0 0 1-1 .9H8.1a1 1 0 0 1-1-.9L6.2 7.5Z"/><path d="M9 7.5a3 3 0 0 1 6 0"/>',
+    user:'<circle cx="12" cy="8.2" r="3.2"/><path d="M5.6 20a6.4 6.4 0 0 1 12.8 0"/>',
+    search:'<circle cx="11" cy="11" r="6"/><path d="M19.5 19.5 16 16"/>',
+    pin:'<path d="M12 21s6.5-5.4 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15.6 12 21 12 21Z"/><circle cx="12" cy="10.2" r="2.3"/>',
+    clock:'<circle cx="12" cy="12" r="8"/><path d="M12 7.6V12l3 1.8"/>',
+    star:'<path d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 17.8 6.8 19.6l1-5.9-4.3-4.1 5.9-.8L12 3.4Z"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    minus:'<path d="M5.5 12h13"/>',
+    check:'<path d="M5 12.5l4.4 4.4L19 7.4"/>',
+    bike:'<circle cx="6" cy="17" r="2.6"/><circle cx="17.5" cy="17" r="2.6"/><path d="M6 17h7.5l3-7H19"/><path d="M13.5 10 15 5.5h2.4"/><path d="M9 17 11 10"/>',
+    store:'<path d="M4 9.2 5.4 5h13.2L20 9.2"/><path d="M5.4 9.5V20h13.2V9.5"/><path d="M4 9.2a2.4 2.4 0 0 0 4.8 0 2.4 2.4 0 0 0 4.8 0 2.4 2.4 0 0 0 4.8 0"/><path d="M9.6 20v-4.2h4.8V20"/>',
+    phone:'<path d="M6.2 4.5H9l1.4 3.6-2 1.5a11 11 0 0 0 5 5l1.5-2 3.6 1.4v2.8a1.7 1.7 0 0 1-1.8 1.7A13.5 13.5 0 0 1 4.5 7.3 1.7 1.7 0 0 1 6.2 4.5Z"/>',
+    heart:'<path d="M12 20s-7-4.4-7-9.4A3.9 3.9 0 0 1 12 7.3a3.9 3.9 0 0 1 7 3.3c0 5-7 9.4-7 9.4Z"/>',
+    x:'<path d="M6 6l12 12M18 6 6 18"/>',
+    sliders:'<path d="M4 7h8M16 7h4M4 12h4M12 12h8M4 17h6M14 17h6"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="12" cy="17" r="2"/>',
+    chat:'<path d="M5 6.5h14v8.5h-8.5L6 19.5V6.5Z"/><path d="M9 10h6M9 12.4h4"/>',
+    flame:'<path d="M12 3.5c3 2.8 4.4 5.3 4.4 8.2a4.4 4.4 0 0 1-8.8 0c0-1.6.6-3 2-4.6.4 1.2 1.2 1.8 2.1 2-.4-2 0-3.9-.7-5.6Z"/>',
+    leaf:'<path d="M5 19c8 1 14-5 14-14C10 5 4 11 5 19Z"/><path d="M5.5 18.5C9 15 13 12.6 17 11.5"/>',
+    coffee:'<path d="M5 8h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8Z"/><path d="M16 9.2h2.2a2.3 2.3 0 0 1 0 4.6H16"/><path d="M8 3.4c-.5 1 .5 1.7 0 2.7M11 3.4c-.5 1 .5 1.7 0 2.7"/>',
+    bowl:'<path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M3.4 11h17.2"/><path d="M9 4.2c-.4 1.6-.4 2.6.6 3.6M12.2 3.4c-.4 1.6-.4 2.6.6 3.6"/>',
+    sushi:'<rect x="3.5" y="9.6" width="17" height="6.4" rx="3.2"/><path d="M8.2 9.6v6.4M12 9.6v6.4M15.8 9.6v6.4"/>',
+    cake:'<path d="M5 20.5h14v-6.5a2 2 0 0 0-1.4-1.9c-1.8-.5-3.4.5-5.6.5s-3.8-1-5.6-.5A2 2 0 0 0 5 14Z"/><path d="M5 16c2-1.4 3.6 0 7 0s5-1.4 7 0"/><path d="M12 4v4.5"/><circle cx="12" cy="3.6" r="1"/>',
+    cup:'<path d="M6.5 4h11l-1 16.2a1 1 0 0 1-1 .8H8.5a1 1 0 0 1-1-.8L6.5 4Z"/><path d="M6.7 8.5h10.6"/><path d="M11 11.5v6"/>',
+    croissant:'<path d="M4 16c2-5 8-9 16-12-3 8-7 14-12 16-1-2 0-4-1-4s-1 1-3 0Z"/>',
+    card:'<rect x="3" y="6" width="18" height="12" rx="2.6"/><path d="M3 10h18"/><path d="M6.5 14.5h3"/>',
+    wallet:'<rect x="3.5" y="6" width="17" height="13" rx="2.6"/><path d="M3.5 10h17"/><circle cx="16.5" cy="13.5" r="1.4" fill="currentColor" stroke="none"/>',
+    ticket:'<path d="M4 8.5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1-2 2H6a2 2 0 0 1-2-2 2 2 0 0 0 0-4Z"/><path d="M12 7v2M12 11.5v2.5"/>',
+    gear:'<circle cx="12" cy="12" r="3"/><path d="M12 4.5v2M12 17.5v2M19.5 12h-2M6.5 12h-2M16.8 7.2l-1.4 1.4M8.6 15.4l-1.4 1.4M16.8 16.8l-1.4-1.4M8.6 8.6 7.2 7.2"/>',
+    install:'<path d="M12 4v10M8 11l4 3.5 4-3.5"/><path d="M5 18.5h14"/>',
+    receipt:'<path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4V3.5Z"/><path d="M9 8h6M9 11.5h6M9 15h3.5"/>',
+    bell:'<path d="M6.5 17c1-1 1.2-2.4 1.2-5 0-2.6 1.8-4.5 4.3-4.5s4.3 1.9 4.3 4.5c0 2.6.2 4 1.2 5Z"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/>',
+    shield:'<path d="M12 3.5 19 6v5c0 4.6-3 8-7 9.5-4-1.5-7-4.9-7-9.5V6Z"/><path d="M9 12l2 2 4-4"/>',
+    edit:'<path d="M4 20h4l10-10-4-4L4 16Z"/><path d="M13.5 6.5l4 4"/>',
+    arrow:'<path d="M5 12h13M13 6l6 6-6 6"/>',
+    tag:'<path d="M4 12.5 11 5.5h6.5V12l-7 7Z"/><circle cx="14.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/>',
+    box:'<path d="M12 3.5 20 7.5v9L12 20.5 4 16.5v-9Z"/><path d="M4 7.5 12 11.5l8-4M12 11.5V20.5"/>'
+  };
+  return '<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="'+fill+'" stroke="currentColor" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round">'+(P[name]||'')+'</svg>';
+}
+function ipath(name,w){ return I(name,{w:w||1.8}).replace(/<\/?svg[^>]*>/g,''); }
+function art(kind,big){ var sz=big?64:40; return '<div class="art" style="color:rgba(22,23,28,.42)">'+I(kind,{size:sz,w:1.5})+'</div>'; }
+function grad(i){
+  var g=['linear-gradient(145deg,#f4f5f8,#e4e7ee)','linear-gradient(145deg,#eef0f4,#dcdfe7)','linear-gradient(145deg,#f6f7f9,#e7eaf0)','linear-gradient(145deg,#eceef3,#dadde5)'];
+  return g[i%g.length];
+}
+
+/* ---------- DATA ---------- */
+var RES=[
+ {id:'r1',name:'青山食堂',sub:'健康谷物碗 · 轻食',icon:'leaf',rating:4.9,reviews:2140,eta:'25-35',dist:'1.2km',fee:4,min:20,
+  tags:[{ic:'flame',t:'热门'},{ic:'tag',t:'满30减5'}],
+  cats:[
+   {n:'招牌推荐',items:[
+    {id:'r1a',name:'牛油果谷物碗',art:'bowl',desc:'藜麦、牛油果、烤鸡胸与混合时蔬，附芝麻油醋汁',price:38,pop:true},
+    {id:'r1b',name:'照烧鸡肉碗',art:'bowl',desc:'日式照烧鸡腿配糙米饭与温泉蛋',price:34,pop:true}]},
+   {n:'轻食沙拉',items:[
+    {id:'r1c',name:'凯撒鸡胸沙拉',art:'leaf',desc:'罗马生菜、帕玛森芝士、香煎鸡胸与面包丁',price:32},
+    {id:'r1d',name:'藜麦时蔬碗',art:'leaf',desc:'三色藜麦搭配当季烤蔬，纯素友好',price:29}]},
+   {n:'饮品',items:[
+    {id:'r1e',name:'冷萃抹茶拿铁',art:'cup',desc:'宇治抹茶 + 燕麦奶，微糖',price:22}]}
+  ]},
+ {id:'r2',name:'灰调咖啡',sub:'手冲咖啡 · 烘焙坊',icon:'coffee',rating:4.8,reviews:1685,eta:'15-25',dist:'0.8km',fee:3,min:18,
+  tags:[{ic:'star',t:'新店'}],
+  cats:[
+   {n:'咖啡',items:[
+    {id:'r2a',name:'单一产区手冲',art:'coffee',desc:'埃塞俄比亚耶加雪菲，柑橘与花香',price:28,pop:true},
+    {id:'r2b',name:'燕麦丝绒拿铁',art:'coffee',desc:'双份浓缩 + 进口燕麦奶',price:26,pop:true},
+    {id:'r2c',name:'澳白',art:'coffee',desc:'细腻奶泡，浓郁平衡',price:24}]},
+   {n:'烘焙',items:[
+    {id:'r2d',name:'法式可颂',art:'croissant',desc:'48 小时低温发酵，层次酥脆',price:16},
+    {id:'r2e',name:'巴斯克芝士蛋糕',art:'cake',desc:'焦香表皮，内里绵密微咸',price:32}]}
+  ]},
+ {id:'r3',name:'黑白食堂',sub:'招牌拉面 · 小食',icon:'bowl',rating:4.7,reviews:3320,eta:'30-40',dist:'2.1km',fee:5,min:25,
+  tags:[{ic:'flame',t:'人气'},{ic:'tag',t:'满40减8'}],
+  cats:[
+   {n:'招牌面食',items:[
+    {id:'r3a',name:'豚骨叉烧拉面',art:'bowl',desc:'18 小时熬制豚骨汤，溏心蛋与厚切叉烧',price:42,pop:true},
+    {id:'r3b',name:'担担面',art:'bowl',desc:'四川风味芝麻辣酱，微辣',price:36}]},
+   {n:'小食',items:[
+    {id:'r3c',name:'香煎锅贴',art:'sushi',desc:'六只装，外脆内多汁',price:22,pop:true},
+    {id:'r3d',name:'叉烧饭',art:'bowl',desc:'炭火叉烧配特制酱汁',price:34}]},
+   {n:'饮品',items:[
+    {id:'r3e',name:'冷泡乌龙茶',art:'cup',desc:'清爽解腻，无糖',price:14}]}
+  ]}
+];
+RES[0].kinds=['轻食','饮品']; RES[1].kinds=['咖啡','甜点','饮品']; RES[2].kinds=['面食','饮品'];
+RES[0].sales='月售 1200+'; RES[1].sales='月售 2300+'; RES[2].sales='月售 1800+';
+var ADDRESSES=[
+ {id:'a1',label:'云栖路 88 号 · 公寓 A 座 1502',who:'林女士 · 138****6688',ic:'pin'},
+ {id:'a2',label:'西溪路 200 号 · 创意园 3 号楼 502',who:'林女士（公司）· 138****6688',ic:'store'},
+ {id:'a3',label:'文一西路 1500 号 · 海创园 2 幢',who:'林先生 · 139****2046',ic:'pin'}
+];
+var COUPONS=[
+ {id:'c1',label:'满 60 减 8 红包',sub:'满 ¥60 可用',off:8,min:60,ic:'ticket'},
+ {id:'c2',label:'新人立减 ¥5',sub:'无门槛 · 仅限新用户',off:5,min:0,ic:'tag'}
+];
+var STATE={
+  screen:'home', tab:'home',
+  cart:{}, cartRes:null, activeRes:null, menuCat:0,
+  favs:new Set(['r2']), orders:[], activeOrder:null,
+  review:{rating:0,tags:new Set(),note:''}, pay:'wallet', payload:null,
+  query:'', filter:'全部', addr:0, coupon:null,
+  itemOpts:{}, sort:'综合排序',
+  sale:{}, points:1280, checkDays:new Set()
+};
+var FLASH=[];
+function buildFlash(){
+  FLASH=[]; RES.forEach(function(r){ var it=r.cats[0].items[0]; if(!it) return;
+    var now=Math.max(5,Math.round(it.price*0.7));
+    STATE.sale[it.id]=now; FLASH.push({res:r.id,id:it.id,name:it.name,art:it.art,was:it.price,now:now});
+  });
+}
+function priceOf(id){ if(STATE.sale&&STATE.sale[id]!=null) return STATE.sale[id]; var it=findItem(id); return it?it.price:0; }
+(function seed(){
+  var r=RES[1];
+  STATE.orders.push({id:'ORD'+(100000+Math.floor(Math.random()*899999)),res:r.id,resName:r.name,resIcon:r.icon,
+   items:[{id:'r2a',name:'单一产区手冲',price:28,qty:1},{id:'r2d',name:'法式可颂',price:16,qty:2}],
+   subtotal:60,fee:3,pack:2,disc:0,total:65,status:'completed',stage:5,reviewed:true,rating:5,
+   placedAt:Date.now()-86400000*2,eta:'15-25',riderName:'周师傅'});
+})();
+
+/* ---------- HELPERS ---------- */
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+var screenEl,appbarEl,tabbarEl,dockEl,fxEl;
+function money(n){return '<span class="cur">¥</span>'+n;}
+function yuan(n){return '¥'+n;}
+function findRes(id){for(var i=0;i<RES.length;i++)if(RES[i].id===id)return RES[i];return null;}
+function findItem(id){for(var i=0;i<RES.length;i++){var r=RES[i];for(var c=0;c<r.cats.length;c++){var its=r.cats[c].items;for(var k=0;k<its.length;k++)if(its[k].id===id)return Object.assign({res:r.id},its[k]);}}return null;}
+function cartCount(){var n=0;for(var k in STATE.cart)n+=STATE.cart[k];return n;}
+function cartSubtotal(){var s=0;for(var k in STATE.cart){var it=findItem(k);if(it)s+=priceOf(k)*STATE.cart[k];}return s;}
+function activeCartRes(){return STATE.cartRes?findRes(STATE.cartRes):null;}
+function discountFor(res,sub){if(!res)return 0;var t=null;for(var i=0;i<res.tags.length;i++)if(res.tags[i].t.indexOf('满')>=0)t=res.tags[i];if(!t)return 0;var m=t.t.match(/满(\d+)减(\d+)/);if(m&&sub>=+m[1])return +m[2];return 0;}
+function currentAddr(){return ADDRESSES[STATE.addr]||ADDRESSES[0];}
+function findCoupon(id){for(var i=0;i<COUPONS.length;i++)if(COUPONS[i].id===id)return COUPONS[i];return null;}
+function couponOff(sub){var c=findCoupon(STATE.coupon);return (c&&sub>=c.min)?c.off:0;}
+function orderTotal(r,sub){return Math.max(0,sub+r.fee+2-discountFor(r,sub)-couponOff(sub));}
+function dishHit(r,q){for(var c=0;c<r.cats.length;c++){var its=r.cats[c].items;for(var k=0;k<its.length;k++)if(its[k].name.toLowerCase().indexOf(q)>=0)return its[k].name;}return null;}
+function filteredRes(){
+  var q=(STATE.query||'').trim().toLowerCase(), f=STATE.filter||'全部';
+  var arr=RES.filter(function(r){
+    if(f==='收藏'){ if(!STATE.favs.has(r.id)) return false; }
+    else if(f==='优惠'){ if(!r.tags.some(function(t){return /满|减|券|折/.test(t.t);})) return false; }
+    else if(f!=='全部'){ if(r.kinds.indexOf(f)<0) return false; }
+    if(!q) return true;
+    if(r.name.toLowerCase().indexOf(q)>=0 || r.sub.toLowerCase().indexOf(q)>=0) return true;
+    return dishHit(r,q)!=null;
+  });
+  var s=STATE.sort;
+  if(s==='评分最高') arr.sort(function(a,b){return b.rating-a.rating;});
+  else if(s==='距离最近') arr.sort(function(a,b){return parseFloat(a.dist)-parseFloat(b.dist);});
+  else if(s==='起送最低') arr.sort(function(a,b){return a.min-b.min;});
+  return arr;
+}
+
+/* ---------- NAVIGATION + BARS ---------- */
+var TAB_SCREENS=['home','orders','profile'];
+function nav(screen,payload){
+  STATE.screen=screen; STATE.payload=payload||null;
+  if(TAB_SCREENS.indexOf(screen)>=0) STATE.tab=screen;
+  renderAppbar(); renderScreen(true); renderTabbar(); renderDock();
+  screenEl.scrollTop=0;
+  if(screen==='profile') renderInstall();
+}
+function renderTabbar(){
+  var show=TAB_SCREENS.indexOf(STATE.screen)>=0;
+  tabbarEl.classList.toggle('hide',!show);
+  if(!show) return;
+  var tabs=[['home','首页','home'],['orders','订单','receipt'],['profile','我的','user']];
+  tabbarEl.innerHTML=tabs.map(function(t){
+    return '<button class="tab '+(STATE.tab===t[0]?'on':'')+'" data-action="tab" data-tab="'+t[0]+'">'+
+      '<span class="pip"></span><span class="ic">'+I(t[2],{size:23,w:1.7})+'</span><span>'+t[1]+'</span></button>';
+  }).join('');
+}
+function cartButton(){
+  return '<button class="iconbtn" data-action="go" data-screen="cart">'+I('bag',{size:21})+
+    '<span class="cart-badge'+(cartCount()?' show':'')+'" id="cartBadge">'+cartCount()+'</span></button>';
+}
+function renderAppbar(){
+  var s=STATE.screen, html='';
+  if(s==='home'){
+    var ad=currentAddr(), short=ad.label.split('·')[0].trim();
+    html='<div class="bar-loc" data-action="chooseAddr" style="cursor:pointer"><span class="lab">配送至</span>'+
+      '<span class="val">'+I('pin',{size:16,w:1.8})+short+' '+I('chevR',{size:14,w:2})+'</span></div>'+cartButton();
+  }else if(s==='orders'){
+    html='<div class="bar-title"><span class="t">我的订单</span></div>'+cartButton();
+  }else if(s==='favorites'){
+    html='<button class="iconbtn" data-action="back">'+I('back',{size:22})+'</button>'+
+      '<div class="bar-title"><span class="t">我的收藏</span></div><span style="width:40px"></span>';
+  }else if(s==='profile'){
+    html='<div class="bar-title"><span class="t">我的</span></div><button class="iconbtn" data-action="noop">'+I('bell',{size:21})+'</button>';
+  }else if(s==='restaurant'){
+    var r=findRes(STATE.activeRes);
+    html='<button class="iconbtn" data-action="back">'+I('back',{size:22})+'</button>'+
+      '<div class="bar-title"><span class="t">'+(r?r.name:'')+'</span></div>'+
+      '<button class="iconbtn" data-action="fav" data-id="'+(r?r.id:'')+'">'+I('heart',{size:21,fill:STATE.favs.has(STATE.activeRes)?'currentColor':'none'})+'</button>'+cartButton();
+  }else{
+    var titles={cart:'购物车',checkout:'确认订单',tracking:'订单追踪',review:'评价订单'};
+    html='<button class="iconbtn" data-action="back">'+I('back',{size:22})+'</button>'+
+      '<div class="bar-title"><span class="t">'+(titles[s]||'')+'</span></div>';
+    html+= (s==='cart')?'<button class="iconbtn" data-action="clearCart">'+I('x',{size:20})+'</button>':'<span style="width:40px"></span>';
+  }
+  appbarEl.innerHTML=html;
+}
+function renderScreen(animate){
+  var map={home:Home,restaurant:Restaurant,cart:Cart,checkout:Checkout,tracking:Tracking,review:Review,orders:Orders,profile:Profile,favorites:Favorites};
+  var fn=map[STATE.screen];
+  if(animate){screenEl.classList.remove('stagger'); void screenEl.offsetWidth; screenEl.innerHTML=fn?fn():''; screenEl.classList.add('stagger');}
+  else{screenEl.classList.remove('stagger'); screenEl.innerHTML=fn?fn():'';}
+  if(STATE.screen==='tracking') afterTracking();
+  if(STATE.screen==='profile') renderInstall();
+}
+function renderDock(){
+  var s=STATE.screen, html='', show=false;
+  screenEl.classList.remove('dock-pad','flat-pad');
+  if(s==='restaurant' && cartCount() && STATE.cartRes===STATE.activeRes){
+    show=true; var r=activeCartRes(), sub=cartSubtotal();
+    html='<button class="dock-bag" data-action="openMiniCart">'+I('bag',{size:21})+'<span class="dock-badge">'+cartCount()+'</span></button>'+
+      '<div class="d-info" data-action="openMiniCart" style="cursor:pointer"><span class="a">'+money(sub)+'</span><span class="b">'+
+      (sub<r.min?('差 '+yuan(r.min-sub)+' 起送'):('已满起送 · 配送 '+yuan(r.fee)))+'</span></div>'+
+      '<button class="btn btn-primary dock-btn" data-action="go" data-screen="cart" '+(sub<r.min?'disabled style="opacity:.45"':'')+'>去结算 '+I('arrow',{size:18,w:2})+'</button>';
+  }else if(s==='cart' && cartCount()){
+    show=true; var rc=activeCartRes(), sb=cartSubtotal(), dc=discountFor(rc,sb), tt=sb+rc.fee+2-dc;
+    html='<div class="d-info"><span class="a">'+money(tt)+'</span><span class="b">含配送与包装'+(dc?(' · 已省 '+yuan(dc)):'')+'</span></div>'+
+      '<button class="btn btn-primary dock-btn" data-action="go" data-screen="checkout">去结算</button>';
+  }else if(s==='checkout'){
+    show=true; var rk=activeCartRes(), sk=cartSubtotal(), saved=discountFor(rk,sk)+couponOff(sk);
+    html='<div class="d-info"><span class="a">'+money(orderTotal(rk,sk))+'</span><span class="b">'+cartCount()+' 件商品'+(saved?(' · 已省 '+yuan(saved)):'')+'</span></div>'+
+      '<button class="btn btn-primary dock-btn" data-action="placeOrder">提交订单</button>';
+  }else if(s==='review'){
+    show=true; html='<button class="btn btn-primary btn-block" data-action="submitReview" style="border-radius:var(--r-pill)">提交评价</button>';
+  }else if(s==='tracking'){
+    var o=orderById(STATE.activeOrder);
+    if(o && o.stage>=5 && !o.reviewed){ show=true; html='<button class="btn btn-primary btn-block" data-action="goReview" style="border-radius:var(--r-pill)">'+I('star',{size:18})+' 评价此订单</button>'; }
+    else { screenEl.classList.add('flat-pad'); }
+  }else if(TAB_SCREENS.indexOf(s)<0){ screenEl.classList.add('flat-pad'); }
+  if(show) screenEl.classList.add('dock-pad');
+  dockEl.classList.toggle('hide',!show);
+  if(show) dockEl.innerHTML=html;
+}
+function orderById(id){for(var i=0;i<STATE.orders.length;i++)if(STATE.orders[i].id===id)return STATE.orders[i];return null;}
+
+/* ---------- HOME ---------- */
+function Home(){
+  var q=STATE.query||'';
+  var hr=new Date().getHours();
+  var hello=hr<5?'夜深了，记得照顾好自己':hr<11?'早安，开启元气一天':hr<14?'午安，吃顿好的':hr<18?'下午好，享受此刻':'晚上好，犒劳一下自己';
+  return ''+
+  '<div class="greet"><div class="g1">'+hello+'</div><div class="g2">发现今天的<br>好味道 <span class="g-dot">·</span></div></div>'+
+  '<div class="search soft-in"><span class="s-ic">'+I('search',{size:19,w:1.8})+'</span>'+
+    '<input id="searchInput" data-action="homeSearch" value="'+q.replace(/"/g,'&quot;')+'" placeholder="搜索店铺或菜品"/>'+
+    '<button id="searchClear" class="iconbtn" style="width:28px;height:28px;box-shadow:none!important;background:var(--ink-5);display:'+(q?'grid':'none')+'" data-action="clearSearch">'+I('x',{size:15,w:2.2})+'</button></div>'+
+  '<div id="searchExtra"'+(q?' style="display:none"':'')+'><div class="hot-label">热门搜索</div><div class="hot-row">'+
+    ['手冲咖啡','日式拉面','轻食沙拉','法式可颂','乌龙茶','叉烧饭'].map(function(k){return '<button class="hot-tag" data-action="hotSearch" data-kw="'+k+'">'+k+'</button>';}).join('')+
+  '</div></div>'+
+  '<div id="homeDiscover"'+(q?' style="display:none"':'')+'>'+
+    catGrid()+ flashStrip()+ rankCarousel()+
+  '</div>'+
+  '<div id="homeList">'+homeListInner()+'</div>';
+}
+function catGrid(){
+  var cats=[['全部','sliders'],['优惠','ticket'],['轻食','leaf'],['咖啡','coffee'],['面食','bowl'],['甜点','cake'],['饮品','cup'],['收藏','heart']];
+  return '<div class="cat-grid" id="homeCats">'+cats.map(function(c){
+    var on=STATE.filter===c[0];
+    return '<button class="cat-tile'+(on?' on':'')+'" data-action="hcat" data-cat="'+c[0]+'">'+
+      '<span class="cat-ic">'+I(c[1],{size:21,w:1.7})+'</span><span class="cat-lb">'+c[0]+'</span></button>';
+  }).join('')+'</div>';
+}
+function flashStrip(){
+  if(!FLASH.length) return '';
+  return '<div class="flash-card surf">'+
+    '<div class="flash-head"><div class="flash-tt">'+I('flame',{size:15,fill:'currentColor',w:0})+' 限时秒杀</div>'+
+      '<div class="flash-clock"><span class="fc-lb">距结束</span><span id="saleClock" class="fc-time">--:--:--</span></div></div>'+
+    '<div class="flash-row">'+FLASH.map(function(it){var gi=RES.map(function(r){return r.id;}).indexOf(it.res);
+      return '<button class="flash-item" data-action="openDish" data-id="'+it.id+'">'+
+        '<div class="flash-thumb" style="background:'+grad(gi)+'">'+art(it.art)+'<span class="flash-badge">7折</span></div>'+
+        '<div class="flash-name">'+it.name+'</div>'+
+        '<div class="flash-price"><span class="fp-now">'+money(it.now)+'</span><span class="fp-was">'+yuan(it.was)+'</span></div>'+
+      '</button>';
+    }).join('')+'</div></div>';
+}
+function popularDishes(){
+  var arr=[]; RES.forEach(function(r){ r.cats.forEach(function(c){ c.items.forEach(function(it){
+    arr.push({id:it.id,name:it.name,art:it.art,resName:r.name,resId:r.id,pop:!!it.pop}); }); }); });
+  arr.sort(function(a,b){ return (b.pop?1:0)-(a.pop?1:0); });
+  return arr.slice(0,6);
+}
+function rankCarousel(){
+  var items=popularDishes(); if(!items.length) return '';
+  return '<div class="section-head" style="margin-bottom:13px"><span class="h2">人气榜</span><span class="lk" data-action="noop">实时热销 '+I('flame',{size:13,fill:'currentColor',w:0})+'</span></div>'+
+  '<div class="rank-row">'+items.map(function(it,i){var gi=RES.map(function(r){return r.id;}).indexOf(it.resId);
+    return '<button class="rank-card" data-action="openDish" data-id="'+it.id+'">'+
+      '<div class="rank-thumb" style="background:'+grad(gi)+'">'+art(it.art)+'<span class="rank-no'+(i<3?' top':'')+'">'+(i+1)+'</span></div>'+
+      '<div class="rank-name">'+it.name+'</div><div class="rank-sub">'+it.resName+'</div>'+
+      '<div class="rank-price">'+money(priceOf(it.id))+'</div></button>';
+  }).join('')+'</div>';
+}
+function promoCard(ic,t,s){
+  return '<div class="promo"><span class="promo-ic">'+I(ic,{size:18,w:1.9})+'</span>'+
+    '<div><div class="promo-t">'+t+'</div><div class="promo-s">'+s+'</div></div></div>';
+}
+function homeListInner(){
+  var list=filteredRes(), q=(STATE.query||'').trim().toLowerCase();
+  var heading=STATE.query?('找到 '+list.length+' 个结果'):(STATE.filter==='全部'?'为你推荐':(STATE.filter==='收藏'?'我的收藏':(STATE.filter==='优惠'?'优惠好店':STATE.filter+' · 精选')));
+  if(!list.length){
+    return '<div class="section-head"><span class="h2">'+heading+'</span></div>'+
+      '<div class="no-result"><div class="nr-ic soft-in">'+I('search',{size:30,w:1.6})+'</div>'+
+      '<div class="nr-t">没有找到相关结果</div><div class="nr-s">换个关键词或筛选条件试试吧</div></div>';
+  }
+  return '<div class="section-head"><span class="h2">'+heading+'</span>'+
+    (STATE.query?'':'<span class="lk" data-action="chooseSort">'+STATE.sort+' '+I('sliders',{size:13,w:1.8})+'</span>')+'</div>'+
+    list.map(function(r){return resCard(r,RES.indexOf(r),q);}).join('');
+}
+function updateHomeList(){
+  var el=$('#homeList'); if(!el) return;
+  el.innerHTML=homeListInner(); el.classList.remove('fade-swap'); void el.offsetWidth; el.classList.add('fade-swap');
+}
+function resCard(r,i,q){
+  var fav=STATE.favs.has(r.id);
+  var hit=(q&&r.name.toLowerCase().indexOf(q)<0&&r.sub.toLowerCase().indexOf(q)<0)?dishHit(r,q):null;
+  return ''+
+  '<div class="rcard surf" style="border-radius:var(--r-lg)" data-action="openRes" data-id="'+r.id+'">'+
+    '<div class="rcover"><div class="grad" style="background:'+grad(i)+'"></div>'+art(r.icon,true)+
+      '<div class="badge-row">'+r.tags.map(function(t){return '<span class="tag glass-soft" style="border-radius:var(--r-pill)"><span class="ic">'+I(t.ic,{size:13,w:1.8})+'</span>'+t.t+'</span>';}).join('')+'</div>'+
+      '<button class="fav-btn '+(fav?'on':'')+'" data-action="fav" data-id="'+r.id+'">'+I('heart',{size:19,fill:fav?'currentColor':'none'})+'</button>'+
+    '</div>'+
+    '<div class="rbody"><div class="rname">'+r.name+'</div>'+
+      '<div class="rmeta"><span class="rate">'+I('star',{size:14,fill:'currentColor',w:0})+r.rating+'</span>'+
+        '<span class="muted">('+(r.reviews>999?(r.reviews/1000).toFixed(1)+'k':r.reviews)+')</span>'+
+        '<span class="dot"></span><span>'+r.sales+'</span><span class="dot"></span><span>'+r.dist+'</span><span class="dot"></span><span>'+r.eta+' 分钟</span></div>'+
+      '<div class="rdeliver">'+I('bike',{size:12,w:1.8})+'<span>配送 '+yuan(r.fee)+'</span><span class="dot"></span><span>'+yuan(r.min)+' 起送</span></div>'+
+      (hit?'<div class="dish-hit">'+I('search',{size:11,w:1.9})+' 含「'+hit+'」</div>':'')+
+    '</div></div>';
+}
+
+/* ---------- RESTAURANT ---------- */
+function Restaurant(){
+  var r=findRes(STATE.activeRes); if(!r) return '';
+  var i=RES.indexOf(r);
+  return ''+
+  '<div class="hero">'+
+    '<div class="hero-cover" style="background:'+grad(i)+'"><div class="art" style="color:rgba(22,23,28,.4)">'+I(r.icon,{size:86,w:1.3})+'</div></div>'+
+    '<div class="hero-info"><h1>'+r.name+'</h1>'+
+      '<div class="muted" style="font-size:13px;font-weight:560;margin-top:5px">'+r.sub+'</div>'+
+      '<div class="hero-stats">'+
+        '<div class="hstat"><span class="v">'+I('star',{size:16,fill:'currentColor',w:0})+r.rating+'</span><span class="l">'+r.reviews+' 评价</span></div>'+
+        '<div class="hstat sep"></div>'+
+        '<div class="hstat"><span class="v">'+r.eta.split('-')[0]+'′</span><span class="l">预计送达</span></div>'+
+        '<div class="hstat sep"></div>'+
+        '<div class="hstat"><span class="v">'+yuan(r.fee)+'</span><span class="l">配送费</span></div>'+
+        '<div class="hstat sep"></div>'+
+        '<div class="hstat"><span class="v">'+yuan(r.min)+'</span><span class="l">起送价</span></div>'+
+      '</div></div></div>'+
+  '<div class="menu-wrap">'+
+    '<div class="cat-rail">'+r.cats.map(function(c,ci){return '<button class="crail-btn '+(ci===STATE.menuCat?'on':'')+'" data-action="mcat" data-ci="'+ci+'">'+c.n+'</button>';}).join('')+'</div>'+
+    '<div class="menu-col" id="menuList">'+menuListActive(r)+'</div>'+
+  '</div>';
+}
+function menuListActive(r){
+  var c=r.cats[STATE.menuCat]||r.cats[0];
+  return '<div class="cat-label">'+c.n+' · '+c.items.length+' 款</div>'+c.items.map(function(it){return itemRow(it,STATE.menuCat);}).join('');
+}
+function itemRow(it,ci){
+  var qty=STATE.cart[it.id]||0;
+  var inOther=STATE.cartRes && STATE.cartRes!==STATE.activeRes;
+  var ctrl;
+  if(qty>0 && !inOther){
+    ctrl='<div class="stepper"><button class="step-btn minus soft" data-action="dec" data-id="'+it.id+'">'+I('minus',{size:17,w:2})+'</button>'+
+      '<span class="step-qty" data-qty="'+it.id+'">'+qty+'</span>'+
+      '<button class="step-btn plus" data-action="inc" data-id="'+it.id+'">'+I('plus',{size:17,w:2})+'</button></div>';
+  }else{
+    ctrl='<button class="add-btn" data-action="add" data-id="'+it.id+'">'+I('plus',{size:18,w:2.2})+'</button>';
+  }
+  return ''+
+  '<div class="item surf" style="border-radius:var(--r-md)">'+
+    '<div class="thumb" data-action="openDish" data-id="'+it.id+'"><div class="gl" style="background:'+grad(ci)+'"></div>'+art(it.art)+'</div>'+
+    '<div class="item-main"><div class="item-name" data-action="openDish" data-id="'+it.id+'">'+it.name+(it.pop?' <span class="pop-tag">'+I('flame',{size:11,fill:'currentColor',w:0})+' 招牌</span>':'')+'</div>'+
+      '<div class="item-desc" data-action="openDish" data-id="'+it.id+'">'+it.desc+'</div>'+
+      '<div class="item-bottom"><div class="item-price">'+money(it.price)+'</div>'+ctrl+'</div>'+
+    '</div></div>';
+}
+
+/* ---------- CART ---------- */
+function Cart(){
+  if(!cartCount()) return emptyState('box','购物车是空的','去首页挑选喜欢的店铺与菜品吧','回到首页','home');
+  var r=activeCartRes(), sub=cartSubtotal(), disc=discountFor(r,sub), ids=Object.keys(STATE.cart);
+  return ''+
+  '<div class="surf" style="border-radius:var(--r-md);padding:13px 16px;display:flex;align-items:center;gap:11px;margin-bottom:14px">'+
+    '<span style="color:var(--ink-2)">'+I('store',{size:20})+'</span>'+
+    '<span style="font-size:15px;font-weight:700;letter-spacing:-.02em">'+r.name+'</span>'+
+    '<span class="muted" style="font-size:12px;margin-left:auto">预计 '+r.eta+' 分钟</span></div>'+
+  ids.map(function(id,idx){var it=findItem(id),qty=STATE.cart[id];
+    var op=STATE.itemOpts[id], opStr=op?Object.keys(op).map(function(k){return op[k];}).join(' · '):'';
+    var onSale=STATE.sale[id]!=null;
+    return '<div class="cline surf" style="border-radius:var(--r-md)">'+
+      '<div class="thumb"><div class="gl" style="background:'+grad(idx)+'"></div>'+art(it.art)+'</div>'+
+      '<div class="cline-main"><div class="cline-name">'+it.name+(onSale?' <span class="sale-chip">7折</span>':'')+'</div>'+(opStr?'<div class="cline-opt">'+opStr+'</div>':'')+
+        '<div class="cline-price">'+yuan(priceOf(id))+' / 份'+(onSale?' <span class="cline-was">'+yuan(it.price)+'</span>':'')+'</div></div>'+
+      '<div class="stepper"><button class="step-btn minus soft" data-action="dec" data-id="'+id+'">'+I('minus',{size:17,w:2})+'</button>'+
+      '<span class="step-qty" data-qty="'+id+'">'+qty+'</span>'+
+      '<button class="step-btn plus" data-action="inc" data-id="'+id+'">'+I('plus',{size:17,w:2})+'</button></div></div>';
+  }).join('')+
+  '<div class="sum surf">'+
+    '<div class="sum-row">小计<span class="v">'+yuan(sub)+'</span></div>'+
+    '<div class="sum-row">配送费<span class="v">'+yuan(r.fee)+'</span></div>'+
+    '<div class="sum-row">包装费<span class="v">'+yuan(2)+'</span></div>'+
+    (disc?'<div class="sum-row disc">满减优惠<span class="v">'+yuan(disc)+'</span></div>':'')+
+    '<div class="sum-div"></div>'+
+    '<div class="sum-total"><span class="l">合计</span><span class="v">'+money(sub+r.fee+2-disc)+'</span></div></div>'+
+  '<div style="text-align:center;margin-top:16px"><span class="muted" style="font-size:12px">'+I('shield',{size:13,w:1.7})+' 安心配送 · 准时保障</span></div>';
+}
+
+/* ---------- CHECKOUT ---------- */
+function Checkout(){
+  if(!cartCount()) return emptyState('box','购物车是空的','先去挑选商品再来结算吧','回到首页','home');
+  var r=activeCartRes(), sub=cartSubtotal(), disc=discountFor(r,sub), co=couponOff(sub), ad=currentAddr();
+  var c=findCoupon(STATE.coupon);
+  var pays=[['wallet','灰调钱包','wallet','余额 ¥328.50'],['card','银行卡','card','**** 6621'],['ticket','到付','ticket','货到付款']];
+  return ''+
+  '<div class="row-card surf" style="margin-top:0">'+
+    '<div class="lrow" data-action="chooseAddr"><span class="l-ic soft-in">'+I(ad.ic,{size:19})+'</span>'+
+      '<div class="l-main"><div class="l-t">'+ad.label+'</div><div class="l-s">收货人 '+ad.who+'</div></div><span class="chev">'+I('chevR',{size:18,w:2})+'</span></div>'+
+    '<div class="lrow" data-action="noop"><span class="l-ic soft-in">'+I('clock',{size:19})+'</span>'+
+      '<div class="l-main"><div class="l-t">尽快送达</div><div class="l-s">预计 '+r.eta+' 分钟内</div></div><span class="chev">'+I('chevR',{size:18,w:2})+'</span></div></div>'+
+  '<div class="section-head" style="margin-bottom:8px"><span class="h2">支付方式</span></div>'+
+  '<div class="row-card surf" style="margin-top:0">'+
+    pays.map(function(p){return '<div class="pay-opt '+(STATE.pay===p[0]?'on':'')+'" data-action="pay" data-pay="'+p[0]+'">'+
+      '<span class="p-ic soft-in">'+I(p[2],{size:19})+'</span>'+
+      '<span class="p-t">'+p[1]+'<div class="l-s" style="font-weight:540;color:var(--ink-3);margin-top:2px;font-size:12px">'+p[3]+'</div></span>'+
+      '<span class="radio"><span class="fill"></span></span></div>';}).join('')+'</div>'+
+  '<div class="row-card surf">'+
+    '<div class="lrow" data-action="chooseCoupon"><span class="l-ic soft-in">'+I('ticket',{size:19})+'</span>'+
+      '<div class="l-main"><div class="l-t">优惠券</div><div class="l-s">'+(c?'已选 · 满足条件立减 '+yuan(c.off):COUPONS.length+' 张可用')+'</div></div>'+
+      (co?'<span class="coupon-pill">− '+yuan(co)+'</span>':(c?'<span class="l-val">未满门槛</span>':'<span class="l-val">去使用</span>'))+'<span class="chev">'+I('chevR',{size:18,w:2})+'</span></div></div>'+
+  '<div class="section-head" style="margin-bottom:8px"><span class="h2">订单备注</span></div>'+
+  '<div class="rev-input field" style="margin-top:0"><textarea data-action="noop" placeholder="口味偏好、餐具需求等（选填）" style="min-height:54px"></textarea></div>'+
+  '<div class="sum surf">'+
+    '<div class="sum-row">商品小计<span class="v">'+yuan(sub)+'</span></div>'+
+    '<div class="sum-row">配送费<span class="v">'+yuan(r.fee)+'</span></div>'+
+    '<div class="sum-row">包装费<span class="v">'+yuan(2)+'</span></div>'+
+    (disc?'<div class="sum-row disc">满减优惠<span class="v">'+yuan(disc)+'</span></div>':'')+
+    (co?'<div class="sum-row disc">优惠券<span class="v">'+yuan(co)+'</span></div>':'')+
+    '<div class="sum-div"></div>'+
+    '<div class="sum-total"><span class="l">需支付</span><span class="v">'+money(orderTotal(r,sub))+'</span></div></div>';
+}
+
+/* ---------- TRACKING ---------- */
+var STAGES=[
+ {t:'订单已提交',s:'商家正在确认你的订单'},
+ {t:'商家已接单',s:'已开始为你准备餐品'},
+ {t:'餐品制作中',s:'后厨正在精心烹制'},
+ {t:'骑手已取餐',s:'骑手已从门店取餐出发'},
+ {t:'配送途中',s:'骑手正在火速赶来'},
+ {t:'已送达',s:'请尽快享用，注意防烫'}
+];
+var ROUTE="M44 174 C 96 168, 104 104, 158 110 S 252 86, 300 44";
+function Tracking(){
+  var o=orderById(STATE.activeOrder); if(!o) return '';
+  var stIdx=Math.min(o.stage,5), cur=STAGES[stIdx], done=o.stage>=5;
+  return ''+
+  '<div class="track-status surf">'+
+    '<div class="st-eyebrow">'+(done?'<span>已完成</span>':'<span class="live-dot"></span><span>实时追踪</span>')+'</div>'+
+    '<h1 id="stTitle">'+(done?'订单已送达':cur.t)+'</h1>'+
+    '<div class="eta" id="stEta">'+etaText(o)+'</div></div>'+
+  '<div class="map surf">'+mapSVG(o)+
+    '<div class="mglass glass-soft" style="border-radius:18px">'+
+      '<span class="rider-av">'+I('bike',{size:21})+'</span>'+
+      '<div style="flex:1"><div class="r-name">'+o.riderName+' · 配送中</div><div class="r-sub">电动车 · 浙A·'+(1000+(o.stage*137)%8999)+'</div></div>'+
+      '<button class="call" data-action="noop">'+I('phone',{size:18})+'</button></div></div>'+
+  '<div class="timeline surf" id="timeline">'+
+    STAGES.map(function(st,i){return '<div class="tstep" data-step="'+i+'"><div class="node">'+I('check',{size:15,w:2.4})+'</div>'+
+      '<div class="tinfo"><div class="tt">'+st.t+'</div><div class="ts">'+st.s+'</div></div></div>';}).join('')+'</div>'+
+  '<div class="row-card surf" style="margin-top:0">'+
+    '<div class="lrow" data-action="noop"><span class="l-ic soft-in">'+I('store',{size:19})+'</span>'+
+      '<div class="l-main"><div class="l-t">'+o.resName+'</div><div class="l-s">订单号 '+o.id+'</div></div></div>'+
+    '<div class="lrow" data-action="noop"><span class="l-ic soft-in">'+I('bag',{size:19})+'</span>'+
+      '<div class="l-main"><div class="l-t">'+o.items.map(function(x){return x.name+'×'+x.qty;}).join('，')+'</div><div class="l-s">共 '+o.items.reduce(function(a,b){return a+b.qty;},0)+' 件</div></div>'+
+      '<span class="l-val">'+yuan(o.total)+'</span></div></div>';
+}
+function etaText(o){
+  if(o.stage>=5) return o.reviewed?'感谢你的评价，期待再次光临':'订单已送达，记得评价哦';
+  var mins=Math.max(2,28-o.stage*5);
+  return '预计 <b>'+mins+' 分钟</b>内送达 · 骑手 '+o.riderName;
+}
+function mapSVG(o){
+  var blocks=[[20,30,60,40],[100,18,70,34],[200,24,90,40],[24,90,48,50],[250,108,70,50],[120,140,80,46],[40,150,52,40],[210,156,60,44]];
+  var start=o.stage>=5?'translate(300,44)':'translate(44,174)';
+  var moving=o.stage===4;
+  return '<svg viewBox="0 0 340 210" preserveAspectRatio="xMidYMid slice">'+
+    '<defs><linearGradient id="mapbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f3f6"/><stop offset="1" stop-color="#e4e7ee"/></linearGradient></defs>'+
+    '<rect width="340" height="210" fill="url(#mapbg)"/>'+
+    blocks.map(function(b){return '<rect x="'+b[0]+'" y="'+b[1]+'" width="'+b[2]+'" height="'+b[3]+'" rx="9" fill="#ffffff" opacity="0.55"/>';}).join('')+
+    '<path d="M0 120 H340 M0 70 H340 M150 0 V210 M70 0 V210" stroke="#d3d7df" stroke-width="6" opacity="0.5" stroke-linecap="round"/>'+
+    '<path d="'+ROUTE+'" fill="none" stroke="#bcc0c9" stroke-width="3.5" stroke-dasharray="2 9" stroke-linecap="round"/>'+
+    '<path id="routeProg" d="'+ROUTE+'" fill="none" stroke="#16171c" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="320" stroke-dashoffset="'+(o.stage>=5?0:320)+'" style="transition:stroke-dashoffset 6s linear"/>'+
+    '<g transform="translate(44,174)"><circle r="13" fill="#fff" stroke="#16171c" stroke-width="2"/><g transform="translate(-9,-9) scale(.75)" stroke="#16171c" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">'+ipath('store',1.8)+'</g></g>'+
+    '<g transform="translate(300,44)"><circle r="13" fill="#16171c"/><g transform="translate(-8,-8) scale(.7)" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">'+ipath('home',2)+'</g></g>'+
+    '<g id="riderG" transform="'+start+'">'+
+      (moving?'<circle class="r-pulse" r="17" fill="#16171c"/>':'')+
+      '<circle r="13" fill="#16171c"/>'+
+      '<g transform="translate(-9,-9) scale(.74)" stroke="#fff" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round">'+ipath('bike',1.9)+'</g>'+
+      '<animateMotion id="riderMove" dur="6s" begin="indefinite" fill="freeze" rotate="0" path="'+ROUTE+'"/>'+
+    '</g></svg>';
+}
+function updateTimeline(o){
+  $$('#timeline .tstep').forEach(function(el,i){
+    el.classList.remove('done','active');
+    if(o.stage>=5) el.classList.add('done');
+    else if(i<o.stage) el.classList.add('done');
+    else if(i===o.stage) el.classList.add('active');
+  });
+  var tt=$('#stTitle'), ee=$('#stEta');
+  if(tt) tt.textContent=o.stage>=5?'订单已送达':STAGES[Math.min(o.stage,5)].t;
+  if(ee) ee.innerHTML=etaText(o);
+}
+function afterTracking(){
+  var o=orderById(STATE.activeOrder); if(!o) return;
+  updateTimeline(o);
+  if(o.stage===4){
+    var rp=$('#routeProg'); if(rp){ requestAnimationFrame(function(){ rp.style.strokeDashoffset='0'; }); }
+    var rm=$('#riderMove'); if(rm && rm.beginElement){ try{ rm.beginElement(); }catch(e){} }
+  }
+}
+
+/* ---------- REVIEW ---------- */
+function Review(){
+  var o=orderById(STATE.activeOrder); if(!o) return '';
+  var r=findRes(o.res);
+  var labels=['','不太满意','一般般','还不错','很满意','非常完美'];
+  var tags=['包装精致','准时送达','份量十足','口味很赞','骑手礼貌','保温到位'];
+  return ''+
+  '<div class="rev-card surf">'+
+    '<div class="rev-thumb"><div class="gl" style="position:absolute;inset:0;background:'+grad(RES.indexOf(r))+'"></div>'+art(o.resIcon)+'</div>'+
+    '<div class="rt">'+o.resName+'</div><div class="rs">'+o.items.map(function(x){return x.name;}).join('，')+'</div>'+
+    '<div class="stars" id="stars">'+[1,2,3,4,5].map(function(v){return '<button class="star '+(v<=STATE.review.rating?'on':'')+'" data-action="star" data-v="'+v+'">'+I('star',{size:34,fill:v<=STATE.review.rating?'currentColor':'none',w:1.5})+'</button>';}).join('')+'</div>'+
+    '<div class="rate-label" id="rateLabel">'+(STATE.review.rating?labels[STATE.review.rating]:'点击星星打分')+'</div></div>'+
+  '<div class="section-head" style="margin-bottom:10px"><span class="h2">这次体验如何？</span></div>'+
+  '<div class="rev-tags">'+tags.map(function(t){return '<button class="rtag '+(STATE.review.tags.has(t)?'on':'')+'" data-action="rtag" data-t="'+t+'">'+t+'</button>';}).join('')+'</div>'+
+  '<div class="rev-input field"><textarea data-action="reviewNote" placeholder="分享更多用餐感受，帮助更多人（选填）">'+STATE.review.note+'</textarea></div>';
+}
+
+/* ---------- ORDERS ---------- */
+function Orders(){
+  if(!STATE.orders.length) return emptyState('receipt','还没有订单','下单后可在这里查看进度与历史','去点餐','home');
+  var live=STATE.orders.filter(function(o){return o.stage<5 || (o.stage>=5 && !o.reviewed);});
+  var past=STATE.orders.filter(function(o){return o.reviewed;});
+  var html='';
+  if(live.length){ html+='<div class="section-head" style="margin-top:6px;margin-bottom:10px"><span class="h2">进行中</span></div>'+live.map(orderCard).join(''); }
+  if(past.length){ html+='<div class="section-head" style="margin-bottom:10px"><span class="h2">历史订单</span></div>'+past.map(orderCard).join(''); }
+  return html;
+}
+function orderCard(o){
+  var r=findRes(o.res), live=o.stage<5, delivered=o.stage>=5 && !o.reviewed, badge;
+  if(live) badge='<span class="obadge live"><span class="live-dot"></span>'+STAGES[Math.min(o.stage,5)].t+'</span>';
+  else if(delivered) badge='<span class="obadge done">'+I('check',{size:13,w:2.3})+'待评价</span>';
+  else badge='<span class="obadge done">'+I('check',{size:13,w:2.3})+'已完成</span>';
+  return ''+
+  '<div class="ocard surf" data-action="openOrder" data-id="'+o.id+'">'+
+    '<div class="ocard-top"><div class="thumb"><div class="gl" style="position:absolute;inset:0;background:'+grad(RES.indexOf(r))+'"></div>'+art(o.resIcon)+'</div>'+
+      '<div class="o-main"><div class="o-name">'+o.resName+'</div><div class="o-time">'+fmtTime(o.placedAt)+' · 单号 '+o.id.slice(-6)+'</div></div>'+badge+'</div>'+
+    '<div class="ocard-bot"><div class="o-items">'+o.items.map(function(x){return x.name+'×'+x.qty;}).join('，')+'</div>'+
+      (o.reviewed?'<button class="reorder-btn" data-action="reorder" data-id="'+o.id+'">'+I('arrow',{size:14,w:2})+' 再来一单</button>':'<div class="o-total">'+money(o.total)+'</div>')+
+    '</div></div>';
+}
+function fmtTime(ts){
+  var d=new Date(ts), now=new Date();
+  var hh=('0'+d.getHours()).slice(-2), mm=('0'+d.getMinutes()).slice(-2);
+  if(d.toDateString()===now.toDateString()) return '今天 '+hh+':'+mm;
+  var diff=Math.floor((now-ts)/86400000);
+  if(diff<=1) return '昨天 '+hh+':'+mm;
+  return (d.getMonth()+1)+'月'+d.getDate()+'日 '+hh+':'+mm;
+}
+
+/* ---------- PROFILE ---------- */
+function Profile(){
+  var completed=STATE.orders.filter(function(o){return o.reviewed;}).length;
+  var rows1=[['ticket','优惠券',COUPONS.length+' 张可用'],['wallet','灰调钱包','¥328.50'],['pin','收货地址',ADDRESSES.length+' 个地址','chooseAddr']];
+  var rows2=[['heart','我的收藏',STATE.favs.size+' 家店铺','go','favorites'],['shield','隐私与安全',''],['gear','设置','']];
+  return ''+
+  '<div class="prof-head surf"><div class="avatar">林</div>'+
+    '<div style="flex:1"><div class="p-name">林女士</div><div class="p-sub">'+I('shield',{size:13,w:1.7})+' 黑金会员 · 积分 '+STATE.points+'</div></div>'+
+    '<button class="iconbtn" data-action="noop">'+I('edit',{size:19})+'</button></div>'+
+  '<div class="prof-stats surf">'+
+    '<div class="pstat"><div class="v">'+STATE.orders.length+'</div><div class="l">全部订单</div></div>'+
+    '<div class="pstat"><div class="v">'+completed+'</div><div class="l">已完成</div></div>'+
+    '<div class="pstat"><div class="v">'+STATE.favs.size+'</div><div class="l">收藏</div></div>'+
+    '<div class="pstat"><div class="v">'+STATE.points+'</div><div class="l">积分</div></div></div>'+
+  '<div class="checkin-card surf" data-action="checkin">'+
+    '<div class="ck-ic">'+I('flame',{size:20,fill:'currentColor',w:0})+'</div>'+
+    '<div class="ck-main"><div class="ck-t">每日签到 · 已连签 '+STATE.checkDays.size+' 天</div><div class="ck-s">签到最高领 30 积分，连签更划算</div></div>'+
+    '<span class="ck-go">签到 '+I('chevR',{size:16,w:2})+'</span></div>'+
+  '<div id="installSlot"></div>'+
+  '<div class="row-card surf">'+rows1.map(rowItem).join('')+'</div>'+
+  '<div class="row-card surf">'+rows2.map(rowItem).join('')+'</div>'+
+  '<div style="text-align:center;margin-top:22px"><span class="muted" style="font-size:11.5px">灰调 · Liquid Foodie · v1.0</span></div>';
+}
+function rowItem(r){
+  var act=r[3]||'noop', extra=r[4]?(' data-screen="'+r[4]+'"'):'';
+  return '<div class="lrow" data-action="'+act+'"'+extra+'><span class="l-ic soft-in">'+I(r[0],{size:19})+'</span>'+
+    '<div class="l-main"><div class="l-t">'+r[1]+'</div></div>'+
+    (r[2]?'<span class="l-val">'+r[2]+'</span>':'')+'<span class="chev">'+I('chevR',{size:18,w:2})+'</span></div>';
+}
+function Favorites(){
+  var list=RES.filter(function(r){return STATE.favs.has(r.id);});
+  if(!list.length) return emptyState('heart','还没有收藏','在店铺卡片点击爱心，收藏你喜欢的店铺','去逛逛','home');
+  return '<div class="section-head" style="margin-top:4px"><span class="h2">已收藏 '+list.length+' 家</span></div>'+
+    list.map(function(r){return resCard(r,RES.indexOf(r));}).join('');
+}
+function emptyState(icon,t,s,btn,screen){
+  return '<div class="empty"><div class="e-ic soft-in">'+I(icon,{size:34,w:1.6})+'</div>'+
+    '<div class="e-t">'+t+'</div><div class="e-s">'+s+'</div>'+
+    '<button class="btn btn-primary" style="margin-top:20px;padding:13px 28px;font-size:14.5px;border-radius:var(--r-pill)" data-action="go" data-screen="'+screen+'">'+btn+'</button></div>';
+}
+
+/* ---------- CART OPERATIONS + FX ---------- */
+function updateCartBadge(){var b=$('#cartBadge'); if(b){var c=cartCount(); b.textContent=c; b.classList.toggle('show',c>0);}}
+function bumpBadge(){var b=$('#cartBadge'); if(b){b.classList.add('bump'); setTimeout(function(){b.classList.remove('bump');},520);}}
+function flyToCart(origin){
+  var badge=$('#cartBadge'); var cartIcon=badge?badge.closest('.iconbtn'):null;
+  if(!origin||!cartIcon){ bumpBadge(); return; }
+  var a=origin.getBoundingClientRect(), b=cartIcon.getBoundingClientRect(), app=$('#app').getBoundingClientRect();
+  var sx=a.left+a.width/2-app.left-9, sy=a.top+a.height/2-app.top-9;
+  var ex=b.left+b.width/2-app.left-9, ey=b.top+b.height/2-app.top-9;
+  var dot=document.createElement('div'); dot.className='fly-dot'; dot.innerHTML=I('plus',{size:11,w:2.6});
+  dot.style.left=sx+'px'; dot.style.top=sy+'px'; fxEl.appendChild(dot);
+  var dx=ex-sx, dy=ey-sy;
+  var anim=dot.animate([
+    {transform:'translate(0,0) scale(1)',opacity:1},
+    {transform:'translate('+(dx*0.5)+'px,'+(dy*0.5-44)+'px) scale(1.12)',opacity:1,offset:.55},
+    {transform:'translate('+dx+'px,'+dy+'px) scale(.3)',opacity:.35}
+  ],{duration:650,easing:'cubic-bezier(.5,-0.2,.4,1)'});
+  anim.onfinish=function(){ dot.remove(); bumpBadge(); };
+}
+function refreshMenu(){
+  var r=findRes(STATE.activeRes); if(!r) return;
+  var ml=$('#menuList'); if(ml){ ml.innerHTML=menuListActive(r); ml.classList.remove('fade-swap'); void ml.offsetWidth; ml.classList.add('fade-swap'); }
+}
+function postCart(origin,fly){
+  updateCartBadge();
+  if(fly) flyToCart(origin); else bumpBadge();
+  if(STATE.screen==='restaurant') refreshMenu();
+  else if(STATE.screen==='cart'){ if(!cartCount()){ renderAppbar(); renderScreen(false); } else renderScreen(false); }
+  renderDock();
+}
+function addItem(id,origin){
+  var it=findItem(id); if(!it) return;
+  if(STATE.cartRes && STATE.cartRes!==it.res){
+    showModal({icon:'bag',title:'要更换店铺吗？',desc:'购物车中已有其他店铺的商品，更换将清空原有商品。',confirmText:'清空并添加',cancelText:'保留',onConfirm:function(){
+      STATE.cart={}; STATE.cartRes=it.res; STATE.cart[id]=1; postCart(null,false); toast('已添加到购物车');
+    }});
+    return;
+  }
+  STATE.cartRes=it.res; STATE.cart[id]=(STATE.cart[id]||0)+1; postCart(origin,true);
+}
+function changeQty(id,d,origin){
+  var cur=STATE.cart[id]||0, next=cur+d;
+  if(next<=0) delete STATE.cart[id]; else STATE.cart[id]=next;
+  if(!cartCount()) STATE.cartRes=null;
+  postCart(origin, d>0 && STATE.screen==='restaurant');
+}
+
+/* ---------- ORDER + SIMULATION ---------- */
+function startSimulation(id){
+  var seq=[[1,1600],[2,2600],[3,2800],[4,2200],[5,6400]], acc=0;
+  seq.forEach(function(step){
+    acc+=step[1];
+    setTimeout(function(){
+      var o=orderById(id); if(!o || o.stage>=step[0]) return;
+      o.stage=step[0]; if(o.stage>=5) o.status='delivered';
+      onStageChange(o);
+    },acc);
+  });
+}
+function onStageChange(o){
+  if(STATE.screen==='tracking' && STATE.activeOrder===o.id){
+    updateTimeline(o);
+    if(o.stage===4){
+      var rp=$('#routeProg'); if(rp) rp.style.strokeDashoffset='0';
+      var rm=$('#riderMove'); if(rm && rm.beginElement){ try{ rm.beginElement(); }catch(e){} }
+      var rg=$('#riderG'); if(rg){ var c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('class','r-pulse'); c.setAttribute('r','17'); c.setAttribute('fill','#16171c'); rg.insertBefore(c,rg.firstChild); }
+    }
+    if(o.stage>=5){ renderDock(); toast('订单已送达，记得评价哦','check'); }
+  }else if(STATE.screen==='orders'){ renderScreen(false); }
+}
+
+/* ---------- MODALS ---------- */
+function showModal(opt){
+  var wrap=document.createElement('div'); wrap.className='modal-wrap';
+  wrap.innerHTML='<div class="modal-bg" data-close="1"></div><div class="modal glass">'+
+    (opt.icon?'<div class="m-ic">'+I(opt.icon,{size:30,w:2.2})+'</div>':'')+
+    '<h3>'+opt.title+'</h3>'+(opt.desc?'<p>'+opt.desc+'</p>':'')+
+    '<div class="m-actions">'+(opt.single?'':'<button class="btn btn-soft" data-close="1">'+(opt.cancelText||'取消')+'</button>')+
+    '<button class="btn btn-primary" data-confirm="1">'+(opt.confirmText||'确定')+'</button></div></div>';
+  fxEl.appendChild(wrap); requestAnimationFrame(function(){ wrap.classList.add('show'); });
+  function close(){ wrap.classList.remove('show'); setTimeout(function(){ wrap.remove(); },520); }
+  wrap.addEventListener('click',function(e){
+    if(e.target.closest('[data-confirm]')){ close(); if(opt.onConfirm) setTimeout(opt.onConfirm,60); }
+    else if(e.target.closest('[data-close]')) close();
+  });
+}
+function successModal(title,desc,onClose){
+  var wrap=document.createElement('div'); wrap.className='modal-wrap';
+  wrap.innerHTML='<div class="modal-bg"></div><div class="modal glass">'+
+    '<div class="m-ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path class="check-draw" d="M5 12.5l4.4 4.4L19 7.4"/></svg></div>'+
+    '<h3>'+title+'</h3><p>'+desc+'</p>'+
+    '<div class="m-actions"><button class="btn btn-primary" data-ok="1" style="flex:1;padding:14px;font-size:15px">完成</button></div></div>';
+  fxEl.appendChild(wrap); requestAnimationFrame(function(){ wrap.classList.add('show'); });
+  function close(){ wrap.classList.remove('show'); setTimeout(function(){ wrap.remove(); if(onClose) onClose(); },520); }
+  wrap.addEventListener('click',function(e){ if(e.target.closest('[data-ok]')||e.target.classList.contains('modal-bg')) close(); });
+}
+
+/* ---------- MINI CART SHEET ---------- */
+function cartSheet(){
+  var r=activeCartRes(); if(!r||!cartCount()) return;
+  var wrap=document.createElement('div'); wrap.className='modal-wrap';
+  function body(){
+    var ids=Object.keys(STATE.cart), sub=cartSubtotal(), disc=discountFor(r,sub);
+    return '<div class="ms-head"><div><div class="ms-store">'+r.name+'</div><div class="ms-sub">已满 '+yuan(r.min)+' 起送 · 配送 '+yuan(r.fee)+'</div></div>'+
+      '<button class="ms-clear" data-clear="1">'+I('x',{size:14,w:2.2})+' 清空</button></div>'+
+    '<div class="ms-list">'+ids.map(function(id,idx){var it=findItem(id),qty=STATE.cart[id];var onSale=STATE.sale[id]!=null;
+      var op=STATE.itemOpts[id], opStr=op?Object.keys(op).map(function(k){return op[k];}).join(' · '):'';
+      return '<div class="ms-item"><div class="thumb" style="width:50px;height:50px;border-radius:13px"><div class="gl" style="background:'+grad(idx)+'"></div>'+art(it.art)+'</div>'+
+        '<div class="ms-main"><div class="ms-name">'+it.name+'</div>'+(opStr?'<div class="ms-opt">'+opStr+'</div>':'')+'<div class="ms-price">'+money(priceOf(id))+(onSale?' <span class="ms-was">'+yuan(it.price)+'</span>':'')+'</div></div>'+
+        '<div class="stepper"><button class="step-btn minus soft" data-ms="dec" data-id="'+id+'">'+I('minus',{size:16,w:2})+'</button><span class="step-qty">'+qty+'</span><button class="step-btn plus" data-ms="inc" data-id="'+id+'">'+I('plus',{size:16,w:2})+'</button></div></div>';
+    }).join('')+'</div>'+
+    '<div class="ms-foot"><div class="ms-total"><span class="mt-a">'+money(orderTotal(r,sub))+'</span>'+(disc?'<span class="mt-save">已省 '+yuan(disc)+'</span>':'<span class="mt-b">含配送与包装</span>')+'</div>'+
+      '<button class="btn btn-primary ms-go" data-go="1">去结算</button></div>';
+  }
+  wrap.innerHTML='<div class="modal-bg" data-close="1"></div><div class="modal cart-sheet">'+body()+'</div>';
+  fxEl.appendChild(wrap); requestAnimationFrame(function(){ wrap.classList.add('show'); });
+  function close(){ wrap.classList.remove('show'); setTimeout(function(){ wrap.remove(); },520); }
+  function under(){ updateCartBadge(); if(STATE.screen==='restaurant') refreshMenu(); renderDock(); }
+  function rerender(){ var m=$('.cart-sheet',wrap); if(m) m.innerHTML=body(); }
+  wrap.addEventListener('click',function(e){
+    var ms=e.target.closest('[data-ms]');
+    if(ms){ var id=ms.getAttribute('data-id'), d=ms.getAttribute('data-ms')==='inc'?1:-1;
+      STATE.cart[id]=(STATE.cart[id]||0)+d; if(STATE.cart[id]<=0){ delete STATE.cart[id]; delete STATE.itemOpts[id]; }
+      if(!cartCount()){ STATE.cartRes=null; renderAppbar(); under(); close(); toast('购物车已清空','x'); return; }
+      rerender(); under(); return; }
+    if(e.target.closest('[data-clear]')){ STATE.cart={}; STATE.itemOpts={}; STATE.cartRes=null; renderAppbar(); under(); close(); toast('购物车已清空','x'); return; }
+    if(e.target.closest('[data-go]')){ close(); setTimeout(function(){ nav('checkout'); },90); return; }
+    if(e.target.closest('[data-close]')) close();
+  });
+}
+
+/* ---------- DAILY CHECK-IN ---------- */
+function checkinSheet(){
+  var rewards=[5,5,10,10,15,15,30];
+  var wrap=document.createElement('div'); wrap.className='modal-wrap';
+  function nextIdx(){ for(var i=0;i<7;i++) if(!STATE.checkDays.has(i)) return i; return -1; }
+  function body(){
+    var ni=nextIdx(), done=STATE.checkDays.size;
+    return '<div class="ci-top"><div class="ci-streak">'+done+'</div><div class="ci-lb">已连续签到（天）· 当前积分 '+STATE.points+'</div></div>'+
+      '<div class="ci-grid">'+rewards.map(function(p,i){
+        var got=STATE.checkDays.has(i), today=i===ni;
+        return '<div class="ci-day'+(got?' got':'')+(today?' today':'')+'"><div class="ci-p">+'+p+'</div><div class="ci-circ">'+(got?I('check',{size:16,w:2.6}):I('star',{size:15,fill:today?'currentColor':'none',w:1.6}))+'</div><div class="ci-d">第'+(i+1)+'天</div></div>';
+      }).join('')+'</div>'+
+      '<button class="btn btn-primary ci-btn" '+(ni<0?'disabled style="opacity:.5"':'')+' data-claim="1">'+(ni<0?'本周已签满，明天继续':'签到领 +'+rewards[ni]+' 积分')+'</button>';
+  }
+  wrap.innerHTML='<div class="modal-bg" data-close="1"></div><div class="modal sheet glass checkin-sheet"><h3>每日签到</h3>'+body()+'</div>';
+  fxEl.appendChild(wrap); requestAnimationFrame(function(){ wrap.classList.add('show'); });
+  function close(){ wrap.classList.remove('show'); setTimeout(function(){ wrap.remove(); },520); }
+  wrap.addEventListener('click',function(e){
+    if(e.target.closest('[data-claim]')){ var ni=nextIdx(); if(ni<0) return; STATE.checkDays.add(ni); STATE.points+=rewards[ni];
+      var m=$('.checkin-sheet',wrap); if(m) m.innerHTML='<h3>每日签到</h3>'+body();
+      if(STATE.screen==='profile') renderScreen(false);
+      toast('签到成功，+'+rewards[ni]+' 积分','check'); return; }
+    if(e.target.closest('[data-close]')) close();
+  });
+}
+
+/* ---------- DISH DETAIL SHEET ---------- */
+function dishSpecs(it){
+  var a=it.art;
+  if(a==='cup'||a==='coffee'||a==='tea') return [
+    {name:'温度',opts:['热','冰'],def:'热'},
+    {name:'甜度',opts:['标准糖','少糖','少少糖','无糖'],def:'标准糖'}];
+  if(a==='bowl'||a==='noodle'||a==='sushi'||a==='rice') return [
+    {name:'份量',opts:['标准','加大'],def:'标准'},
+    {name:'辣度',opts:['不辣','微辣','中辣','特辣'],def:'微辣'}];
+  if(a==='leaf'||a==='salad'||a==='bento') return [
+    {name:'餐量',opts:['标准','大份'],def:'标准'},
+    {name:'酱料',opts:['油醋汁','和风','凯撒'],def:'油醋汁'}];
+  if(a==='cake'||a==='dessert') return [
+    {name:'规格',opts:['单人份','双人份'],def:'单人份'}];
+  return [{name:'规格',opts:['标准'],def:'标准'}];
+}
+function afterDishAdd(){
+  updateCartBadge(); bumpBadge();
+  if(STATE.screen==='restaurant') refreshMenu();
+  renderDock(); toast('已加入购物车','bag');
+}
+function commitDish(it,qty,sel){
+  STATE.cartRes=it.res; if(!STATE.activeRes) STATE.activeRes=it.res;
+  STATE.cart[it.id]=qty; STATE.itemOpts[it.id]=sel; afterDishAdd();
+}
+function dishSheet(it){
+  var groups=dishSpecs(it);
+  var sel={}; groups.forEach(function(g){ sel[g.name]=(STATE.itemOpts[it.id]&&STATE.itemOpts[it.id][g.name])||g.def; });
+  var qty=STATE.cart[it.id]||1;
+  var gi=RES.indexOf(findRes(it.res)); if(gi<0) gi=0;
+  var unit=priceOf(it.id), onSale=STATE.sale[it.id]!=null;
+  var wrap=document.createElement('div'); wrap.className='modal-wrap';
+  function groupHTML(g){
+    return '<div class="ds-group"><div class="ds-gname">'+g.name+'</div><div class="ds-opts">'+
+      g.opts.map(function(o){return '<button class="ds-opt'+(sel[g.name]===o?' on':'')+'" data-g="'+g.name+'" data-o="'+o+'">'+o+'</button>';}).join('')+'</div></div>';
+  }
+  wrap.innerHTML='<div class="modal-bg" data-close="1"></div>'+
+    '<div class="modal dish-sheet">'+
+      '<div class="ds-hero" style="background:'+grad(gi)+';color:rgba(22,23,28,.42)">'+art(it.art,true)+(onSale?'<span class="ds-saletag">'+I('flame',{size:12,fill:'currentColor',w:0})+' 限时 7 折</span>':'')+'</div>'+
+      '<button class="ds-x iconbtn" data-close="1">'+I('x',{size:18,w:2.2})+'</button>'+
+      '<div class="ds-body">'+
+        '<div class="ds-name">'+it.name+(it.pop?' <span class="pop-tag">'+I('flame',{size:11,fill:'currentColor',w:0})+' 招牌</span>':'')+'</div>'+
+        '<div class="ds-priceline"><span class="ds-now">'+money(unit)+'</span>'+(onSale?'<span class="ds-was">'+yuan(it.price)+'</span>':'')+'</div>'+
+        '<div class="ds-desc">'+it.desc+'</div>'+
+        groups.map(groupHTML).join('')+
+        '<div class="ds-note">'+I('shield',{size:13,w:1.7})+' 口味定制不额外收费</div>'+
+      '</div>'+
+      '<div class="ds-foot">'+
+        '<div class="ds-q"><button class="step-btn minus soft" data-q="-1">'+I('minus',{size:17,w:2})+'</button>'+
+          '<span class="ds-qty">'+qty+'</span>'+
+          '<button class="step-btn plus" data-q="1">'+I('plus',{size:17,w:2})+'</button></div>'+
+        '<button class="btn btn-primary ds-add" data-add="1">加入购物车 · '+money(unit*qty)+'</button>'+
+      '</div></div>';
+  fxEl.appendChild(wrap); requestAnimationFrame(function(){ wrap.classList.add('show'); });
+  function close(){ wrap.classList.remove('show'); setTimeout(function(){ wrap.remove(); },520); }
+  function sync(){ var b=$('.ds-add',wrap); if(b) b.innerHTML='加入购物车 · '+money(unit*qty); var q=$('.ds-qty',wrap); if(q){ q.textContent=qty; q.style.animation='none'; void q.offsetWidth; q.style.animation=''; } }
+  wrap.addEventListener('click',function(e){
+    var opt=e.target.closest('.ds-opt');
+    if(opt){ var g=opt.getAttribute('data-g'); sel[g]=opt.getAttribute('data-o');
+      $$('.ds-opt',wrap).forEach(function(b){ if(b.getAttribute('data-g')===g) b.classList.toggle('on',b===opt); }); return; }
+    var qb=e.target.closest('[data-q]');
+    if(qb){ qty=Math.max(1, qty+(+qb.getAttribute('data-q'))); sync(); return; }
+    if(e.target.closest('[data-add]')){
+      if(STATE.cartRes && STATE.cartRes!==it.res && cartCount()>0){
+        close(); showModal({icon:'bag',title:'是否清空当前购物车？',desc:'购物车中有其它店铺的商品，更换后将清空。',confirmText:'清空并添加',
+          onConfirm:function(){ STATE.cart={}; STATE.itemOpts={}; commitDish(it,qty,sel); }});
+      }else{ close(); commitDish(it,qty,sel); }
+      return;
+    }
+    if(e.target.closest('[data-close]')) close();
+  });
+}
+
+/* ---------- SHEET PICKER ---------- */
+function sheetModal(opt){
+  var wrap=document.createElement('div'); wrap.className='modal-wrap';
+  var rows=opt.options.map(function(o,i){
+    return '<button class="opt-row'+(o.on?' on':'')+'"'+(o.disabled?' style="opacity:.4;pointer-events:none"':' data-pick="'+i+'"')+'>'+
+      '<span class="o-ic soft-in">'+I(o.ic||'tag',{size:19})+'</span>'+
+      '<span class="o-tx"><span class="o-tt">'+o.title+'</span>'+(o.sub?'<span class="o-ss">'+o.sub+'</span>':'')+'</span>'+
+      '<span class="o-ck">'+I('check',{size:20,w:2.4})+'</span></button>';
+  }).join('');
+  wrap.innerHTML='<div class="modal-bg" data-close="1"></div><div class="modal sheet glass"><h3>'+opt.title+'</h3>'+rows+
+    '<div class="m-actions" style="margin-top:14px"><button class="btn btn-soft" data-close="1" style="flex:1;padding:13px">关闭</button></div></div>';
+  fxEl.appendChild(wrap); requestAnimationFrame(function(){ wrap.classList.add('show'); });
+  function close(){ wrap.classList.remove('show'); setTimeout(function(){ wrap.remove(); },520); }
+  wrap.addEventListener('click',function(e){
+    var pk=e.target.closest('[data-pick]');
+    if(pk){ var i=+pk.getAttribute('data-pick'); close(); setTimeout(function(){ opt.onPick(i); },60); return; }
+    if(e.target.closest('[data-close]')) close();
+  });
+}
+
+/* ---------- TOAST ---------- */
+var toastTimer=null;
+function toast(msg,icon){
+  var ex=$('.toast',fxEl); if(ex) ex.remove(); if(toastTimer) clearTimeout(toastTimer);
+  var t=document.createElement('div'); t.className='toast glass';
+  t.innerHTML=(icon?'<span class="ic">'+I(icon,{size:17,w:2})+'</span>':'')+'<span>'+msg+'</span>';
+  fxEl.appendChild(t); requestAnimationFrame(function(){ t.classList.add('show'); });
+  toastTimer=setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },480); },2200);
+}
+
+/* ---------- BACK ---------- */
+function back(){
+  var s=STATE.screen;
+  if(s==='restaurant') nav('home');
+  else if(s==='cart'){ if(STATE.cartRes){ STATE.activeRes=STATE.cartRes; nav('restaurant'); } else nav('home'); }
+  else if(s==='checkout') nav('cart');
+  else if(s==='tracking') nav('orders');
+  else if(s==='review') nav('tracking');
+  else if(s==='favorites') nav('profile');
+  else nav('home');
+}
+
+/* ---------- HANDLERS ---------- */
+var handlers={
+  noop:function(){},
+  tab:function(el){ nav(el.dataset.tab); },
+  go:function(el){ nav(el.dataset.screen); },
+  back:function(){ back(); },
+  openRes:function(el){ STATE.activeRes=el.dataset.id; STATE.menuCat=0; nav('restaurant'); },
+  fav:function(el,e){ if(e) e.stopPropagation(); var id=el.dataset.id; if(!id) return;
+    if(STATE.favs.has(id)){ STATE.favs.delete(id); } else { STATE.favs.add(id); }
+    if(STATE.screen==='home') updateHomeList();
+    else if(STATE.screen==='favorites') renderScreen(false);
+    else if(STATE.screen==='restaurant') renderAppbar();
+  },
+  hcat:function(el){ STATE.filter=el.dataset.cat||'全部'; $$('#homeCats .cat-tile').forEach(function(c){ c.classList.toggle('on',c.dataset.cat===STATE.filter); }); updateHomeList(); },
+  homeSearch:function(){},
+  clearSearch:function(){ STATE.query=''; renderScreen(false); var i=$('#searchInput'); if(i) i.focus(); },
+  hotSearch:function(el){ STATE.query=el.dataset.kw||''; renderScreen(false); },
+  chooseSort:function(){
+    var opts=['综合排序','评分最高','距离最近','起送最低'];
+    sheetModal({title:'排序方式', options:opts.map(function(s){return {ic:'sliders',title:s,on:STATE.sort===s};}),
+      onPick:function(i){ STATE.sort=opts[i]; updateHomeList(); toast('已按「'+opts[i]+'」排序','sliders'); }});
+  },
+  openDish:function(el,e){ if(e) e.stopPropagation(); var it=findItem(el.dataset.id); if(it) dishSheet(it); },
+  openMiniCart:function(el,e){ if(e) e.stopPropagation(); cartSheet(); },
+  checkin:function(){ checkinSheet(); },
+  chooseAddr:function(){
+    sheetModal({title:'选择收货地址',
+      options:ADDRESSES.map(function(a,i){return {ic:a.ic,title:a.label,sub:'收货人 '+a.who,on:i===STATE.addr};}),
+      onPick:function(i){ STATE.addr=i; if(STATE.screen==='home') renderAppbar(); else renderScreen(false); toast('收货地址已更新','pin'); }});
+  },
+  chooseCoupon:function(){
+    var sub=cartSubtotal();
+    var opts=COUPONS.map(function(c){ var ok=sub>=c.min; return {ic:c.ic,title:c.label,sub:ok?c.sub:(c.sub+' · 还差 '+yuan(c.min-sub)),disabled:!ok,on:STATE.coupon===c.id,val:c.id}; });
+    opts.push({ic:'x',title:'不使用优惠券',sub:'',on:!STATE.coupon,val:null});
+    sheetModal({title:'选择优惠券', options:opts, onPick:function(i){ STATE.coupon=opts[i].val; renderScreen(false); renderDock(); toast(opts[i].val?'优惠券已选用':'已取消优惠券','ticket'); }});
+  },
+  reorder:function(el,e){ if(e) e.stopPropagation(); var o=orderById(el.dataset.id); if(!o) return;
+    var r=findRes(o.res); if(!r){ toast('该店铺暂不可用'); return; }
+    STATE.cart={}; o.items.forEach(function(x){ if(findItem(x.id)) STATE.cart[x.id]=x.qty; });
+    if(!cartCount()){ toast('该订单商品已下架'); return; }
+    STATE.cartRes=r.id; STATE.activeRes=r.id; STATE.coupon=null;
+    nav('cart'); toast('已重新加入购物车','bag');
+  },
+  hcat_legacy:function(){},
+  mcat:function(el){ STATE.menuCat=+el.dataset.ci; $$('.crail-btn').forEach(function(t){ t.classList.remove('on'); }); el.classList.add('on'); refreshMenu(); },
+  add:function(el){ addItem(el.dataset.id,el); },
+  inc:function(el){ changeQty(el.dataset.id,1,el); },
+  dec:function(el){ changeQty(el.dataset.id,-1,el); },
+  clearCart:function(){ showModal({icon:'x',title:'清空购物车？',desc:'将移除购物车内全部商品。',confirmText:'清空',onConfirm:function(){
+    STATE.cart={}; STATE.cartRes=null; STATE.itemOpts={}; renderAppbar(); renderScreen(false); renderDock(); toast('购物车已清空','x'); }}); },
+  pay:function(el){ STATE.pay=el.dataset.pay; $$('.pay-opt').forEach(function(p){ p.classList.toggle('on',p.dataset.pay===STATE.pay); }); },
+  placeOrder:function(){
+    var r=activeCartRes(); if(!r||!cartCount()) return;
+    var sub=cartSubtotal(), disc=discountFor(r,sub), co=couponOff(sub), total=orderTotal(r,sub);
+    var items=Object.keys(STATE.cart).map(function(id){ var it=findItem(id); return {id:id,name:it.name,price:priceOf(id),qty:STATE.cart[id]}; });
+    var riders=['周师傅','李师傅','王师傅','陈师傅','赵师傅'];
+    var o={id:'ORD'+(100000+Math.floor(Math.random()*899999)),res:r.id,resName:r.name,resIcon:r.icon,items:items,
+      subtotal:sub,fee:r.fee,pack:2,disc:disc,coupon:co,total:total,status:'live',stage:0,reviewed:false,rating:0,
+      placedAt:Date.now(),eta:r.eta,riderName:riders[Math.floor(Math.random()*riders.length)]};
+    STATE.orders.unshift(o); STATE.activeOrder=o.id;
+    STATE.cart={}; STATE.cartRes=null; STATE.coupon=null; STATE.itemOpts={};
+    nav('tracking'); toast('下单成功，正在等待商家接单','check');
+    startSimulation(o.id);
+  },
+  goReview:function(){ STATE.review={rating:0,tags:new Set(),note:''}; nav('review'); },
+  openOrder:function(el){ STATE.activeOrder=el.dataset.id; nav('tracking'); },
+  star:function(el){
+    var v=+el.dataset.v; STATE.review.rating=v;
+    var labels=['','不太满意','一般般','还不错','很满意','非常完美'];
+    var wrap=$('#stars'); if(wrap){
+      wrap.innerHTML=[1,2,3,4,5].map(function(i){
+        return '<button class="star '+(i<=v?'on':'')+(i<=v?' pop':'')+'" style="animation-delay:'+((i-1)*0.05)+'s" data-action="star" data-v="'+i+'">'+I('star',{size:34,fill:i<=v?'currentColor':'none',w:1.5})+'</button>';
+      }).join('');
+    }
+    var lbl=$('#rateLabel'); if(lbl) lbl.textContent=labels[v];
+  },
+  rtag:function(el){ var t=el.dataset.t; if(STATE.review.tags.has(t)) STATE.review.tags.delete(t); else STATE.review.tags.add(t); el.classList.toggle('on'); },
+  reviewNote:function(){},
+  submitReview:function(){
+    if(STATE.review.rating===0){ toast('请先为本次体验打分','star'); return; }
+    var o=orderById(STATE.activeOrder); if(!o) return;
+    o.reviewed=true; o.status='completed'; o.rating=STATE.review.rating;
+    o.reviewTags=Array.from(STATE.review.tags); o.reviewNote=STATE.review.note;
+    successModal('评价已提交','感谢你的反馈，期待再次为你服务', function(){ STATE.review={rating:0,tags:new Set(),note:''}; nav('orders'); });
+  },
+  install:function(){ doInstall(); }
+};
+
+/* ---------- PWA ---------- */
+var deferredPrompt=null;
+function setupPWA(){
+  try{
+    var iconSVG="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="512" height="512" rx="116" fill="#16171c"/><g transform="translate(256,250)" stroke="#fafafa" stroke-width="24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M-96 -58 H96 L80 138 a20 20 0 0 1 -20 18 H-60 a20 20 0 0 1 -20 -18 Z"/><path d="M-48 -58 a48 48 0 0 1 96 0"/></g></svg>');
+    var manifest={name:"灰调 · Liquid Foodie",short_name:"灰调",description:"黑白灰高级感虚拟点餐平台",start_url:".",scope:".",display:"standalone",orientation:"portrait",background_color:"#eceef2",theme_color:"#eceef2",icons:[{src:iconSVG,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}]};
+    var mb=new Blob([JSON.stringify(manifest)],{type:"application/manifest+json"});
+    var ml=document.getElementById('manifest'); if(ml) ml.href=URL.createObjectURL(mb);
+  }catch(e){}
+  try{
+    if('serviceWorker' in navigator){
+      var sw="const C='lf-v1';self.addEventListener('install',function(e){self.skipWaiting();});self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith((async function(){var c=await caches.open(C);try{var n=await fetch(e.request);c.put(e.request,n.clone());return n;}catch(err){var m=await c.match(e.request);return m||Response.error();}})());});";
+      var sb=new Blob([sw],{type:'text/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(sb)).catch(function(){});
+    }
+  }catch(e){}
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferredPrompt=e; if(STATE.screen==='profile') renderInstall(); });
+}
+function renderInstall(){
+  var slot=$('#installSlot'); if(!slot) return;
+  if(!deferredPrompt){ slot.innerHTML=''; return; }
+  slot.innerHTML='<button class="btn btn-primary btn-block" style="margin-top:14px;border-radius:var(--r-lg);padding:15px" data-action="install">'+I('install',{size:19})+' 安装灰调到主屏幕</button>';
+}
+function doInstall(){ if(!deferredPrompt) return; deferredPrompt.prompt(); var p=deferredPrompt; deferredPrompt=null; renderInstall(); if(p.userChoice) p.userChoice.then(function(){}); }
+
+/* ---------- BOOT ---------- */
+function boot(){
+  screenEl=$('#screen'); appbarEl=$('#appbar'); tabbarEl=$('#tabbar'); dockEl=$('#dock'); fxEl=$('#fx');
+  $('#app').addEventListener('click',function(e){
+    var el=e.target.closest('[data-action]'); if(!el) return;
+    var fn=handlers[el.dataset.action]; if(fn) fn(el,e);
+  });
+  $('#app').addEventListener('input',function(e){
+    var el=e.target.closest('[data-action]'); if(!el) return;
+    var a=el.dataset.action;
+    if(a==='reviewNote'){ STATE.review.note=el.value; }
+    else if(a==='homeSearch'){
+      STATE.query=el.value;
+      var x=$('#searchClear'); if(x) x.style.display=el.value?'grid':'none';
+      var ex=$('#searchExtra'); if(ex) ex.style.display=el.value?'none':'block';
+      var dv=$('#homeDiscover'); if(dv) dv.style.display=el.value?'none':'block';
+      updateHomeList();
+    }
+  });
+  /* setupPWA 已停用（嵌入 YIMO 时不需要） */;
+  buildFlash();
+  startSaleClock();
+  nav('home');
+}
+function startSaleClock(){
+  function tick(){
+    var el=document.getElementById('saleClock'); if(!el) return;
+    var now=new Date(), end=new Date(now); end.setHours(22,0,0,0);
+    if(end<=now) end.setTime(end.getTime()+86400000);
+    var s=Math.floor((end-now)/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=s%60;
+    function p(n){return ('0'+n).slice(-2);}
+    el.textContent=p(h)+':'+p(m)+':'+p(ss);
+  }
+  tick(); setInterval(tick,1000);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>互动叙事原型 · Narrative Prototype</title>
+
+  <!-- 第三方库（纯 CDN，可换成本地文件后离线部署）
+       marked     : Markdown 解析
+       DOMPurify  : Markdown 输出的 XSS 过滤
+       如果 CDN 加载失败，app.js 里的 renderMarkdown 会自动降级为纯文本转义，不会白屏。 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" defer></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== 顶部世界状态条 ===================== -->
+  <!-- data-mood 由 JS 写入，CSS 据此给整条做极淡的心情着色（signature 效果） -->
+  <header class="topbar" id="topbar" data-mood="calm">
+    <button class="icon-btn" id="navToggle" aria-label="菜单">☰</button>
+
+    <div class="world-strip">
+      <span class="world-chip" id="chipTime" title="游戏时间">清晨</span>
+      <span class="world-chip" id="chipLocation" title="当前地点">未设定</span>
+      <span class="world-chip world-chip--mood" id="chipMood" title="角色情绪">平静</span>
+    </div>
+
+    <!-- 开发者数值开关：默认隐藏内部数值 -->
+    <button class="icon-btn" id="devToggle" aria-label="开发者数值" title="开发者：查看隐藏数值">◉</button>
+  </header>
+
+  <!-- 开发者面板（默认折叠），显示隐藏的 依恋度/情绪温度 等内部状态 -->
+  <div class="dev-panel" id="devPanel" hidden>
+    <strong>开发者视图</strong>
+    <div id="devReadout">—</div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ===================== 侧边导航 ===================== -->
+    <nav class="nav" id="nav">
+      <div class="nav-group-label">核心</div>
+      <button class="nav-item is-active" data-panel="chat">对话</button>
+      <button class="nav-item" data-panel="world">世界状态</button>
+      <button class="nav-item" data-panel="saves">存档 / IF 线</button>
+      <button class="nav-item" data-panel="settings">设置</button>
+
+      <div class="nav-group-label">扩展（接口已预留）</div>
+      <button class="nav-item" data-panel="behavior">主动行为</button>
+      <button class="nav-item" data-panel="npc">情境触发</button>
+      <button class="nav-item" data-panel="avatar">形象自定义</button>
+      <button class="nav-item" data-panel="diary">双视角日记</button>
+      <button class="nav-item" data-panel="theater">小剧场</button>
+      <button class="nav-item" data-panel="couple">情侣空间</button>
+      <button class="nav-item" data-panel="gift">虚拟赠礼</button>
+      <button class="nav-item" data-panel="album">相册</button>
+      <button class="nav-item" data-panel="secret">秘密盒子</button>
+      <button class="nav-item" data-panel="playground">代码游乐园</button>
+      <button class="nav-item" data-panel="export">导出 / 分享</button>
+      <button class="nav-item" data-panel="backup">备份 / 恢复</button>
+    </nav>
+    <div class="nav-scrim" id="navScrim"></div>
+
+    <!-- ===================== 主区域 ===================== -->
+    <main class="main">
+
+      <!-- ---------- 面板：对话（核心） ---------- -->
+      <section class="panel is-active" data-panel="chat">
+        <div class="chat-wrap">
+          <div class="chat-stream" id="chatStream" aria-live="polite"></div>
+
+          <!-- 角色主动浮现的小事件文字（半透明，顶部一行） -->
+          <div class="ambient-line" id="ambientLine" hidden></div>
+
+          <div class="chat-input-bar">
+            <button class="icon-btn" id="chatClear" title="清空当前对话（不影响存档）">⌫</button>
+            <textarea id="chatInput" rows="1" placeholder="对他说点什么…（Enter 发送 / Shift+Enter 换行）"></textarea>
+            <button class="btn btn--accent" id="chatSend">发送</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 面板：世界状态（核心） ---------- -->
+      <section class="panel" data-panel="world">
+        <h2 class="panel-title">世界状态</h2>
+        <p class="panel-hint">这些状态会被自动拼进系统提示词，影响角色的反应。</p>
+
+        <div class="card">
+          <h3>游戏时间</h3>
+          <div class="seg" id="timeSeg"></div>
+        </div>
+
+        <div class="card">
+          <h3>地点</h3>
+          <div class="chip-group" id="locationGroup"></div>
+        </div>
+
+        <div class="card">
+          <h3>角色情绪</h3>
+          <p class="mood-now" id="moodNow">—</p>
+          <p class="panel-hint">情绪会随你的选择与事件双向变化（黏人 ↔ 闹别扭），只显示描述文字，不显示数字。</p>
+          <div class="chip-group" id="moodNudge"></div>
+        </div>
+      </section>
+
+      <!-- ---------- 面板：存档 / IF 线（核心） ---------- -->
+      <section class="panel" data-panel="saves">
+        <h2 class="panel-title">存档 / IF 线</h2>
+        <p class="panel-hint">保存与读取整局状态：对话、情绪、隐藏数值、时间地点、日记。</p>
+
+        <div class="card">
+          <div class="row">
+            <input type="text" id="saveName" placeholder="存档名（如：安抚线 / 冷漠线）" />
+            <button class="btn btn--accent" id="saveCreate">保存当前进度</button>
+          </div>
+        </div>
+
+        <div class="save-list" id="saveList"></div>
+      </section>
+
+      <!-- ---------- 面板：设置（核心） ---------- -->
+      <section class="panel" data-panel="settings">
+        <h2 class="panel-title">设置</h2>
+        <p class="panel-hint">凭据仅存在你本机的 localStorage，代码不会上传，也不内置任何密钥。</p>
+
+        <div class="card">
+          <h3>AI 接口</h3>
+          <label class="field">
+            <span>API Endpoint</span>
+            <input type="text" id="setEndpoint" placeholder="https://api.openai.com/v1" />
+          </label>
+          <label class="field">
+            <span>API Key</span>
+            <input type="password" id="setKey" placeholder="sk-..." />
+          </label>
+          <label class="field">
+            <span>Model Name</span>
+            <input type="text" id="setModel" placeholder="gpt-4o-mini" />
+          </label>
+
+          <div class="row">
+            <button class="btn btn--accent" id="setSave">保存设置</button>
+            <button class="btn" id="setTest">测试连接</button>
+            <span class="status" id="setStatus"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>其他</h3>
+          <label class="switch-row">
+            <input type="checkbox" id="optTTS" />
+            <span>语音朗读 AI 回复（Web Speech，浏览器支持时生效）</span>
+          </label>
+          <label class="switch-row">
+            <input type="checkbox" id="optIdle" />
+            <span>启用闲置主动消息（5 分钟无操作）</span>
+          </label>
+          <label class="switch-row">
+            <input type="checkbox" id="optAmbient" />
+            <span>启用随机小事件浮现文字</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- ====================================================== -->
+      <!--   以下为扩展模块：接口已预留，渲染函数见 app.js 的     -->
+      <!--   Stubs 区。每个面板已接入对应 USER_CONFIG，可直接补全。-->
+      <!-- ====================================================== -->
+      <section class="panel" data-panel="behavior"><div id="mount-behavior"></div></section>
+      <section class="panel" data-panel="npc"><div id="mount-npc"></div></section>
+      <section class="panel" data-panel="avatar"><div id="mount-avatar"></div></section>
+      <section class="panel" data-panel="diary"><div id="mount-diary"></div></section>
+      <section class="panel" data-panel="theater"><div id="mount-theater"></div></section>
+      <section class="panel" data-panel="couple"><div id="mount-couple"></div></section>
+      <section class="panel" data-panel="gift"><div id="mount-gift"></div></section>
+      <section class="panel" data-panel="album"><div id="mount-album"></div></section>
+      <section class="panel" data-panel="secret"><div id="mount-secret"></div></section>
+      <section class="panel" data-panel="playground"><div id="mount-playground"></div></section>
+      <section class="panel" data-panel="export"><div id="mount-export"></div></section>
+      <section class="panel" data-panel="backup"><div id="mount-backup"></div></section>
+
+    </main>
+  </div>
+
+  <!-- 轻量 toast 容器 -->
+  <div class="toast" id="toast" hidden></div>
+
+  <!-- 特殊事件模式遮罩骨架（默认隐藏；完整逻辑见 app.js 的 SpecialEvent 接口）
+       注意：本骨架按“剧情化特殊场景”定位 —— 换主题色 / 锁场景 / 限定叙事选项 / 剧本推进，
+       退出为剧情选择推进，不是服从解锁。 -->
+  <div class="event-overlay" id="eventOverlay" hidden></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
